@@ -51,8 +51,8 @@ DBAC and the Pulse is one of the impressive campus athletic centres and gyms in 
     - UI that allows users to declare usage (Setting sets left, toggling work-in, exercise choice)
     - Low-latency real-time database to manage data
     - Data handling from front-end to backend
-- **Milestone 4 <ins>Date</ins> :** Fully develop platform to allow DBAC coaches and instructors to schedule and manage classes
-- **Milestone 5 <ins>Date</ins> :** Fully develop platform to allow for chat for specific sports and activities
+- **Milestone 4 <ins>Date</ins> :** Fully develop platform to allow for chat for specific sports and activities
+- **Milestone 5 <ins>Date</ins> :** Fully develop platform to allow DBAC coaches and instructors to schedule and manage classes
 
 ### Tech Stack
 <!-- *Determine a list of options for your tech stack. Ideally at this point, you'd list multiple frameworks that you'd pick from later, after onboarding your developers, so that you know what your team mates are most comfortable/interested in working with.* -->
@@ -69,12 +69,11 @@ DBAC and the Pulse is one of the impressive campus athletic centres and gyms in 
 *Describe the high-level structure of the project, including directories, modules, and how components/modules interact. For instance, you may need a frontend directory and a backend directory. In your backend directory you may have a designated module for different components of the project, etc. Keep it high level and don't include biolerplate. Include a diagram if you'd like!*
 
 - /dev
-  - frontend
-    - src
-    - static
-    - 
-  - backend
-    - a
+  - /frontend
+    - /src
+    - /static
+  - /backend
+    - /services
 ### API Documentation
 *Optional: Include some high-level descriptions of the APIs that will need to be developed. You can organize this however you'd like.*
 - **API Endpoint:** [URL]
