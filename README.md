@@ -92,7 +92,7 @@ The DBAC Companion App aims to further enhance the experience at one of the most
 | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 ## Project Challenges
 
-Below is a list of challenges that we'll try to address over the course of our project, after developing our MVP. Some of them reflect industry level challenges involving ML services. They may show up as features/issues throughout our project, depending on what stage we're at.
+Below is a list of challenges that we'll try to address over the course of our project, after developing our MVP. 
 
 
 
