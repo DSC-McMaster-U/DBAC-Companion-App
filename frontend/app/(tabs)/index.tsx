@@ -49,7 +49,7 @@ export default function HomeScreen() {
       {/* Display the message from the backend */}
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Message from Backend:</ThemedText>
-        <Text>{message ? message : 'Loading message...'}</Text> {/* Show message or loading text */}
+        <Text>{message ? message : 'Loading message...'}</Text>
       </ThemedView>
 
       <ThemedView style={styles.stepContainer}>
