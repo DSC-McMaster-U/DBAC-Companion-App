@@ -21,7 +21,7 @@ Content-Type: application/json
 
 {
     "studentnum": "400380908",
-    "newStatus": "part-time"
+    "newStatus": "full-time"
 }
 
 ###DELETE A USER 
