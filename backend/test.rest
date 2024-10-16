@@ -1,0 +1,33 @@
+### GET USERS 
+GET http://localhost:8383/users
+
+### GET USER 
+GET http://localhost:8383/users/400380909
+
+### ADD A USER 
+POST http://localhost:8383/adduser
+Content-Type: application/json
+
+{
+    "name": "Edward Jung",
+    "studentnum": "400380909",
+    "macid": "junge11",
+    "fulltime_status": "part-time"
+}
+
+### UPDATE STATUS OF A FRIEND 
+PATCH http://localhost:8383/changestatus 
+Content-Type: application/json
+
+{
+    "studentnum": "400380908",
+    "newStatus": "part-time"
+}
+
+###DELETE A USER 
+DELETE http://localhost:8383/users
+Content-Type: application/json
+
+{
+    "studentnum": "400380909"
+}
