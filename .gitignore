@@ -1,0 +1,11 @@
+# Node.js specific
+node_modules/
+npm-debug.log
+
+# Optional dependencies
+.DS_Store
+.env
+
+# Build output
+dist/
+build/
