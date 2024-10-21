@@ -1,0 +1,23 @@
+### GET MACHINES 
+GET http://localhost:8383/machines
+
+### GET MACHINE 
+GET http://localhost:8383/machines/1
+
+### UPDATE USER OF MACHINE
+PATCH http://localhost:8383/machines/users
+Content-Type: application/json
+
+{
+    "machineid": "1",
+    "userid": "400380908"
+}
+
+### UPDATE SETS LEFT
+PATCH http://localhost:8383/machines/setsleft
+Content-Type: application/json
+
+{
+    "machineid": "1",
+    "sets_left": 5
+}
