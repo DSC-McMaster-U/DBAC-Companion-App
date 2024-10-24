@@ -1,16 +1,20 @@
 {
-  "name": "backend",
+  "name": "gdsc",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "description": "",
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.21.0"
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.5",
+    "env": "^0.0.2",
+    "express": "^4.21.1",
+    "pg": "^8.13.0"
   }
 }
