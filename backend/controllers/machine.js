@@ -48,6 +48,7 @@ export const updateMachineUser = async (req, res) => {
   const machine_availability = machine_snap.availability;
   const sets_left = machine_snap.sets_left;
   const allowWorkin = machine_snap.workin;
+  const new_queue = machine_snap.queue;
   const same_type_occupied = facility_snap.occupied_machine_count[machine_type];
   const num_active_users = facility_snap.num_active_users;
 
@@ -82,6 +83,7 @@ export const updateMachineUser = async (req, res) => {
     userid: userid,
     availability: new_availability,
     sets_left: new_sets_left,
+    queue: new_queue,
   });
 
   // return updated machine
@@ -112,6 +114,20 @@ export const updateWorkIn = async (req, res) => {
     workin: workin,
   });
 
+  var machineSnap = await getDoc(machineRef);
+
+  res.status(200).send(machineSnap.data());
+};
+
+export const updateQueue = async (req, res) => {
+  const { machineid, queue } = req.body;
+
+  const machineRef = doc(db, "machines", machineid);
+
+  updateDoc(machineRef, {
+    queue: queue,
+  });
+  
   var machineSnap = await getDoc(machineRef);
 
   res.status(200).send(machineSnap.data());

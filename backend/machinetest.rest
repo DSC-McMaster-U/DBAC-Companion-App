@@ -21,3 +21,12 @@ Content-Type: application/json
     "machineid": "1",
     "sets_left": 5
 }
+
+### UPDATE QUEUE
+PATCH http://localhost:8383/machines/queue
+Content-Type: application/json
+
+{
+    "machineid": "1",
+    "queue": [ "400527630", "400213254" ]
+}
