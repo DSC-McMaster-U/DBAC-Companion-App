@@ -1,18 +1,13 @@
-const express = require('express');
-const cors = require('cors');
+import express from "express";
+import userRouter from "./routes/users.js";
+
 const app = express();
+const port = 3000;
 
-// Middleware to enable CORS
-app.use(cors());
-app.use(express.json());
+// API Middlewares
 
-// Example route
-app.get('/', (req, res) => {
-    res.json({ message: 'Hello from the backend!' });
-});
+app.use("/user", userRouter);
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
