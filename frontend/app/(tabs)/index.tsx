@@ -128,8 +128,8 @@ export default function HomeScreen() {
               <View style={styles.pulseLeftCol}>
                 <CircularProgressBar
                   style={{width: "100%"}}
-                  strokeWidth={7}
-                  label='The Pulse'
+                  strokeWidth={10}
+                  label='Total'
                   progress={pulseVal}
                 />
               </View>
