@@ -5,10 +5,14 @@ import Animated, {
 } from 'react-native-reanimated';
 
 type ScrollViewProps = ViewProps & {
-    background: string
+    background?: string
 }
 
-export default function ScrollView({background, children, ...rest} : ScrollViewProps) {
+export default function ScrollView({
+    background = '#00000000', 
+    children, 
+    ...rest
+} : ScrollViewProps) {
     return (
         <Animated.ScrollView style={{backgroundColor: background}} { ...rest }>
             { children }
