@@ -5,6 +5,7 @@ import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { StatusBar } from 'react-native';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -31,11 +32,11 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="explore"
+          name="pulse"
           options={{
-            title: 'Explore',
+            title: 'Pulse',
             tabBarIcon: ({ color }) => (
-              <TabBarIcon name={'code-slash'} color={color} />
+              <FontAwesome6 name="dumbbell" size={25} color={color} />
             ),
           }}
         />

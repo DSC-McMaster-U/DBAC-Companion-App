@@ -3,6 +3,7 @@ import {
   StyleSheet, 
   ViewProps, 
   View, 
+  ScrollView,
   Image, 
   Text, 
   TextProps, 
@@ -12,7 +13,6 @@ import {
 import MacMarauders from '@/assets/images/Macmarauders.png';
 import ProfilePicture from '@/assets/images/profile-picture.png';
 import CircularProgressBar from '@/components/CircularProgressBar';
-import ScrollView from '@/components/ScrollView';
 import Screen from '@/components/Screen';
 
 /*************************************HOME SCREEN TITLE*************************************/
