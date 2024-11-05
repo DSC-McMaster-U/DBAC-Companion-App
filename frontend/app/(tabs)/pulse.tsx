@@ -80,124 +80,119 @@ function EquipmentCard({ equipmentID, available, equipmentPicture, setsLeft, use
 }
 
 function MapView() {
-  const [selectedSection, setSelectedSection] = useState<SectionType | null>(null);
-
-  const handleSectionPress = (section: SectionType) => {
-    setSelectedSection(section);
-  };
-
-  const handleBackPress = () => {
-    setSelectedSection(null);
-  };
-
-  return (
-    <View style={styles.mapContainer}>
-      {/* Conditionally render the full map or the detailed view of a selected section */}
-        {!selectedSection ? (
-          <Svg height="500" width="350" viewBox="0 0 120 140">
-          {/* Upper Section - Adjusted coordinates */}
-          <Path
-            d="M10 10 
-               L100 10 
-               L110 30 
-               L85 50 
-               L85 60 
-               L95 60 
-               L95 70 
-               L75 70 
-               L65 90 
-               L40 100 
-               L10 100 
-               Z"
-            fill="#eaeaea"
-            stroke="black"
-            onPress={() => handleSectionPress('Upper Section')}
-          />
+    const [selectedSection, setSelectedSection] = useState<SectionType | null>(null);
   
-          {/* Lower Section - Adjusted coordinates to connect without overlap */}
-          <Path
-            d="M15 100 
-               H 70 
-               L 90 120 
-               V 130 
-               H 15 
-               Z"
-            fill="#eaeaea"
-            stroke="black"
-            onPress={() => handleSectionPress('Lower Section')}
-          />
-        </Svg>
-      ) : selectedSection === 'Upper Section' ? (
-        // Detailed view for Upper Section
-        <View style={styles.selectedSectionContainer}>
-          <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-            <Text style={styles.backButtonText}>Back</Text>
-          </TouchableOpacity>
-
-          <Svg height="700" width="600" viewBox="0 0 100 100">
-            {/* Replace with more detailed layout of the Upper Section */}
+    const handleSectionPress = (section: SectionType) => {
+      setSelectedSection(section);
+    };
+  
+    const handleBackPress = () => {
+      setSelectedSection(null);
+    };
+  
+    return (
+      <View style={styles.mapContainer}>
+        {/* Conditionally render the full map or the detailed view of a selected section */}
+        {!selectedSection ? (
+          <Svg height="450" width="300" viewBox="0 0 120 160">
+            {/* Upper Section - New design similar to the provided image */}
             <Path
-               d="M10 10 
-               L90 10 
-               L100 20 
-               L80 40 
-               L80 50
-               L90 50
-               L90 60
-               L75 60
-               L70 80
-               L50 90 
-               L10 90 
-               Z"
-              fill="#eaeaea"
+              d="M10 10 
+              L90 10
+              L90 40
+              L83 40
+              L95 55
+              L83 70 
+              L95 90
+              L80 90
+              L70 90
+              L40 90
+              L10 90
+              Z"
+              fill="white"  
               stroke="black"
+              strokeWidth="0.5"
+              onPress={() => handleSectionPress('Upper Section')}
             />
-
-            {/* Additional paths for internal layout, if needed */}
+            
+            {/* Lower Section - Adjusted coordinates to align with upper section */}
             <Path
-              d="M20 20 H 40 V 30 H 20 Z"  // Example inner layout within Upper Section
-              fill="#ccc"
+              d="M10 80 
+              L90 80 
+              L100 90 
+              L80 110 
+              L80 120
+              L90 120
+              L90 130
+              L75 130
+              L55 150
+              L50 155 
+              L10 155 
+              Z"
+              fill="white"  
               stroke="black"
-            />
-            <Path
-              d="M50 20 H 70 V 30 H 50 Z"  // Another inner layout for equipment or area
-              fill="#ccc"
-              stroke="black"
-            />
-          </Svg>
-        </View>
-      ) : (
-        // Detailed view for Lower Section
-        <View style={styles.selectedSectionContainer}>
-          <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-            <Text style={styles.backButtonText}>Back</Text>
-          </TouchableOpacity>
-
-          <Svg height="400" width="350" viewBox="0 0 100 100">
-            {/* Replace with more detailed layout of the Lower Section */}
-            <Path
-              d="M10 60 H 60 L 80 80 V 90 H 10 Z" // This represents the detailed layout; replace with actual details
-              fill="#eaeaea"
-              stroke="black"
-            />
-
-            {/* Additional paths for internal layout, if needed */}
-            <Path
-              d="M20 70 H 40 V 80 H 20 Z"  // Example inner layout within Lower Section
-              fill="#ccc"
-              stroke="black"
-            />
-            <Path
-              d="M50 70 H 70 V 80 H 50 Z"  // Another inner layout for equipment or area
-              fill="#ccc"
-              stroke="black"
+              strokeWidth="0.5"  // Thinner stroke
+              onPress={() => handleSectionPress('Lower Section')}
             />
           </Svg>
-        </View>
-      )}
-    </View>
-  );
-}
+        ) : selectedSection === 'Lower Section' ? (
+          // Detailed view for Lower Section wrapped in ScrollView
+          <ScrollView contentContainerStyle={styles.selectedSectionContainer}>
+            <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
+              <Text style={styles.backButtonText}>Back</Text>
+            </TouchableOpacity>
+  
+            <Svg style={{ height: '100%', width: '100%' }} viewBox="0 0 120 140">
+              <Path
+                 d="M10 80 
+                 L90 80 
+                 L100 90 
+                 L80 110 
+                 L80 120
+                 L90 120
+                 L90 130
+                 L75 130
+                 L55 150
+                 L50 155 
+                 L10 155 
+                 Z"
+                fill="white"  
+                stroke="black"
+                strokeWidth="0.5"  // Thinner stroke
+              />
+            </Svg>
+          </ScrollView>
+        ) : (
+          // Detailed view for Upper Section wrapped in ScrollView
+          <ScrollView contentContainerStyle={styles.selectedSectionContainer}>
+            <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
+              <Text style={styles.backButtonText}>Back</Text>
+            </TouchableOpacity>
+  
+            <Svg height="600" width="400" viewBox="0 0 120 140">
+              <Path
+                d="M10 10 
+                L90 10
+                L90 40
+                L83 40
+                L95 55
+                L83 70 
+                L95 90
+                L80 90
+                L70 90
+                L40 90
+                L10 90
+                Z"
+                fill="white"  
+                stroke="black"
+                strokeWidth="0.5"  // Thinner stroke
+              />
+            </Svg>
+          </ScrollView>
+        )}
+      </View>
+    );
+  }
 
 
 export default function PulseScreen() {
@@ -322,11 +317,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   selectedSectionContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#f5f5f5',
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 0,
+      backgroundColor: '#f5f5f5',
   },
   backButton: {
     position: 'absolute',
