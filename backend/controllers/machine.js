@@ -91,7 +91,6 @@ const determineAvailabilityAndIncrement = (machine_snap, userid) => {
     // When there is a user ID, handle occupancy and work-in rules
     if (availability === "Occupied" && !workin) {
       return { increment: 0, new_availability: "Occupied" };
-      // You could choose to return a different message if workin is false and user is occupying the machine
     }
     increment = 1; // User occupies the machine, increment sets left
   }
