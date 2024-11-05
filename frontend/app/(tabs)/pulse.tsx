@@ -81,12 +81,12 @@ function EquipmentCard({equipmentID, available, equipmentPicture, setsLeft, used
 export default function PulseScreen() {
   return (
     <Screen style={styles.screen}>
-      <View style={{paddingTop: 30, paddingLeft: 40, paddingRight: 40}}>
+      <View style={{paddingTop: 30, paddingHorizontal: 10}}>
         <ThemedText type='title' style={{marginTop: 10}}>Equipment</ThemedText>
         <SearchBar />
         <FilterButton />
       </View>
-      <ScrollView style={{width: "100%", marginTop: 20, paddingLeft: 40, paddingRight: 40}}>
+      <ScrollView style={{width: "100%", marginTop: 20, paddingHorizontal: 10}}>
         <EquipmentCard equipmentID={1} available={true} equipmentPicture={require('@/assets/images/powerrack-1.png')} />
         <EquipmentCard equipmentID={2} available={false} equipmentPicture={require('@/assets/images/powerrack-1.png')} setsLeft={3} usedBy='Jack' />
         <EquipmentCard equipmentID={3} available={true} equipmentPicture={require('@/assets/images/powerrack-1.png')} />
