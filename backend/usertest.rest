@@ -33,7 +33,8 @@ Content-Type: application/json
 
 {
     "machineid": "1",
-    "userid": "400380908"
+    "userid": "400380908",
+    "workin": true
 }
 
 ###DELETE A USER 

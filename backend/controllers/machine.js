@@ -30,65 +30,115 @@ export const getMachineInfo = async (req, res) => {
 };
 
 export const updateMachineUser = async (req, res) => {
-  var { machineid, userid } = req.body;
-  var increment = 0;
-  var new_availability = "Occupied";
-  var new_sets_left = 5;
+  const { machineid, userid, workin } = req.body; // Add 'workin' here
 
-  // try to get machine and facility snapshots
+  try {
+    const machine_ref = doc(db, "machines", machineid);
+    const machine_snap = (await getDoc(machine_ref)).data();
+    const facility_ref = doc(db, "facilities", machine_snap.facility);
+    const facility_snap = (await getDoc(facility_ref)).data();
 
-  const machine_ref = doc(db, "machines", machineid);
-  const machine_snap = (await getDoc(machine_ref)).data();
+    // If 'workin' is provided, update it in the machine document
+    if (workin !== undefined) {
+      await updateDoc(machine_ref, {
+        workin: workin,
+      });
+    }
 
-  const facility_ref = doc(db, "facilities", machine_snap.facility);
-  const facility_snap = (await getDoc(facility_ref)).data();
+    const { increment, new_availability } = determineAvailabilityAndIncrement(
+      machine_snap,
+      userid
+    );
 
-  // info about machine and facility
-  const machine_type = machine_snap.machine_type;
-  const machine_availability = machine_snap.availability;
-  const sets_left = machine_snap.sets_left;
-  const allowWorkin = machine_snap.workin;
-  const new_queue = machine_snap.queue;
-  const same_type_occupied = facility_snap.occupied_machine_count[machine_type];
-  const num_active_users = facility_snap.num_active_users;
+    const updatedFacility = await updateFacilityData(
+      facility_ref,
+      facility_snap,
+      machine_snap,
+      increment
+    );
+
+    await updateMachineData(
+      machine_ref,
+      machine_snap,
+      new_availability,
+      5,
+      updatedFacility.new_queue
+    );
+
+    const updated_machine = (await getDoc(machine_ref)).data();
+    res.status(200).send(updated_machine);
+  } catch (error) {
+    res
+      .status(500)
+      .send({ message: "An error occurred while updating the machine." });
+  }
+};
+
+const determineAvailabilityAndIncrement = (machine_snap, userid) => {
+  const { availability, workin } = machine_snap;
+  let increment = 0;
+  let new_availability = "Occupied"; // Default to "Occupied" when user is present
 
   // Handle cases where there is no user ID
   if (userid == null) {
-    if (machine_availability === "Unoccupied") {
+    if (availability === "Unoccupied") {
       new_availability = "Unoccupied";
-    } else if (machine_availability === "Occupied") {
+    } else if (availability === "Occupied") {
       new_availability = "Unoccupied";
       increment = -1; // Decrease sets left since machine becomes unoccupied
     }
   } else {
     // When there is a user ID, handle occupancy and work-in rules
-    if (machine_availability === "Occupied" && !allowWorkin) {
-      return res
-        .status(403)
-        .send({ message: "Work-in is not allowed on this machine." });
+    if (availability === "Occupied" && !workin) {
+      return { increment: 0, new_availability: "Occupied" };
+      // You could choose to return a different message if workin is false and user is occupying the machine
     }
     increment = 1; // User occupies the machine, increment sets left
   }
 
-  // update facility
+  return { increment, new_availability };
+};
+
+// Helper function to update facility data
+const updateFacilityData = async (
+  facility_ref,
+  facility_snap,
+  machine_snap,
+  increment
+) => {
+  const { machine_type } = machine_snap;
+  const updated_occupied_count =
+    facility_snap.occupied_machine_count[machine_type] + increment;
+  const updated_num_users = facility_snap.num_active_users + increment;
+
   await updateDoc(facility_ref, {
     occupied_machine_count: {
-      [machine_type]: same_type_occupied + increment,
+      [machine_type]: updated_occupied_count,
     },
-    num_active_users: num_active_users + increment,
+    num_active_users: updated_num_users,
   });
 
-  // update machine
+  return {
+    updated_occupied_count,
+    updated_num_users,
+    new_queue: machine_snap.queue,
+  };
+};
+
+// Helper function to update machine data
+const updateMachineData = async (
+  machine_ref,
+  machine_snap,
+  new_availability,
+  new_sets_left,
+  new_queue
+) => {
   await updateDoc(machine_ref, {
-    userid: userid,
+    userid: machine_snap.userid,
     availability: new_availability,
     sets_left: new_sets_left,
     queue: new_queue,
   });
-
-  // return updated machine
-  var machine_snap2 = (await getDoc(machine_ref)).data();
-  res.status(200).send(machine_snap2);
 };
 
 export const updateSetsLeft = async (req, res) => {
