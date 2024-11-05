@@ -4,6 +4,9 @@ GET http://localhost:8383/users
 ### GET USER 
 GET http://localhost:8383/users/400380909
 
+### GET MACHINE
+GET http://localhost:8383/machines/1
+
 ### ADD A USER 
 POST http://localhost:8383/adduser
 Content-Type: application/json
@@ -22,6 +25,15 @@ Content-Type: application/json
 {
     "studentnum": "400380908",
     "newStatus": "full-time"
+}
+
+### UPDATE MACHINE STATUS 
+PATCH http://localhost:8383/machines/users 
+Content-Type: application/json
+
+{
+    "machineid": "1",
+    "userid": "400380908"
 }
 
 ###DELETE A USER 

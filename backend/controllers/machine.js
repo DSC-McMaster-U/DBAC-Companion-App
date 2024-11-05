@@ -52,22 +52,22 @@ export const updateMachineUser = async (req, res) => {
   const same_type_occupied = facility_snap.occupied_machine_count[machine_type];
   const num_active_users = facility_snap.num_active_users;
 
-  // how to update fields
-  if (userid == null && machine_availability === "Unoccupied") {
-    new_availability = "Unoccupied";
-    new_sets_left = 0;
-  } else if (userid == null && machine_availability === "Occupied") {
-    new_availability = "Unoccupied";
-    increment = -1;
-    new_sets_left = 0;
+  // Handle cases where there is no user ID
+  if (userid == null) {
+    if (machine_availability === "Unoccupied") {
+      new_availability = "Unoccupied";
+    } else if (machine_availability === "Occupied") {
+      new_availability = "Unoccupied";
+      increment = -1; // Decrease sets left since machine becomes unoccupied
+    }
   } else {
+    // When there is a user ID, handle occupancy and work-in rules
     if (machine_availability === "Occupied" && !allowWorkin) {
-      // If work-in is not allowed, prevent new user from occupying
       return res
         .status(403)
         .send({ message: "Work-in is not allowed on this machine." });
     }
-    increment = 1;
+    increment = 1; // User occupies the machine, increment sets left
   }
 
   // update facility
@@ -127,7 +127,7 @@ export const updateQueue = async (req, res) => {
   updateDoc(machineRef, {
     queue: queue,
   });
-  
+
   var machineSnap = await getDoc(machineRef);
 
   res.status(200).send(machineSnap.data());
