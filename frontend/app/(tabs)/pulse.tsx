@@ -17,7 +17,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 // Define SectionType
-type SectionType = 'Upper Section' | 'Lower Section';
+type SectionType = 'Zone 1' | 'Zone 2';
 
 function SearchBar() {
   return (
@@ -80,96 +80,102 @@ function EquipmentCard({ equipmentID, available, equipmentPicture, setsLeft, use
 }
 
 function MapView() {
-    const [selectedSection, setSelectedSection] = useState<SectionType | null>(null);
-  
-    const handleSectionPress = (section: SectionType) => {
-      setSelectedSection(section);
-    };
-  
-    const handleBackPress = () => {
-      setSelectedSection(null);
-    };
-  
-    return (
-      <View style={styles.mapContainer}>
-        {/* Conditionally render the full map or the detailed view of a selected section */}
-        {!selectedSection ? (
-          <Svg height="450" width="300" viewBox="0 0 120 160">
-            {/* Upper Section - New design similar to the provided image */}
-            <Path
-              d="M10 10 
-              L90 10
-              L90 40
-              L83 40
-              L95 55
-              L83 70 
-              L95 90
-              L80 90
-              L70 90
-              L40 90
-              L10 90
-              Z"
-              fill="white"  
-              stroke="black"
-              strokeWidth="0.5"
-              onPress={() => handleSectionPress('Upper Section')}
-            />
-            
-            {/* Lower Section - Adjusted coordinates to align with upper section */}
-            <Path
-              d="M10 80 
-              L90 80 
-              L100 90 
-              L80 110 
-              L80 120
-              L90 120
-              L90 130
-              L75 130
-              L55 150
-              L50 155 
-              L10 155 
-              Z"
-              fill="white"  
-              stroke="black"
-              strokeWidth="0.5"  // Thinner stroke
-              onPress={() => handleSectionPress('Lower Section')}
-            />
-          </Svg>
-        ) : selectedSection === 'Lower Section' ? (
-          // Detailed view for Lower Section wrapped in ScrollView
-          <ScrollView contentContainerStyle={styles.selectedSectionContainer}>
-            <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-              <Text style={styles.backButtonText}>Back</Text>
+  const [selectedSection, setSelectedSection] = useState<SectionType | null>(null);
+
+  const handleSectionPress = (section: SectionType) => {
+    setSelectedSection(section);
+  };
+
+  const handleBackPress = () => {
+    setSelectedSection(null);
+  };
+
+  const handleZoneSwitch = (zone: SectionType) => {
+    setSelectedSection(zone);
+  };
+
+  return (
+    <View style={styles.mapContainer}>
+      {/* Conditionally render the full map or the detailed view of a selected section */}
+      {!selectedSection ? (
+        <Svg height="450" width="300" viewBox="0 0 120 160">
+          {/* Upper Section (Zone 2) */}
+          <Path
+            d="M10 10 
+            L90 10
+            L90 40
+            L83 40
+            L95 55
+            L83 70 
+            L95 90
+            L80 90
+            L70 90
+            L40 90
+            L10 90
+            Z"
+            fill="white"  
+            stroke="black"
+            strokeWidth="0.5"
+            onPress={() => handleSectionPress('Zone 2')}
+          />
+          
+          {/* Lower Section (Zone 1) */}
+          <Path
+            d="M10 80 
+            L90 80 
+            L100 90 
+            L80 110 
+            L80 120
+            L90 120
+            L90 130
+            L75 130
+            L55 150
+            L50 155 
+            L10 155 
+            Z"
+            fill="white"  
+            stroke="black"
+            strokeWidth="0.5"
+            onPress={() => handleSectionPress('Zone 1')}
+          />
+        </Svg>
+      ) : (
+        // Detailed view for selected section
+        <ScrollView contentContainerStyle={styles.selectedSectionContainer}>
+          <View style={styles.navigationButtons}>
+            <TouchableOpacity onPress={handleZoneSwitch.bind(null, 'Zone 1')} style={styles.zoneButton}>
+              <Text style={styles.zoneButtonText}>Zone 1</Text>
             </TouchableOpacity>
-  
-            <Svg style={{ height: '100%', width: '100%' }} viewBox="0 0 120 140">
+            <TouchableOpacity onPress={handleZoneSwitch.bind(null, 'Zone 2')} style={styles.zoneButton}>
+              <Text style={styles.zoneButtonText}>Zone 2</Text>
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
+            <Text style={styles.backButtonText}>Back</Text>
+          </TouchableOpacity>
+
+          {selectedSection === 'Zone 1' ? (
+            <Svg height="600" width="400" viewBox="0 0 120 160">
               <Path
-                 d="M10 80 
-                 L90 80 
-                 L100 90 
-                 L80 110 
-                 L80 120
-                 L90 120
-                 L90 130
-                 L75 130
-                 L55 150
-                 L50 155 
-                 L10 155 
-                 Z"
+                d="M10 80 
+                L90 80 
+                L100 90 
+                L80 110 
+                L80 120
+                L90 120
+                L90 130
+                L75 130
+                L55 150
+                L50 155 
+                L10 155 
+                Z"
                 fill="white"  
                 stroke="black"
-                strokeWidth="0.5"  // Thinner stroke
+                strokeWidth="0.5"
               />
             </Svg>
-          </ScrollView>
-        ) : (
-          // Detailed view for Upper Section wrapped in ScrollView
-          <ScrollView contentContainerStyle={styles.selectedSectionContainer}>
-            <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-              <Text style={styles.backButtonText}>Back</Text>
-            </TouchableOpacity>
-  
-            <Svg height="600" width="400" viewBox="0 0 120 140">
+          ) : (
+            <Svg height="600" width="400" viewBox="0 0 120 160">
               <Path
                 d="M10 10 
                 L90 10
@@ -185,15 +191,15 @@ function MapView() {
                 Z"
                 fill="white"  
                 stroke="black"
-                strokeWidth="0.5"  // Thinner stroke
+                strokeWidth="0.5"
               />
             </Svg>
-          </ScrollView>
-        )}
-      </View>
-    );
-  }
-
+          )}
+        </ScrollView>
+      )}
+    </View>
+  );
+}
 
 export default function PulseScreen() {
   const [isMapView, setIsMapView] = useState(false);
@@ -317,11 +323,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   selectedSectionContainer: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 0,
-      backgroundColor: '#f5f5f5',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#f5f5f5',
+  },
+  navigationButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 20,
+  },
+  zoneButton: {
+    marginHorizontal: 10,
+    padding: 10,
+    backgroundColor: '#ccc',
+    borderRadius: 5,
+  },
+  zoneButtonText: {
+    color: 'black',
+    fontWeight: 'bold',
   },
   backButton: {
     position: 'absolute',
@@ -335,8 +357,5 @@ const styles = StyleSheet.create({
   backButtonText: {
     color: 'black',
     fontWeight: 'bold',
-  },
-  sectionContent: {
-    alignItems: 'center',
   },
 });
