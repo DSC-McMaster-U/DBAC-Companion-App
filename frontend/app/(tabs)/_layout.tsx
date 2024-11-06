@@ -32,7 +32,7 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="pulse"
+          name="(pulse)"
           options={{
             title: 'Pulse',
             tabBarIcon: ({ color }) => (

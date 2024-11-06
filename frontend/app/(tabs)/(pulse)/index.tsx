@@ -14,6 +14,7 @@ import Screen from '@/components/Screen';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import IconText from '@/components/IconText';
 import { iconTextGreen, iconTextYellow } from '@/constants/Colors';
+import { useRouter } from 'expo-router';
 
 function SearchBar() {
   return (
@@ -44,8 +45,14 @@ type EquipmentCardProps = ViewProps & {
 }
 
 function EquipmentCard({equipmentID, available, equipmentPicture, setsLeft, usedBy}: EquipmentCardProps) {
+  const router = useRouter();
+
   return (
-    <TouchableOpacity style={styles.equipmentCard}>
+    <TouchableOpacity 
+      style={styles.equipmentCard}
+      onPress={() => {
+        router.push('/(pulse)/equipmenttabularmenu')
+      }} >
       <Image style={{width: 114, height: 138, objectFit: 'contain', borderRadius: 20}} source={equipmentPicture} />
       <View style={{height: 128, gap: 5}}>
         <ThemedText type='subtitle'>Power Rack #{equipmentID}</ThemedText>
