@@ -401,6 +401,7 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         flexDirection: 'row',
         justifyContent: 'space-evenly',
+        alignItems: 'center',
         backgroundColor: '#f1f1f1',
         borderRadius: 10,
         padding: '3%'
@@ -413,6 +414,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         padding: '3%',
         justifyContent: 'space-between',
+        alignItems: 'center',
         backgroundColor: '#f1f1f1',
         borderRadius: 10
     },
@@ -466,11 +468,11 @@ const styles = StyleSheet.create({
     workoutControlsSectionViewStyle: {
         backgroundColor: '#f1f1f1', 
         flexDirection: 'row', 
-        padding: 20, 
+        paddingHorizontal: '3%',
+        paddingVertical: '5%', 
         borderRadius: 10,
-        justifyContent: 'space-around',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        gap: 40
     },
     workoutControlsTextStyle: {
         fontFamily: 'Poppins',
