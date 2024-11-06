@@ -17,7 +17,7 @@ export default function CheckBox({ text, textStyle, value, onValueChange, color,
                 value={value}
                 onValueChange={onValueChange}
                 color={color} />
-            <Text style={textStyle}>{ text }</Text>
+            <Text style={[textStyle]}>{ text }</Text>
         </View>
     );
 }
@@ -25,6 +25,7 @@ export default function CheckBox({ text, textStyle, value, onValueChange, color,
 const styles = StyleSheet.create({
     checkboxViewStyle: {
         flexDirection: 'row', 
+        alignItems: 'center',
         gap: 5
     }
 })
