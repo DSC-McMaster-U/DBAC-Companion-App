@@ -59,10 +59,10 @@ export const updateMachineUser = async (req, res) => {
 
     await updateMachineData(
       machine_ref,
-      machine_snap,
       new_availability,
       5,
-      updatedFacility.new_queue
+      updatedFacility.new_queue,
+      userid
     );
 
     const updated_machine = (await getDoc(machine_ref)).data();
@@ -127,13 +127,13 @@ const updateFacilityData = async (
 // Helper function to update machine data
 const updateMachineData = async (
   machine_ref,
-  machine_snap,
   new_availability,
   new_sets_left,
-  new_queue
+  new_queue,
+  new_userid
 ) => {
   await updateDoc(machine_ref, {
-    userid: machine_snap.userid,
+    userid: new_userid,
     availability: new_availability,
     sets_left: new_sets_left,
     queue: new_queue,
