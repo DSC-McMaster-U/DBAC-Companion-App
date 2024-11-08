@@ -1,4 +1,3 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { 
   StyleSheet, 
   ViewProps, 
@@ -13,7 +12,9 @@ import {
 import { ThemedText } from '@/components/ThemedText';
 import Screen from '@/components/Screen';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import IconText from '@/components/IconText';
+import { iconTextGreen, iconTextYellow } from '@/constants/Colors';
+import { useRouter } from 'expo-router';
 
 function SearchBar() {
   return (
@@ -44,32 +45,26 @@ type EquipmentCardProps = ViewProps & {
 }
 
 function EquipmentCard({equipmentID, available, equipmentPicture, setsLeft, usedBy}: EquipmentCardProps) {
+  const router = useRouter();
+
   return (
-    <TouchableOpacity style={styles.equipmentCard}>
+    <TouchableOpacity 
+      style={styles.equipmentCard}
+      onPress={() => {
+        router.push('/(pulse)/equipmenttabularmenu')
+      }} >
       <Image style={{width: 114, height: 138, objectFit: 'contain', borderRadius: 20}} source={equipmentPicture} />
       <View style={{height: 128, gap: 5}}>
         <ThemedText type='subtitle'>Power Rack #{equipmentID}</ThemedText>
         {available ?
         <>
-          <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-            <Ionicons name="checkmark" size={24} color="#00a20d" />
-            <ThemedText type='green'>Available</ThemedText>
-          </View>
+          <IconText text="Available" iconName="check" color={iconTextGreen} />
         </>
         :
         <>
-          <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 5}}>
-            <FontAwesome5 name="exclamation-triangle" size={17} color="#f4a100" />            
-            <ThemedText type='yellow'>In Use</ThemedText>
-          </View>
-          <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 5}}>
-            <AntDesign name="clockcircle" size={17} color="#f4a100" />            
-            <ThemedText type='yellow'>{setsLeft} Sets Left</ThemedText>
-          </View>
-          <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 5}}>
-            <AntDesign name="questioncircle" size={17} color="#f4a100" />
-            <ThemedText type='yellow'>Used by {usedBy}</ThemedText>
-          </View>
+          <IconText text="In Use" iconName="exclamation-triangle" color={iconTextYellow} />
+          <IconText text={`${setsLeft} Sets Left`} iconName="clock" color={iconTextYellow}  />
+          <IconText text={`Used by ${usedBy}`} iconName="question-circle" color={iconTextYellow} />
         </>
         }
 
@@ -81,7 +76,7 @@ function EquipmentCard({equipmentID, available, equipmentPicture, setsLeft, used
 export default function PulseScreen() {
   return (
     <Screen style={styles.screen}>
-      <View style={{paddingTop: 30, paddingHorizontal: 10}}>
+      <View style={{paddingHorizontal: 10}}>
         <ThemedText type='title' style={{marginTop: 10}}>Equipment</ThemedText>
         <SearchBar />
         <FilterButton />

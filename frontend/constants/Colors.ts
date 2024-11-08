@@ -6,7 +6,10 @@
 const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 export const maroon = '#7a003c';
-export const darkYellow = '#fdc129'
+export const darkYellow = '#fdc129';
+export const iconTextYellow = '#f4a100';
+export const iconTextGreen = '#00a20d';
+export const red = '#FF0000';
 
 export const Colors = {
   light: {
