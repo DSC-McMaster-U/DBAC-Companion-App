@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import {
   StyleSheet,
   ViewProps,
@@ -10,8 +11,8 @@ import {
   Text,
 } from 'react-native';
 
-import Svg, { Path, Text as SvgText, Rect, G, Image, Circle } from 'react-native-svg';
-
+import CircularProgressBar from '@/components/CircularProgressBar';
+import Svg, { Path, Text as SvgText, Rect, G, Image } from 'react-native-svg';
 import { ThemedText } from '@/components/ThemedText';
 import Screen from '@/components/Screen';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -164,7 +165,7 @@ function GymMap({ onSectionPress }: GymMapProps): JSX.Element {
   `;
 
   return (
-    <View style={styles.svgContainer}>
+    <View style={{ position: 'relative', width: svgWidth, height: svgHeight }}>
       <Svg height={svgHeight} width={svgWidth} viewBox={viewBox}>
         <ZoneSection
           zone="Zone 2"
@@ -187,72 +188,46 @@ function GymMap({ onSectionPress }: GymMapProps): JSX.Element {
           onPress={() => onSectionPress('Zone 1')}
         />
       </Svg>
+
+      {/* Overlay the CircularProgressBars */}
+      <View style={{ 
+        position: 'absolute', 
+        top: 415, 
+        left: 115,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
+        elevation: 10,
+      }}>
+        <CircularProgressBar
+          strokeWidth={7}
+          label="Zone 1 Occupancy"
+          progress={50} // Replace with dynamic value
+          style={{ width: 60, height: 60 }}
+        />
+      </View>
+
+      <View style={{ 
+        position: 'absolute', 
+        top: 155, 
+        left: 130, 
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
+        elevation: 10, }}>
+        <CircularProgressBar
+          strokeWidth={7}
+          label="Zone 2 Occupancy"
+          progress={75} // Replace with dynamic value
+          style={{ width: 60, height: 60 }}
+        />
+      </View>
     </View>
   );
 }
 
-function getOccupancyColor(progress: number): string {
-  if (progress <= 33) {
-    return 'lime';
-  } else if (progress <= 66) {
-    return '#f4a100';
-  } else {
-    return 'red';
-  }
-}
-
-function polarToCartesian(centerX: number, centerY: number, radius: number, angleInDegrees: number): { x: number, y: number } {
-  const angleInRadians = ((angleInDegrees + 90) * Math.PI) / 180.0;
-  return {
-    x: centerX + radius * Math.cos(angleInRadians),
-    y: centerY + radius * Math.sin(angleInRadians),
-  };
-}
-
-function describeArc(x: number, y: number, radius: number, startAngle: number, endAngle: number): string {
-  const start = polarToCartesian(x, y, radius, endAngle);
-  const end = polarToCartesian(x, y, radius, startAngle);
-
-  const largeArcFlag = Math.abs(endAngle - startAngle) <= 180 ? '0' : '1';
-  const sweepFlag = endAngle > startAngle ? '1' : '0';
-
-  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
-}
-
-type SvgSemiCircularProgressProps = {
-  progress: number;
-  radius: number;
-  strokeWidth: number;
-  color: string;
-  x: number;
-  y: number;
-};
-
-function SvgSemiCircularProgress({
-  progress,
-  radius,
-  strokeWidth,
-  color,
-  x,
-  y,
-}: SvgSemiCircularProgressProps): JSX.Element {
-  const startAngle = 0;
-  const endAngle = 180;
-
-  const backgroundPath = describeArc(0, 0, radius, startAngle, endAngle);
-  const progressEndAngle = startAngle + (progress / 100) * (endAngle - startAngle);
-  const progressPath = describeArc(0, 0, radius, startAngle, progressEndAngle);
-
-  return (
-    <G transform={`translate(${x}, ${y})`}>
-      <Path d={backgroundPath} stroke="#e6e6e6" strokeWidth={strokeWidth} fill="none" />
-      <Path d={progressPath} stroke={color} strokeWidth={strokeWidth} fill="none" />
-      <SvgText x={0} y={radius / 2} fontSize={radius / 2.5} fill="black" textAnchor="middle" alignmentBaseline="middle">
-        {`${progress}%`}
-      </SvgText>
-    </G>
-  );
-}
 
 type ZoneSectionProps = {
   zone: SectionType;
@@ -262,21 +237,96 @@ type ZoneSectionProps = {
   onPress: () => void;
 };
 
-function ZoneSection({ zone, pathData, occupancy, equipmentImages, onPress }: ZoneSectionProps): JSX.Element {
+function ZoneSection({ zone, pathData, occupancy, onPress }: ZoneSectionProps): JSX.Element {
   return (
     <G onPress={onPress}>
+      {/* Define zone path and background */}
       <Path d={pathData} fill="white" stroke="black" strokeWidth="0.5" />
-      <Rect x={zone === 'Zone 1' ? '15' : '20'} y={zone === 'Zone 1' ? '115' : '30'} width="50" height={zone === 'Zone 1' ? '40' : '50'} fill="#e6e6e6" stroke="black" strokeWidth="0.5" />
-      <SvgText x={zone === 'Zone 1' ? '40' : '45'} y={zone === 'Zone 1' ? '130' : '45'} fontSize="8" fill="black" textAnchor="middle">
+
+      {/* Zone label */}
+      <Rect
+        x={zone === 'Zone 1' ? '15' : '15'}
+        y={zone === 'Zone 1' ? '115' : '30'}
+        width="50"
+        height={zone === 'Zone 1' ? '40' : '50'}
+        fill="#e6e6e6"
+        stroke="black"
+        strokeWidth="0.5"
+      />
+      <SvgText
+        x={zone === 'Zone 1' ? '40' : '40'}
+        y={zone === 'Zone 1' ? '130' : '45'}
+        fontSize="8"
+        fill="black"
+        textAnchor="middle"
+      >
         {zone}
       </SvgText>
-      {equipmentImages.map((img, index) => (
-        <Image key={index} x={img.x} y={img.y} width={img.width} height={img.height} href={require('./../../assets/images/powerrack-1.png')} />
-      ))}
-      <SvgSemiCircularProgress progress={parseInt(occupancy)} radius={10} strokeWidth={2} color={getOccupancyColor(parseInt(occupancy))} x={zone === 'Zone 1' ? 40 : 45} y={zone === 'Zone 1' ? 145 : 60} />
+
+      {/* Icons for Zone 1 and Zone 2 */}
+      {zone === 'Zone 1' && (
+        <>
+          <View style={{ position: 'absolute', top: 150, left: 80 }}>
+            <MaterialCommunityIcons name="dumbbell" size={25} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 218, left: 80 }}>
+            <MaterialCommunityIcons name="weight-lifter" size={25} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 218, left: 195 }}>
+            <MaterialCommunityIcons name="run" size={25} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 150, left: 195 }}>
+            <MaterialCommunityIcons name="human-handsup" size={25} color="black" />
+          </View>
+          
+        </>
+      )}
+      {zone === 'Zone 2' && (
+          <>
+          <View style={{ position: 'absolute', top: 400, left: 75 }}>
+            <MaterialCommunityIcons name="dumbbell" size={24} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 448, left: 75 }}>
+            <MaterialCommunityIcons name="weight-lifter" size={24} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 400, left: 195 }}>
+            <MaterialCommunityIcons name="run" size={24} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 448, left: 195 }}>
+            <MaterialCommunityIcons name="human-handsup" size={24} color="black" />
+          </View>
+          
+        </>
+      )}
+
+      {/* Smaller Press Here Button - Top Left for Zone 2, Bottom Left for Zone 1 */}
+      <Rect
+        x={zone === 'Zone 1' ? '7' : '7'}
+        y={zone === 'Zone 1' ? '168' : '7'}
+        width="30"
+        height="10"
+        fill="#7a003c"
+        opacity="1"
+        rx="3"
+        onPress={onPress}
+      />
+      <SvgText
+        x={zone === 'Zone 1' ? '22' : '22'}
+        y={zone === 'Zone 1' ? '174' : '13'}
+        fontSize="4"
+        fill="white"
+        fontWeight="bold"
+        textAnchor="middle"
+        onPress={onPress}
+      >
+        Press Here
+      </SvgText>
     </G>
   );
 }
+
+
+
 
 type SelectedSectionViewProps = {
   selectedSection: SectionType;
@@ -329,21 +379,29 @@ function SelectedSectionView({
         <TouchableOpacity onPress={onBackPress} style={styles.backButton}>
           <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
-        <View style={styles.navigationButtons}>
-          <TouchableOpacity onPress={() => onZoneSwitch('Zone 1')} style={[styles.zoneButton, selectedSection === 'Zone 1' && styles.activeZoneButton]}>
-            <Text style={styles.zoneButtonText}>Zone 1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => onZoneSwitch('Zone 2')} style={[styles.zoneButton, selectedSection === 'Zone 2' && styles.activeZoneButton]}>
-            <Text style={styles.zoneButtonText}>Zone 2</Text>
-          </TouchableOpacity>
-        </View>
       </View>
       <View style={styles.svgContainer}>
         <Svg height={svgHeight} width={svgWidth} viewBox={viewBox}>
           {selectedSection === 'Zone 1' ? (
-            <ZoneDetail zone="Zone 1" pathData={zone1Path} occupancy="50" equipmentImages={[{ x: '20', y: '160', width: '15', height: '15' }, { x: '65', y: '160', width: '15', height: '15' }]} />
+            <ZoneDetail
+              zone="Zone 1"
+              pathData={zone1Path}
+              occupancy="50"
+              equipmentImages={[
+                { x: '20', y: '160', width: '15', height: '15' },
+                { x: '65', y: '160', width: '15', height: '15' },
+              ]}
+            />
           ) : (
-            <ZoneDetail zone="Zone 2" pathData={zone2Path} occupancy="75" equipmentImages={[{ x: '25', y: '60', width: '15', height: '15' }, { x: '50', y: '60', width: '15', height: '15' }]} />
+            <ZoneDetail
+              zone="Zone 2"
+              pathData={zone2Path}
+              occupancy="75"
+              equipmentImages={[
+                { x: '25', y: '60', width: '15', height: '15' },
+                { x: '50', y: '60', width: '15', height: '15' },
+              ]}
+            />
           )}
         </Svg>
       </View>
@@ -357,22 +415,108 @@ type ZoneDetailProps = {
   occupancy: string;
   equipmentImages: { x: string; y: string; width: string; height: string }[];
 };
-
 function ZoneDetail({ zone, pathData, occupancy, equipmentImages }: ZoneDetailProps): JSX.Element {
   return (
     <G>
+      {/* Draw the zone path */}
       <Path d={pathData} fill="white" stroke="black" strokeWidth="0.5" />
-      <Rect x={zone === 'Zone 1' ? '15' : '20'} y={zone === 'Zone 1' ? '115' : '30'} width="50" height={zone === 'Zone 1' ? '40' : '50'} fill="#e6e6e6" stroke="black" strokeWidth="0.5" />
-      <SvgText x={zone === 'Zone 1' ? '40' : '45'} y={zone === 'Zone 1' ? '130' : '45'} fontSize="10" fill="black" textAnchor="middle">
+      <Rect
+        x={zone === 'Zone 1' ? '15' : '20'}
+        y={zone === 'Zone 1' ? '115' : '30'}
+        width="50"
+        height={zone === 'Zone 1' ? '40' : '50'}
+        fill="#e6e6e6"
+        stroke="black"
+        strokeWidth="0.5"
+      />
+      <SvgText
+        x={zone === 'Zone 1' ? '40' : '45'}
+        y={zone === 'Zone 1' ? '130' : '45'}
+        fontSize="10"
+        fill="black"
+        textAnchor="middle"
+      >
         {zone}
       </SvgText>
-      {equipmentImages.map((img, index) => (
-        <Image key={index} x={img.x} y={img.y} width={img.width} height={img.height} href={require('./../../assets/images/powerrack-1.png')} />
-      ))}
-      <SvgSemiCircularProgress progress={parseInt(occupancy)} radius={15} strokeWidth={3} color={getOccupancyColor(parseInt(occupancy))} x={zone === 'Zone 1' ? 40 : 45} y={zone === 'Zone 1' ? 150 : 65} />
+
+      {/* CircularProgressBar for Zone 1 and Zone 2 */}
+      {zone === 'Zone 1' ? (
+        <View style={{ 
+          position: 'absolute', 
+          top: 400, 
+          left: 90, 
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.3,
+          shadowRadius: 6,
+          elevation: 10,
+         }}>
+          <CircularProgressBar
+            strokeWidth={7}
+            label="Zone 1 Occupancy"
+            progress={parseInt(occupancy)}
+            style={{ width: 60, height: 60 }}
+          />
+        </View>
+      ) : (
+        <View style={{ 
+          position: 'absolute', 
+          top: 160, 
+          left: 103,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.3,
+          shadowRadius: 6,
+          elevation: 10,
+         }}>
+          <CircularProgressBar
+            strokeWidth={7}
+            label="Zone 2 Occupancy"
+            progress={parseInt(occupancy)}
+            style={{ width: 60, height: 60 }}
+          />
+        </View>
+      )}
+
+      {zone === 'Zone 1' && (
+        <>
+        <View style={{ position: 'absolute', top: 395, left: 50 }}>
+          <MaterialCommunityIcons name="dumbbell" size={24} color="black" />
+        </View>
+        <View style={{ position: 'absolute', top: 435, left: 50 }}>
+          <MaterialCommunityIcons name="weight-lifter" size={24} color="black" />
+        </View>
+        <View style={{ position: 'absolute', top: 395, left: 165 }}>
+          <MaterialCommunityIcons name="run" size={24} color="black" />
+        </View>
+        <View style={{ position: 'absolute', top: 435, left: 165 }}>
+          <MaterialCommunityIcons name="human-handsup" size={24} color="black" />
+        </View>
+        
+      </>
+
+      )}
+      {zone === 'Zone 2' && (
+        <>
+        <View style={{ position: 'absolute', top: 150, left: 65 }}>
+          <MaterialCommunityIcons name="dumbbell" size={25} color="black" />
+        </View>
+        <View style={{ position: 'absolute', top: 218, left: 65 }}>
+          <MaterialCommunityIcons name="weight-lifter" size={25} color="black" />
+        </View>
+        <View style={{ position: 'absolute', top: 218, left: 178 }}>
+          <MaterialCommunityIcons name="run" size={25} color="black" />
+        </View>
+        <View style={{ position: 'absolute', top: 150, left: 178 }}>
+          <MaterialCommunityIcons name="human-handsup" size={25} color="black" />
+        </View>
+      </>
+      )}
     </G>
   );
 }
+
+
 
 export default function PulseScreen(): JSX.Element {
   const [isMapView, setIsMapView] = useState(false);
@@ -424,14 +568,20 @@ const styles = StyleSheet.create({
   switchButton: { width: '50%', height: '100%', borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
   activeSwitchButton: { backgroundColor: 'white' },
   activeText: { color: 'black' },
-  mapContainer: { flex: 1, backgroundColor: '#f5f5f5' },
-  selectedSectionContainer: { flex: 1, backgroundColor: '#f5f5f5' },
-  svgContainer: { flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 20 },
+  mapContainer: { flex: 1, backgroundColor: '#f5f5f5', alignItems: 'center', justifyContent: 'center' },
+  selectedSectionContainer: { flex: 1, backgroundColor: '#f5f5f5', alignItems: 'center', justifyContent: 'center' },
+  svgContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  header: { 
+    width: '100%', 
+    alignItems: 'center', 
+    justifyContent: 'center',  // Centers the "Back" button horizontally
+    paddingTop: 20,
+    paddingBottom: 10,  // Optional: Adds some spacing below the button
+  },
   navigationButtons: { flexDirection: 'row' },
   zoneButton: { marginHorizontal: 10, padding: 10, backgroundColor: '#ccc', borderRadius: 5 },
   activeZoneButton: { backgroundColor: '#aaa' },
   zoneButtonText: { color: 'black', fontWeight: 'bold' },
-  backButton: { backgroundColor: '#ccc', paddingVertical: 8, paddingHorizontal: 15, borderRadius: 5 },
+  backButton: { backgroundColor: '#ccc', paddingVertical: 8, paddingHorizontal: 13, borderRadius: 5 },
   backButtonText: { color: 'black', fontWeight: 'bold' },
 });
