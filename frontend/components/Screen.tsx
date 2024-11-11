@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, StatusBar, View, ViewProps, StyleProp } from "react-native";
+import Constants from "expo-constants";
 
 type ScreenProps = ViewProps & {
     style?: StyleProp<ViewProps>
@@ -16,6 +17,6 @@ export default function Screen({style, children, ...rest} : ScreenProps) {
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: StatusBar.currentHeight || 24 // Move body of screen under status bar
+        paddingTop: Constants.statusBarHeight // Move body of screen under status bar
     }
 });

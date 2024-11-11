@@ -9,14 +9,17 @@ import {
   View,
   TextInput,
   Text,
+  Image
 } from 'react-native';
 
 import CircularProgressBar from '@/components/CircularProgressBar';
-import Svg, { Path, Text as SvgText, Rect, G, Image } from 'react-native-svg';
+import Svg, { Path, Text as SvgText, Rect, G } from 'react-native-svg';
 import { ThemedText } from '@/components/ThemedText';
 import Screen from '@/components/Screen';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import IconText from '@/components/IconText';
+import { iconTextGreen, iconTextYellow } from '@/constants/Colors';
+import { useRouter } from 'expo-router';
 
 // Define SectionType
 type SectionType = 'Zone 1' | 'Zone 2';
@@ -49,47 +52,29 @@ type EquipmentCardProps = ViewProps & {
   usedBy?: string;
 };
 
-function EquipmentCard({
-  equipmentID,
-  available,
-  equipmentPicture,
-  setsLeft,
-  usedBy,
-}: EquipmentCardProps): JSX.Element {
+function EquipmentCard({equipmentID, available, equipmentPicture, setsLeft, usedBy}: EquipmentCardProps) {
+  const router = useRouter();
+
   return (
-    <TouchableOpacity style={styles.equipmentCard}>
-      <View style={{ width: 114, height: 138, backgroundColor: 'lightgray', borderRadius: 20 }} />
-      <View style={{ height: 128, justifyContent: 'center' }}>
-        <ThemedText type="subtitle">Power Rack #{equipmentID}</ThemedText>
-        {available ? (
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Ionicons name="checkmark" size={24} color="#00a20d" />
-            <ThemedText type="green" style={{ marginLeft: 5 }}>
-              Available
-            </ThemedText>
-          </View>
-        ) : (
-          <>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <FontAwesome5 name="exclamation-triangle" size={17} color="#f4a100" />
-              <ThemedText type="yellow" style={{ marginLeft: 5 }}>
-                In Use
-              </ThemedText>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <AntDesign name="clockcircle" size={17} color="#f4a100" />
-              <ThemedText type="yellow" style={{ marginLeft: 5 }}>
-                {setsLeft} Sets Left
-              </ThemedText>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <AntDesign name="questioncircle" size={17} color="#f4a100" />
-              <ThemedText type="yellow" style={{ marginLeft: 5 }}>
-                Used by {usedBy}
-              </ThemedText>
-            </View>
-          </>
-        )}
+    <TouchableOpacity 
+      style={styles.equipmentCard}
+      onPress={() => {
+        router.push('/(pulse)/equipmenttabularmenu')
+      }} >
+      <Image style={{width: 114, height: 138, objectFit: 'contain', borderRadius: 20}} source={equipmentPicture} />
+      <View style={{height: 128, gap: 5}}>
+        <ThemedText type='subtitle'>Power Rack #{equipmentID}</ThemedText>
+        {available ?
+        <>
+          <IconText text="Available" iconName="check" color={iconTextGreen} />
+        </>
+        :
+        <>
+          <IconText text="In Use" iconName="exclamation-triangle" color={iconTextYellow} />
+          <IconText text={`${setsLeft} Sets Left`} iconName="clock" color={iconTextYellow}  />
+          <IconText text={`Used by ${usedBy}`} iconName="question-circle" color={iconTextYellow} />
+        </>
+        }
       </View>
     </TouchableOpacity>
   );
@@ -523,7 +508,7 @@ export default function PulseScreen(): JSX.Element {
 
   return (
     <Screen style={styles.screen}>
-      <View style={{ paddingTop: 30, paddingHorizontal: 10 }}>
+      <View style={{ paddingHorizontal: 10 }}>
         <ThemedText type="title" style={{ marginTop: 10 }}>
           Equipment
         </ThemedText>
@@ -563,7 +548,7 @@ const styles = StyleSheet.create({
   screen: { backgroundColor: 'white', flex: 1 },
   searchBar: { width: '100%', height: 34, backgroundColor: '#eaeaea', marginTop: 15, borderRadius: 10, justifyContent: 'center', paddingLeft: 20 },
   filterButton: { width: 75, height: 25, backgroundColor: '#eaeaea', borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 12 },
-  equipmentCard: { width: '100%', height: 170, backgroundColor: '#eaeaea', marginBottom: 20, borderRadius: 20, flexDirection: 'row', padding: 10 },
+  equipmentCard: { width: '100%', height: 170, gap: 10, backgroundColor: '#eaeaea', marginBottom: 20, alignItems: 'center', borderRadius: 20, flexDirection: 'row', padding: 10 },
   switchView: { width: '80%', height: 40, backgroundColor: '#eaeaea', alignSelf: 'center', marginTop: 10, marginBottom: 10, borderRadius: 10, flexDirection: 'row', padding: 2 },
   switchButton: { width: '50%', height: '100%', borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
   activeSwitchButton: { backgroundColor: 'white' },
