@@ -211,7 +211,7 @@ function GymMap({ onSectionPress }: GymMapProps): JSX.Element {
       <View style={{ 
         position: 'absolute', 
         top: 155, 
-        left: 130, 
+        left: 115, 
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
@@ -266,10 +266,10 @@ function ZoneSection({ zone, pathData, occupancy, onPress }: ZoneSectionProps): 
       {/* Icons for Zone 1 and Zone 2 */}
       {zone === 'Zone 1' && (
         <>
-          <View style={{ position: 'absolute', top: 150, left: 80 }}>
+          <View style={{ position: 'absolute', top: 150, left: 75 }}>
             <MaterialCommunityIcons name="dumbbell" size={25} color="black" />
           </View>
-          <View style={{ position: 'absolute', top: 218, left: 80 }}>
+          <View style={{ position: 'absolute', top: 218, left: 75 }}>
             <MaterialCommunityIcons name="weight-lifter" size={25} color="black" />
           </View>
           <View style={{ position: 'absolute', top: 218, left: 195 }}>
@@ -574,9 +574,9 @@ const styles = StyleSheet.create({
   header: { 
     width: '100%', 
     alignItems: 'center', 
-    justifyContent: 'center',  // Centers the "Back" button horizontally
+    justifyContent: 'center',  
     paddingTop: 20,
-    paddingBottom: 10,  // Optional: Adds some spacing below the button
+    paddingBottom: 10,
   },
   navigationButtons: { flexDirection: 'row' },
   zoneButton: { marginHorizontal: 10, padding: 10, backgroundColor: '#ccc', borderRadius: 5 },
