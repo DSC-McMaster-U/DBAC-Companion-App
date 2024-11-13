@@ -5,7 +5,7 @@ GET http://localhost:8383/users
 GET http://localhost:8383/users/400380909
 
 ### GET MACHINE
-GET http://localhost:8383/machines/1
+GET http://localhost:8383/machines/2
 
 ### ADD A USER 
 POST http://localhost:8383/adduser
