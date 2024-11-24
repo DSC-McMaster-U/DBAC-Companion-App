@@ -1,32 +1,88 @@
-import {db} from '../firebase.js'
-import { doc, deleteDoc, setDoc, getDoc, updateDoc, getCountFromServer } from "firebase/firestore";
-import { collection, getDocs } from "firebase/firestore";
+import { db } from '../firebase.js';
+import { doc, getDoc } from "firebase/firestore";
 
 export const getMachineCapacityInfo = async (req, res) => {
-    const { facility, machine_type } = req.body()
+    try {
+        const { facility, machine_type } = req.method === 'GET' ? req.query : req.body;
 
-    const facilityRef = doc(db, "facilities", facility)
-    const facility_snap = (await getDoc(facilityRef)).data()
+        if (!facility || !machine_type) {
+            return res.status(400).json({
+                error: 'Both facility and machine_type parameters are required'
+            });
+        }
 
-    const num_occupied = facility_snap.occupied_machine_count[machine_type]
-    const total_num_machines = facility_snap.num_machines[machine_type]
+        const facilityRef = doc(db, "facilities", facility);
+        const facilitySnap = await getDoc(facilityRef);
 
-    res.status(200).send({
-        num_occupied: num_occupied,
-        total_num_machines: total_num_machines})
-}
+        if (!facilitySnap.exists()) {
+            return res.status(404).json({
+                error: `Facility ${facility} not found`
+            });
+        }
+
+        const facilityData = facilitySnap.data();
+
+        if (!facilityData.occupied_machine_count?.[machine_type] !== undefined ||
+            !facilityData.num_machines?.[machine_type] !== undefined) {
+            return res.status(404).json({
+                error: `Machine type ${machine_type} not found in facility ${facility}`
+            });
+        }
+
+        const num_occupied = facilityData.occupied_machine_count[machine_type];
+        const total_num_machines = facilityData.num_machines[machine_type];
+
+        res.status(200).json({
+            num_occupied,
+            total_num_machines
+        });
+    } catch (error) {
+        console.error('Error in getMachineCapacityInfo:', error);
+        res.status(500).json({
+            error: 'Internal server error',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+};
 
 export const getFacilityCapacityInfo = async (req, res) => {
-    const { facility } = req.body()
+    try {
+        // Support both GET and POST methods
+        const facility = req.method === 'GET' ? req.query.facility : req.body.facility;
 
-    const facilityRef = doc(db, "facilities", facility)
-    const facility_snap = (await getDoc(facilityRef)).data()
+        if (!facility) {
+            return res.status(400).json({
+                error: 'Facility parameter is required'
+            });
+        }
 
-    const num_active_users = facility_snap.num_active_users
-    const capacity = facility_snap.capacity
+        const facilityRef = doc(db, "facilities", facility);
+        const facilitySnap = await getDoc(facilityRef);
 
-    res.status(200).send({
-        num_active_users: num_active_users,
-        capacity: capacity
-    })
-}
+        if (!facilitySnap.exists()) {
+            return res.status(404).json({
+                error: `Facility ${facility} not found`
+            });
+        }
+
+        const facilityData = facilitySnap.data();
+
+        if (facilityData.num_active_users === undefined ||
+            facilityData.capacity === undefined) {
+            return res.status(500).json({
+                error: 'Facility data is incomplete'
+            });
+        }
+
+        res.status(200).json({
+            num_active_users: facilityData.num_active_users,
+            capacity: facilityData.capacity
+        });
+    } catch (error) {
+        console.error('Error in getFacilityCapacityInfo:', error);
+        res.status(500).json({
+            error: 'Internal server error',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+};

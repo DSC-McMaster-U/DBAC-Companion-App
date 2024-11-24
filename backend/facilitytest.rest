@@ -1,0 +1,6 @@
+### Get Facility Information
+GET http://localhost:8383/facility/user_capacity
+Content-Type: application/json
+{
+    "facility": "pulse"
+}
