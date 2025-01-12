@@ -378,33 +378,32 @@ function SelectedSectionView({
   const viewBox = '0 0 120 180';
 
   const zone1Path = `
-    M10 100 
-    L90 100 
-    L100 110 
-    L80 130 
-    L80 140
-    L90 140
-    L90 150
-    L75 150
-    L55 170
-    L50 175 
-    L10 175 
+    M 6.25 36.25 
+    L 106.25 36.25 
+    L 118.75 48.75 
+    L 93.75 73.75 
+    L 93.75 86.25 
+    L 106.25 86.25 
+    L 106.25 98.75 
+    L 87.5 98.75 
+    L 62.5 123.75 
+    L 56.25 130 
+    L 6.25 130 
     Z
   `;
 
   const zone2Path = `
-    M10 10 
-    L90 10
-    L90 60
-    L83 60
-    L95 75
-    L83 90 
-    L95 110
-    L80 110
-    L70 110
-    L40 110
-    L10 110
+    M 6 48 
+    L 93.6 48 
+    L 108 66 
+    L 93.6 84 
+    L 108 108 
+    L 6 108 
     Z
+  `;
+
+  const zone3Path = `
+    M 6.75 50.75 L 114.75 50.75 L 114.75 118.25 L 6.75 118.25 Z
   `;
 
   return (
@@ -417,25 +416,74 @@ function SelectedSectionView({
       <View style={styles.svgContainer}>
         <Svg height={svgHeight} width={svgWidth} viewBox={viewBox}>
           {selectedSection === 'Zone 1' ? (
-            <ZoneDetail
-              zone="Zone 1"
-              pathData={zone1Path}
-              occupancy="50"
-              equipmentImages={[
-                { x: '20', y: '160', width: '15', height: '15' },
-                { x: '65', y: '160', width: '15', height: '15' },
-              ]}
-            />
+            <>
+              <SvgText
+                x={'56.25'}
+                y={'10'}
+                fontSize="14"
+                fill="black"
+                fontWeight="bold"
+                textAnchor="middle"
+              >
+                Zone 1
+              </SvgText>
+
+              <ZoneDetail
+                zone="Zone 1"
+                pathData={zone1Path}
+                occupancy="50"
+                equipmentImages={[
+                  { x: '20', y: '160', width: '15', height: '15' },
+                  { x: '65', y: '160', width: '15', height: '15' },
+                ]}
+              />
+            </>
+          ) : selectedSection === 'Zone 2' ? (
+            <>
+              <SvgText
+                x={'56.25'}
+                y={'10'}
+                fontSize="14"
+                fill="black"
+                fontWeight="bold"
+                textAnchor="middle"
+              >
+                Zone 2
+              </SvgText>
+
+              <ZoneDetail
+                zone="Zone 2"
+                pathData={zone2Path}
+                occupancy="75"
+                equipmentImages={[
+                  { x: '25', y: '60', width: '15', height: '15' },
+                  { x: '50', y: '60', width: '15', height: '15' },
+                ]}
+              />
+            </>
           ) : (
-            <ZoneDetail
-              zone="Zone 2"
-              pathData={zone2Path}
-              occupancy="75"
-              equipmentImages={[
-                { x: '25', y: '60', width: '15', height: '15' },
-                { x: '50', y: '60', width: '15', height: '15' },
-              ]}
-            />
+            <>
+              <SvgText
+                x={'56.25'}
+                y={'10'}
+                fontSize="14"
+                fill="black"
+                fontWeight="bold"
+                textAnchor="middle"
+              >
+                Zone 3
+              </SvgText>
+
+              <ZoneDetail
+                zone="Zone 3"
+                pathData={zone3Path}
+                occupancy="75"
+                equipmentImages={[
+                  { x: '25', y: '60', width: '15', height: '15' },
+                  { x: '50', y: '60', width: '15', height: '15' },
+                ]}
+              />
+            </>
           )}
         </Svg>
       </View>
@@ -454,98 +502,6 @@ function ZoneDetail({ zone, pathData, occupancy, equipmentImages }: ZoneDetailPr
     <G>
       {/* Draw the zone path */}
       <Path d={pathData} fill="white" stroke="black" strokeWidth="0.5" />
-      <Rect
-        x={zone === 'Zone 1' ? '15' : '20'}
-        y={zone === 'Zone 1' ? '115' : '30'}
-        width="50"
-        height={zone === 'Zone 1' ? '40' : '50'}
-        fill="#e6e6e6"
-        stroke="black"
-        strokeWidth="0.5"
-      />
-      <SvgText
-        x={zone === 'Zone 1' ? '40' : '45'}
-        y={zone === 'Zone 1' ? '130' : '45'}
-        fontSize="10"
-        fill="black"
-        textAnchor="middle"
-      >
-        {zone}
-      </SvgText>
-
-      {/* CircularProgressBar for Zone 1 and Zone 2 */}
-      {zone === 'Zone 1' ? (
-        <View style={{ 
-          position: 'absolute', 
-          top: 400, 
-          left: 90, 
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 6,
-          elevation: 10,
-         }}>
-          <CircularProgressBar
-            strokeWidth={7}
-            label="Zone 1 Occupancy"
-            progress={parseInt(occupancy)}
-            style={{ width: 60, height: 60 }}
-          />
-        </View>
-      ) : (
-        <View style={{ 
-          position: 'absolute', 
-          top: 160, 
-          left: 103,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 6,
-          elevation: 10,
-         }}>
-          <CircularProgressBar
-            strokeWidth={7}
-            label="Zone 2 Occupancy"
-            progress={parseInt(occupancy)}
-            style={{ width: 60, height: 60 }}
-          />
-        </View>
-      )}
-
-      {zone === 'Zone 1' && (
-        <>
-        <View style={{ position: 'absolute', top: 395, left: 50 }}>
-          <MaterialCommunityIcons name="dumbbell" size={24} color="black" />
-        </View>
-        <View style={{ position: 'absolute', top: 435, left: 50 }}>
-          <MaterialCommunityIcons name="weight-lifter" size={24} color="black" />
-        </View>
-        <View style={{ position: 'absolute', top: 395, left: 165 }}>
-          <MaterialCommunityIcons name="run" size={24} color="black" />
-        </View>
-        <View style={{ position: 'absolute', top: 435, left: 165 }}>
-          <MaterialCommunityIcons name="human-handsup" size={24} color="black" />
-        </View>
-        
-      </>
-
-      )}
-      {zone === 'Zone 2' && (
-        <>
-        <View style={{ position: 'absolute', top: 150, left: 65 }}>
-          <MaterialCommunityIcons name="dumbbell" size={25} color="black" />
-        </View>
-        <View style={{ position: 'absolute', top: 218, left: 65 }}>
-          <MaterialCommunityIcons name="weight-lifter" size={25} color="black" />
-        </View>
-        <View style={{ position: 'absolute', top: 218, left: 178 }}>
-          <MaterialCommunityIcons name="run" size={25} color="black" />
-        </View>
-        <View style={{ position: 'absolute', top: 150, left: 178 }}>
-          <MaterialCommunityIcons name="human-handsup" size={25} color="black" />
-        </View>
-      </>
-      )}
     </G>
   );
 }
