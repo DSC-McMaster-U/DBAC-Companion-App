@@ -135,23 +135,36 @@ function GymMap({ onSectionPress }: GymMapProps): JSX.Element {
   `;
 
   const zone2Path = `
-    M5 5 
-    L85 5
-    L85 55
+    M5 55
     L78 55
     L90 70
     L78 85 
     L90 105
-    L75 105
-    L65 105
-    L35 105
     L5 105
+    Z
+  `;
+
+  const zone3Path = `
+    M5 5
+    L85 5
+    L85 55
+    L5 55
     Z
   `;
 
   return (
     <View style={{ position: 'relative', width: svgWidth, height: svgHeight }}>
       <Svg height={svgHeight} width={svgWidth} viewBox={viewBox}>
+        <ZoneSection
+          zone="Zone 3"
+          pathData={zone3Path}
+          occupancy="75"
+          equipmentImages={[
+            { x: '30', y: '30', width: '15', height: '15' },
+            { x: '55', y: '30', width: '15', height: '15' },
+          ]}
+          onPress={() => onSectionPress('Zone 3')}
+        />
         <ZoneSection
           zone="Zone 2"
           pathData={zone2Path}
@@ -195,7 +208,7 @@ function GymMap({ onSectionPress }: GymMapProps): JSX.Element {
 
       <View style={{ 
         position: 'absolute', 
-        top: 155, 
+        top: 230, 
         left: 115, 
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
@@ -206,6 +219,23 @@ function GymMap({ onSectionPress }: GymMapProps): JSX.Element {
           strokeWidth={7}
           label="Zone 2 Occupancy"
           progress={75} // Replace with dynamic value
+          style={{ width: 60, height: 60 }}
+        />
+      </View>
+
+      <View style={{ 
+        position: 'absolute', 
+        top: 70, 
+        left: 115, 
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
+        elevation: 10, }}>
+        <CircularProgressBar
+          strokeWidth={7}
+          label="Zone 3 Occupancy"
+          progress={40} // Replace with dynamic value
           style={{ width: 60, height: 60 }}
         />
       </View>
@@ -230,17 +260,17 @@ function ZoneSection({ zone, pathData, occupancy, onPress }: ZoneSectionProps): 
 
       {/* Zone label */}
       <Rect
-        x={zone === 'Zone 1' ? '15' : '15'}
-        y={zone === 'Zone 1' ? '115' : '30'}
+        x={'15'}
+        y={zone === 'Zone 1' ? '115' : zone === 'Zone 2' ? '70' : '20'}
         width="50"
-        height={zone === 'Zone 1' ? '40' : '50'}
+        height={zone === 'Zone 1' ? '40' : '30'}
         fill="#e6e6e6"
         stroke="black"
         strokeWidth="0.5"
       />
       <SvgText
-        x={zone === 'Zone 1' ? '40' : '40'}
-        y={zone === 'Zone 1' ? '130' : '45'}
+        x={'40'}
+        y={zone === 'Zone 1' ? '130' : zone === 'Zone 2' ? '97' : '45'}
         fontSize="8"
         fill="black"
         textAnchor="middle"
@@ -248,25 +278,8 @@ function ZoneSection({ zone, pathData, occupancy, onPress }: ZoneSectionProps): 
         {zone}
       </SvgText>
 
-      {/* Icons for Zone 1 and Zone 2 */}
+      {/* Icons for Zone 1, Zone 2, and Zone 3 */}
       {zone === 'Zone 1' && (
-        <>
-          <View style={{ position: 'absolute', top: 150, left: 75 }}>
-            <MaterialCommunityIcons name="dumbbell" size={25} color="black" />
-          </View>
-          <View style={{ position: 'absolute', top: 218, left: 75 }}>
-            <MaterialCommunityIcons name="weight-lifter" size={25} color="black" />
-          </View>
-          <View style={{ position: 'absolute', top: 218, left: 195 }}>
-            <MaterialCommunityIcons name="run" size={25} color="black" />
-          </View>
-          <View style={{ position: 'absolute', top: 150, left: 195 }}>
-            <MaterialCommunityIcons name="human-handsup" size={25} color="black" />
-          </View>
-          
-        </>
-      )}
-      {zone === 'Zone 2' && (
           <>
           <View style={{ position: 'absolute', top: 400, left: 75 }}>
             <MaterialCommunityIcons name="dumbbell" size={24} color="black" />
@@ -284,10 +297,46 @@ function ZoneSection({ zone, pathData, occupancy, onPress }: ZoneSectionProps): 
         </>
       )}
 
+      {zone === 'Zone 2' && (
+        <>
+          <View style={{ position: 'absolute', top: 215, left: 75 }}>
+            <MaterialCommunityIcons name="dumbbell" size={25} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 275, left: 75 }}>
+            <MaterialCommunityIcons name="weight-lifter" size={25} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 275, left: 195 }}>
+            <MaterialCommunityIcons name="run" size={25} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 215, left: 195 }}>
+            <MaterialCommunityIcons name="human-handsup" size={25} color="black" />
+          </View>
+          
+        </>
+      )}
+
+      {zone === 'Zone 3' && (
+          <>
+          <View style={{ position: 'absolute', top: 65, left: 75 }}>
+            <MaterialCommunityIcons name="dumbbell" size={24} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 125, left: 75 }}>
+            <MaterialCommunityIcons name="weight-lifter" size={24} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 65, left: 195 }}>
+            <MaterialCommunityIcons name="run" size={24} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 125, left: 195 }}>
+            <MaterialCommunityIcons name="human-handsup" size={24} color="black" />
+          </View>
+          
+        </>
+      )}
+
       {/* Smaller Press Here Button - Top Left for Zone 2, Bottom Left for Zone 1 */}
       <Rect
-        x={zone === 'Zone 1' ? '7' : '7'}
-        y={zone === 'Zone 1' ? '168' : '7'}
+        x={'7'}
+        y={zone === 'Zone 1' ? '168' : zone === 'Zone 2' ? '57' : '7'}
         width="30"
         height="10"
         fill="#7a003c"
@@ -296,8 +345,8 @@ function ZoneSection({ zone, pathData, occupancy, onPress }: ZoneSectionProps): 
         onPress={onPress}
       />
       <SvgText
-        x={zone === 'Zone 1' ? '22' : '22'}
-        y={zone === 'Zone 1' ? '174' : '13'}
+        x={'22'}
+        y={zone === 'Zone 1' ? '174' : zone === 'Zone 2' ? '63' : '13'}
         fontSize="4"
         fill="white"
         fontWeight="bold"
