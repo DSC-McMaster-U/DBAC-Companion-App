@@ -1,8 +1,8 @@
-import { StyleSheet} from "react-native";
+import { ImageProps } from "react-native";
 import { Rect, Image, RectProps } from "react-native-svg";
 
 type EquipmentMapAvailability = RectProps & {
-    equipmentImage: any,
+    equipmentImage: ImageProps['source'] | string,
     availabilityColor: string
 }
 
@@ -22,21 +22,3 @@ export default function EquipmentMapAvailability({
         </>
     );
 }
-
-const styles = StyleSheet.create({
-    icon: {
-        width: 45,
-        height: 24,
-        backgroundColor: 'gray',
-        borderRadius: 10,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    availability: {
-        width: 13,
-        height: 13,
-        borderRadius: 25,
-    }
-})
