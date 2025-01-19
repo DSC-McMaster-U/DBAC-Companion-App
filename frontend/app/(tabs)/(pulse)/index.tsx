@@ -13,16 +13,17 @@ import {
 } from 'react-native';
 
 import CircularProgressBar from '@/components/CircularProgressBar';
-import Svg, { Path, Text as SvgText, Rect, G } from 'react-native-svg';
+import Svg, { Path, Text as SvgText, ImageProps, Rect, G } from 'react-native-svg';
 import { ThemedText } from '@/components/ThemedText';
 import Screen from '@/components/Screen';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import IconText from '@/components/IconText';
 import { iconTextGreen, iconTextYellow } from '@/constants/Colors';
 import { useRouter } from 'expo-router';
+import EquipmentMapAvailability from '@/components/EquipmentMapAvailability';
 
 // Define SectionType
-type SectionType = 'Zone 1' | 'Zone 2';
+type SectionType = 'Zone 1' | 'Zone 2' | 'Zone 3';
 
 function SearchBar(): JSX.Element {
   return (
@@ -416,74 +417,23 @@ function SelectedSectionView({
       <View style={styles.svgContainer}>
         <Svg height={svgHeight} width={svgWidth} viewBox={viewBox}>
           {selectedSection === 'Zone 1' ? (
-            <>
-              <SvgText
-                x={'56.25'}
-                y={'10'}
-                fontSize="14"
-                fill="black"
-                fontWeight="bold"
-                textAnchor="middle"
-              >
-                Zone 1
-              </SvgText>
-
-              <ZoneDetail
-                zone="Zone 1"
-                pathData={zone1Path}
-                occupancy="50"
-                equipmentImages={[
-                  { x: '20', y: '160', width: '15', height: '15' },
-                  { x: '65', y: '160', width: '15', height: '15' },
-                ]}
-              />
-            </>
+            <ZoneDetail
+              zone="Zone 1"
+              pathData={zone1Path}
+              equipmentImages={[]}
+            />
           ) : selectedSection === 'Zone 2' ? (
-            <>
-              <SvgText
-                x={'56.25'}
-                y={'10'}
-                fontSize="14"
-                fill="black"
-                fontWeight="bold"
-                textAnchor="middle"
-              >
-                Zone 2
-              </SvgText>
-
-              <ZoneDetail
-                zone="Zone 2"
-                pathData={zone2Path}
-                occupancy="75"
-                equipmentImages={[
-                  { x: '25', y: '60', width: '15', height: '15' },
-                  { x: '50', y: '60', width: '15', height: '15' },
-                ]}
-              />
-            </>
+            <ZoneDetail
+              zone="Zone 2"
+              pathData={zone2Path}
+              equipmentImages={[]}
+            />
           ) : (
-            <>
-              <SvgText
-                x={'56.25'}
-                y={'10'}
-                fontSize="14"
-                fill="black"
-                fontWeight="bold"
-                textAnchor="middle"
-              >
-                Zone 3
-              </SvgText>
-
-              <ZoneDetail
-                zone="Zone 3"
-                pathData={zone3Path}
-                occupancy="75"
-                equipmentImages={[
-                  { x: '25', y: '60', width: '15', height: '15' },
-                  { x: '50', y: '60', width: '15', height: '15' },
-                ]}
-              />
-            </>
+            <ZoneDetail
+              zone="Zone 3"
+              pathData={zone3Path}
+              equipmentImages={[]}
+            />
           )}
         </Svg>
       </View>
@@ -494,14 +444,35 @@ function SelectedSectionView({
 type ZoneDetailProps = {
   zone: SectionType;
   pathData: string;
-  occupancy: string;
-  equipmentImages: { x: string; y: string; width: string; height: string }[];
+  equipmentImages: { x: number, y: number, src: ImageProps['href'] | string, capacity?: Number }[];
 };
-function ZoneDetail({ zone, pathData, occupancy, equipmentImages }: ZoneDetailProps): JSX.Element {
+function ZoneDetail({ zone, pathData, equipmentImages }: ZoneDetailProps): JSX.Element {
   return (
     <G>
+      <SvgText
+        x={'56.25'}
+        y={'10'}
+        fontSize="14"
+        fill="black"
+        fontWeight="bold"
+        textAnchor="middle"
+      >
+        { zone }
+      </SvgText>
+
       {/* Draw the zone path */}
       <Path d={pathData} fill="white" stroke="black" strokeWidth="0.5" />
+
+      {
+        equipmentImages.map(equipment => (
+          <EquipmentMapAvailability
+            x={equipment.x}
+            y={equipment.y}
+            equipmentImage={equipment.src}
+            availabilityColor="green"
+          />
+        ))
+      }
     </G>
   );
 }
