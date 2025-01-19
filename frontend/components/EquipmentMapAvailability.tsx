@@ -1,8 +1,7 @@
-import { ImageProps } from "react-native";
-import { Rect, Image, RectProps } from "react-native-svg";
+import { Rect, Image, ImageProps, RectProps } from "react-native-svg";
 
 type EquipmentMapAvailability = RectProps & {
-    equipmentImage: ImageProps['source'] | string,
+    equipmentImage: ImageProps['href'] | string,
     availabilityColor: string
 }
 
