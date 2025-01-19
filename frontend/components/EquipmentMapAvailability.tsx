@@ -17,7 +17,7 @@ export default function EquipmentMapAvailability({
         <>
             <Rect x={x} y={y} width={22} height={13} fill={'grey'} rx={5} ry={5} {...rest} />
             <Image x={x+1} y={y+1} width={11} height={11} rx={11} ry={11} href={equipmentImage} />
-            <Rect x={x+13} y={y+3} width={7} height={7} rx={12} ry={12} fill={availabilityColor ?? "red"}></Rect>
+            <Rect x={x+13} y={y+3} width={7} height={7} rx={12} ry={12} fill={availabilityColor ?? "red"} />
         </>
     );
 }
