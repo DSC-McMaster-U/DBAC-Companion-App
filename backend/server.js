@@ -11,5 +11,6 @@ app.use(express.json())
 app.use(userRouter)
 app.use(machineRouter)
 app.use(facilityRouter)
+app.use('/assets', express.static('assets'));
 app.use(cors());
 app.listen(port, () => console.log(`Server has started on port: ${port}`))
