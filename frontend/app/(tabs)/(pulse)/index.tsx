@@ -22,6 +22,8 @@ import { iconTextGreen, iconTextYellow } from '@/constants/Colors';
 import { useRouter } from 'expo-router';
 import EquipmentMapAvailability from '@/components/EquipmentMapAvailability';
 
+import bmachine from '@/assets/images/bicepcurl-machine.png';
+
 // Define SectionType
 type SectionType = 'Zone 1' | 'Zone 2' | 'Zone 3';
 
@@ -385,26 +387,26 @@ function SelectedSectionView({
     L 93.75 73.75 
     L 93.75 86.25 
     L 106.25 86.25 
-    L 106.25 98.75 
-    L 87.5 98.75 
-    L 62.5 123.75 
-    L 56.25 130 
-    L 6.25 130 
+    L 106 114 
+    L 88 114 
+    L 66 139 
+    L 55 159 
+    L 7 159 
     Z
   `;
 
   const zone2Path = `
-    M 6 48 
-    L 93.6 48 
-    L 108 66 
-    L 93.6 84 
-    L 108 108 
-    L 6 108 
+    M 6 18 
+    L 100 18 
+    L 114 61 
+    L 89 89 
+    L 110 163 
+    L 7 163 
     Z
   `;
 
   const zone3Path = `
-    M 6.75 50.75 L 114.75 50.75 L 114.75 118.25 L 6.75 118.25 Z
+    M 7 19 L 114 19 L 114 170 L 7 170 Z
   `;
 
   return (
@@ -444,7 +446,7 @@ function SelectedSectionView({
 type ZoneDetailProps = {
   zone: SectionType;
   pathData: string;
-  equipmentImages: { x: number, y: number, src: ImageProps['href'] | string, capacity?: Number }[];
+  equipmentImages: { id: string, x: number, y: number, src: ImageProps['href'] | string, capacity?: Number }[];
 };
 function ZoneDetail({ zone, pathData, equipmentImages }: ZoneDetailProps): JSX.Element {
   return (
@@ -466,6 +468,7 @@ function ZoneDetail({ zone, pathData, equipmentImages }: ZoneDetailProps): JSX.E
       {
         equipmentImages.map(equipment => (
           <EquipmentMapAvailability
+            key={equipment.id}
             x={equipment.x}
             y={equipment.y}
             equipmentImage={equipment.src}
