@@ -90,14 +90,6 @@ function MapView(): JSX.Element {
     setSelectedSection(section);
   };
 
-  const handleBackPress = (): void => {
-    setSelectedSection(null);
-  };
-
-  const handleZoneSwitch = (zone: SectionType): void => {
-    setSelectedSection(zone);
-  };
-
   return (
     <View style={styles.mapContainer}>
       {!selectedSection ? (
@@ -105,8 +97,6 @@ function MapView(): JSX.Element {
       ) : (
         <SelectedSectionView
           selectedSection={selectedSection}
-          onBackPress={handleBackPress}
-          onZoneSwitch={handleZoneSwitch}
         />
       )}
     </View>
@@ -367,32 +357,17 @@ function ZoneSection({ zone, pathData, occupancy, onPress }: ZoneSectionProps): 
 
 type SelectedSectionViewProps = {
   selectedSection: SectionType;
-  onBackPress: () => void;
-  onZoneSwitch: (zone: SectionType) => void;
 };
 
 function SelectedSectionView({
   selectedSection,
-  onBackPress,
-  onZoneSwitch,
 }: SelectedSectionViewProps): JSX.Element {
   const svgWidth = 350;
-  const svgHeight = 550;
+  const svgHeight = 590;
   const viewBox = '0 0 120 180';
 
   const zone1Path = `
-    M 6 22 
-    L 108 22 
-    L 118 36 
-    L 94 47 
-    L 94 67 
-    L 106 67 
-    L 106 90 
-    L 94 90 
-    L 83 119 
-    L 83 159 
-    L 7 159 
-    Z
+    M 6 4 L 108 4 L 117 25 L 105 36 L 105 50 L 116 50 L 116 71 L 105 71 L 98 95 L 99 187 L 7 187 Z
   `;
 
   const zone2Path = `
@@ -411,18 +386,62 @@ function SelectedSectionView({
 
   return (
     <View style={styles.selectedSectionContainer}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={onBackPress} style={styles.backButton}>
-          <Text style={styles.backButtonText}>Back</Text>
-        </TouchableOpacity>
-      </View>
       <View style={styles.svgContainer}>
         <Svg height={svgHeight} width={svgWidth} viewBox={viewBox}>
           {selectedSection === 'Zone 1' ? (
             <ZoneDetail
               zone="Zone 1"
               pathData={zone1Path}
-              equipmentImages={[]}
+              equipmentImages={[
+                { id: 'machine1', x: 8, y: 173, src: bmachine },
+                { id: 'machine2', x: 75.5, y: 173, src: bmachine },
+
+                { id: 'machine3', x: 8, y: 159, src: bmachine },
+                { id: 'machine4', x: 75.5, y: 159, src: bmachine },
+
+                { id: 'machine5', x: 8, y: 145, src: bmachine },
+                { id: 'machine6', x: 75.5, y: 145, src: bmachine },
+
+                { id: 'machine7', x: 8, y: 131, src: bmachine },
+                { id: 'machine8', x: 75.5, y: 131, src: bmachine },
+
+                { id: 'machine9', x: 8, y: 117, src: bmachine },
+                { id: 'machine10', x: 75.5, y: 117, src: bmachine },
+
+                { id: 'machine11', x: 8, y: 103, src: bmachine },
+                { id: 'machine12', x: 30.5, y: 103, src: bmachine },
+                { id: 'machine14', x: 75.5, y: 103, src: bmachine },
+
+                { id: 'machine15', x: 8, y: 89, src: bmachine },
+                { id: 'machine16', x: 30.5, y: 89, src: bmachine },
+                { id: 'machine18', x: 75.5, y: 89, src: bmachine },
+
+                { id: 'machine19', x: 8, y: 75, src: bmachine },
+                { id: 'machine20', x: 30.5, y: 75, src: bmachine },
+                { id: 'machine21', x: 53, y: 75, src: bmachine },
+                { id: 'machine22', x: 75.5, y: 75, src: bmachine },
+
+                { id: 'machine23', x: 8, y: 61, src: bmachine },
+                { id: 'machine24', x: 30.5, y: 61, src: bmachine },
+                { id: 'machine25', x: 53, y: 61, src: bmachine },
+                { id: 'machine26', x: 75.5, y: 61, src: bmachine },
+
+                { id: 'machine27', x: 8, y: 47, src: bmachine },
+                { id: 'machine28', x: 30.5, y: 47, src: bmachine },
+                { id: 'machine29', x: 53, y: 47, src: bmachine },
+                { id: 'machine30', x: 75.5, y: 47, src: bmachine },
+
+                { id: 'machine31', x: 8, y: 33, src: bmachine },
+                { id: 'machine34', x: 75.5, y: 33, src: bmachine },
+
+                { id: 'machine36', x: 30.5, y: 19, src: bmachine },
+                { id: 'machine37', x: 53, y: 19, src: bmachine },
+                { id: 'machine38', x: 75.5, y: 19, src: bmachine },
+
+                { id: 'machine40', x: 30.5, y: 5, src: bmachine },
+                { id: 'machine41', x: 53, y: 5, src: bmachine },
+                { id: 'machine42', x: 75.5, y: 5, src: bmachine },
+              ]}
             />
           ) : selectedSection === 'Zone 2' ? (
             <ZoneDetail
@@ -453,7 +472,7 @@ function ZoneDetail({ zone, pathData, equipmentImages }: ZoneDetailProps): JSX.E
     <G>
       <SvgText
         x={'56.25'}
-        y={'10'}
+        y={'-1'}
         fontSize="14"
         fill="black"
         fontWeight="bold"
@@ -535,13 +554,6 @@ const styles = StyleSheet.create({
   mapContainer: { flex: 1, backgroundColor: '#f5f5f5', alignItems: 'center', justifyContent: 'center' },
   selectedSectionContainer: { flex: 1, backgroundColor: '#f5f5f5', alignItems: 'center', justifyContent: 'center' },
   svgContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  header: { 
-    width: '100%', 
-    alignItems: 'center', 
-    justifyContent: 'center',  
-    paddingTop: 20,
-    paddingBottom: 10,
-  },
   navigationButtons: { flexDirection: 'row' },
   zoneButton: { marginHorizontal: 10, padding: 10, backgroundColor: '#ccc', borderRadius: 5 },
   activeZoneButton: { backgroundColor: '#aaa' },
