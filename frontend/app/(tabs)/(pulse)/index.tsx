@@ -8,7 +8,6 @@ import {
   ScrollView,
   View,
   TextInput,
-  Text,
   Image
 } from 'react-native';
 
@@ -21,6 +20,7 @@ import IconText from '@/components/IconText';
 import { iconTextGreen, iconTextYellow } from '@/constants/Colors';
 import { useRouter } from 'expo-router';
 import EquipmentMapAvailability from '@/components/EquipmentMapAvailability';
+import { PanGestureHandler, GestureHandlerRootView, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
 
 import bmachine from '@/assets/images/bicepcurl-machine.png';
 
@@ -90,14 +90,27 @@ function MapView(): JSX.Element {
     setSelectedSection(section);
   };
 
+  const handleSelectedSectionViewGesture = (e: PanGestureHandlerGestureEvent) => {
+    const { translationX } = e.nativeEvent;
+
+    if(translationX > 10)
+      setSelectedSection(null);
+  };
+
   return (
     <View style={styles.mapContainer}>
       {!selectedSection ? (
         <GymMap onSectionPress={handleSectionPress} />
       ) : (
-        <SelectedSectionView
-          selectedSection={selectedSection}
-        />
+        <GestureHandlerRootView style={{flex: 1}}>
+          <PanGestureHandler onGestureEvent={handleSelectedSectionViewGesture}>
+            <View style={{flex: 1}}>
+              <SelectedSectionView
+                selectedSection={selectedSection}
+              />
+            </View>
+          </PanGestureHandler>
+        </GestureHandlerRootView>
       )}
     </View>
   );
