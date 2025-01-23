@@ -413,6 +413,10 @@ function SelectedSectionView({
     Z
   `;
 
+  const imageURI = (name: string) => {
+    return `http://localhost:8383/assets/images/${name}`;
+  };
+
   return (
     <View style={styles.selectedSectionContainer}>
       <View style={styles.svgContainer}>
@@ -422,54 +426,53 @@ function SelectedSectionView({
               zone="Zone 1"
               pathData={zone1Path}
               equipmentImages={[
-                { id: 'machine1', x: 8, y: 173, src: bmachine },
-                { id: 'machine2', x: 75.5, y: 173, src: bmachine },
+                { id: 'machine1', x: 8, y: 173, src: imageURI('oblique-machine.png') },
+                { id: 'machine2', x: 75.5, y: 173, src: imageURI('power-bench-machine.png') },
 
-                { id: 'machine3', x: 8, y: 159, src: bmachine },
-                { id: 'machine4', x: 75.5, y: 159, src: bmachine },
+                { id: 'machine3', x: 8, y: 159, src: imageURI('leg-curl.png') },
 
-                { id: 'machine5', x: 8, y: 145, src: bmachine },
-                { id: 'machine6', x: 75.5, y: 145, src: bmachine },
+                { id: 'machine5', x: 8, y: 145, src: imageURI('leg-extension.png') },
+                { id: 'machine6', x: 75.5, y: 145, src: imageURI('leg-extension.png') },
 
-                { id: 'machine7', x: 8, y: 131, src: bmachine },
-                { id: 'machine8', x: 75.5, y: 131, src: bmachine },
+                { id: 'machine7', x: 8, y: 131, src: imageURI('hip-abductor.png') },
+                { id: 'machine8', x: 75.5, y: 131, src: imageURI('leg-curl.png') },
 
-                { id: 'machine9', x: 8, y: 117, src: bmachine },
-                { id: 'machine10', x: 75.5, y: 117, src: bmachine },
+                { id: 'machine9', x: 8, y: 117, src: imageURI('pec-fly-machine.png') },
+                { id: 'machine10', x: 75.5, y: 117, src: imageURI('incline-curl-machine.png') },
 
-                { id: 'machine11', x: 8, y: 103, src: bmachine },
-                { id: 'machine12', x: 30.5, y: 103, src: bmachine },
-                { id: 'machine14', x: 75.5, y: 103, src: bmachine },
+                { id: 'machine11', x: 8, y: 103, src: imageURI('') },
+                { id: 'machine12', x: 30.5, y: 103, src: imageURI('nordic.png') },
+                { id: 'machine14', x: 75.5, y: 103, src: imageURI('preacher-curl-machine.png') },
 
-                { id: 'machine15', x: 8, y: 89, src: bmachine },
-                { id: 'machine16', x: 30.5, y: 89, src: bmachine },
-                { id: 'machine18', x: 75.5, y: 89, src: bmachine },
+                { id: 'machine15', x: 8, y: 89, src: imageURI('lat-pulldown.png') },
+                { id: 'machine16', x: 30.5, y: 89, src: imageURI('calf-raise.png') },
+                { id: 'machine18', x: 75.5, y: 89, src: imageURI('preacher-tricep-pushdown.png') },
 
-                { id: 'machine19', x: 8, y: 75, src: bmachine },
-                { id: 'machine20', x: 30.5, y: 75, src: bmachine },
-                { id: 'machine21', x: 53, y: 75, src: bmachine },
-                { id: 'machine22', x: 75.5, y: 75, src: bmachine },
+                { id: 'machine19', x: 8, y: 75, src: imageURI('incline-bicep-curl.png') },
+                { id: 'machine20', x: 30.5, y: 75, src: imageURI('hack-squat.png') },
+                { id: 'machine21', x: 53, y: 75, src: imageURI('belt-squat.png') },
+                { id: 'machine22', x: 75.5, y: 75, src: imageURI('tricep-pushdown.png') },
 
-                { id: 'machine23', x: 8, y: 61, src: bmachine },
-                { id: 'machine24', x: 30.5, y: 61, src: bmachine },
-                { id: 'machine25', x: 53, y: 61, src: bmachine },
-                { id: 'machine26', x: 75.5, y: 61, src: bmachine },
+                { id: 'machine23', x: 8, y: 61, src: imageURI('tricep-pushdown.png') },
+                { id: 'machine24', x: 30.5, y: 61, src: imageURI('leg-press-45.png') },
+                { id: 'machine25', x: 53, y: 61, src: imageURI('moving-leg-press.png') },
+                { id: 'machine26', x: 75.5, y: 61, src: imageURI('lateral-raise-machine.png') },
 
-                { id: 'machine27', x: 8, y: 47, src: bmachine },
-                { id: 'machine28', x: 30.5, y: 47, src: bmachine },
-                { id: 'machine29', x: 53, y: 47, src: bmachine },
-                { id: 'machine30', x: 75.5, y: 47, src: bmachine },
+                { id: 'machine27', x: 8, y: 47, src: imageURI('shoulder-press-machine.png') },
+                { id: 'machine28', x: 30.5, y: 47, src: imageURI('pendulum-squat-machine.png') },
+                { id: 'machine29', x: 53, y: 47, src: imageURI('vertical-squat.png') },
+                { id: 'machine30', x: 75.5, y: 47, src: imageURI('shoulder-press-machine.png') },
 
-                { id: 'machine31', x: 8, y: 33, src: bmachine },
-                { id: 'machine34', x: 75.5, y: 33, src: bmachine },
+                { id: 'machine31', x: 8, y: 33, src: imageURI('chest-press-gymleco.png') },
+                { id: 'machine34', x: 75.5, y: 33, src: imageURI('chest-press-gymleco.png') },
 
-                { id: 'machine36', x: 30.5, y: 19, src: bmachine },
-                { id: 'machine37', x: 53, y: 19, src: bmachine },
-                { id: 'machine38', x: 75.5, y: 19, src: bmachine },
+                { id: 'machine36', x: 30.5, y: 19, src: imageURI('power-squat-machine.png') },
+                { id: 'machine37', x: 53, y: 19, src: imageURI('super-squat-machine.png') },
+                { id: 'machine38', x: 75.5, y: 19, src: imageURI('moving-leg-press.png') },
 
-                { id: 'machine40', x: 30.5, y: 5, src: bmachine },
-                { id: 'machine41', x: 53, y: 5, src: bmachine },
-                { id: 'machine42', x: 75.5, y: 5, src: bmachine },
+                { id: 'machine40', x: 30.5, y: 5, src: imageURI('independent-leg-ex.png') },
+                { id: 'machine41', x: 53, y: 5, src: imageURI('independent-leg-curl.png') },
+                { id: 'machine42', x: 75.5, y: 5, src: imageURI('lying-leg-curl.png') },
               ]}
             />
           ) : selectedSection === 'Zone 2' ? (
