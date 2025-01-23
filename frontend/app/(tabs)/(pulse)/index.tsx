@@ -380,21 +380,36 @@ function SelectedSectionView({
   const viewBox = '0 0 120 180';
 
   const zone1Path = `
-    M 6 4 L 108 4 L 117 25 L 105 36 L 105 50 L 116 50 L 116 71 L 105 71 L 98 95 L 99 187 L 7 187 Z
+    M 6 4 
+    L 108 4 
+    L 117 25 
+    L 105 36 
+    L 105 50 
+    L 116 50 
+    L 116 71 
+    L 105 71 
+    L 98 95 
+    L 99 187 
+    L 7 187 
+    Z
   `;
 
   const zone2Path = `
-    M 6 18 
-    L 100 18 
+    M 6 4 
+    L 100 4 
     L 114 61 
     L 89 89 
-    L 110 163 
-    L 7 163 
+    L 110 187 
+    L 7 187 
     Z
   `;
 
   const zone3Path = `
-    M 7 19 L 114 19 L 114 170 L 7 170 Z
+    M 7 19 
+    L 114 19 
+    L 114 170 
+    L 7 170 
+    Z
   `;
 
   return (
@@ -460,7 +475,63 @@ function SelectedSectionView({
             <ZoneDetail
               zone="Zone 2"
               pathData={zone2Path}
-              equipmentImages={[]}
+              equipmentImages={[
+                { id: 'machine1', x: 8, y: 173, src: bmachine },
+
+                { id: 'machine2', x: 8, y: 159, src: bmachine },
+
+                { id: 'machine3', x: 8, y: 145, src: bmachine },
+
+                { id: 'machine4', x: 8, y: 131, src: bmachine },
+
+                { id: 'machine5', x: 8, y: 117, src: bmachine },
+                { id: 'machine6', x: 30.5, y: 117, src: bmachine },
+                { id: 'machine7', x: 53, y: 117, src: bmachine },
+
+                { id: 'machine8', x: 8, y: 103, src: bmachine },
+                { id: 'machine9', x: 30.5, y: 103, src: bmachine },
+                { id: 'machine10', x: 53, y: 103, src: bmachine },
+
+                { id: 'machine11', x: 8, y: 89, src: bmachine },
+                { id: 'machine12', x: 30.5, y: 89, src: bmachine },
+                { id: 'machine13', x: 53, y: 89, src: bmachine },
+
+                { id: 'machine14', x: 8, y: 75, src: bmachine },
+                { id: 'machine15', x: 30.5, y: 75, src: bmachine },
+                { id: 'machine16', x: 53, y: 75, src: bmachine },
+
+                { id: 'machine17', x: 8, y: 61, src: bmachine },
+                { id: 'machine18', x: 30.5, y: 61, src: bmachine },
+                { id: 'machine19', x: 53, y: 61, src: bmachine },
+
+                { id: 'machine20', x: 8, y: 47, src: bmachine },
+                { id: 'machine21', x: 30.5, y: 47, src: bmachine },
+                { id: 'machine22', x: 53, y: 47, src: bmachine },
+
+                { id: 'machine23', x: 8, y: 33, src: bmachine },
+                { id: 'machine24', x: 30.5, y: 33, src: bmachine },
+                { id: 'machine25', x: 53, y: 33, src: bmachine },
+
+                { id: 'machine26', x: 8, y: 19, src: bmachine },
+                { id: 'machine27', x: 30.5, y: 19, src: bmachine },
+                { id: 'machine28', x: 53, y: 19, src: bmachine },
+
+                { id: 'machine29', x: 8, y: 5, src: bmachine },
+                { id: 'machine30', x: 30.5, y: 5, src: bmachine },
+                { id: 'machine31', x: 53, y: 5, src: bmachine },
+
+                { id: 'machine32', x: 8, y: 103, src: bmachine },
+                { id: 'machine33', x: 30.5, y: 103, src: bmachine },
+                { id: 'machine34', x: 53, y: 103, src: bmachine },
+
+                { id: 'machine35', x: 8, y: 103, src: bmachine },
+                { id: 'machine36', x: 30.5, y: 103, src: bmachine },
+                { id: 'machine37', x: 53, y: 103, src: bmachine },
+
+                { id: 'machine38', x: 8, y: 103, src: bmachine },
+                { id: 'machine39', x: 30.5, y: 103, src: bmachine },
+                { id: 'machine40', x: 53, y: 103, src: bmachine },
+              ]}
             />
           ) : (
             <ZoneDetail
@@ -478,7 +549,7 @@ function SelectedSectionView({
 type ZoneDetailProps = {
   zone: SectionType;
   pathData: string;
-  equipmentImages: { id: string, x: number, y: number, src: ImageProps['href'] | string, capacity?: Number }[];
+  equipmentImages: { id: string, x: number, y: number, src: ImageProps['href'] | string, capacity?: number }[];
 };
 function ZoneDetail({ zone, pathData, equipmentImages }: ZoneDetailProps): JSX.Element {
   return (
