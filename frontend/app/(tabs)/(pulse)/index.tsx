@@ -440,7 +440,7 @@ function SelectedSectionView({
                 { id: 'machine9', x: 8, y: 117, src: imageURI('pec-fly-machine.png') },
                 { id: 'machine10', x: 75.5, y: 117, src: imageURI('incline-curl-machine.png') },
 
-                { id: 'machine11', x: 8, y: 103, src: imageURI('') },
+                { id: 'machine11', x: 8, y: 103, src: imageURI('seated-row.png') },
                 { id: 'machine12', x: 30.5, y: 103, src: imageURI('nordic.png') },
                 { id: 'machine14', x: 75.5, y: 103, src: imageURI('preacher-curl-machine.png') },
 
