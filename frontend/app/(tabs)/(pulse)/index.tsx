@@ -480,61 +480,48 @@ function SelectedSectionView({
               zone="Zone 2"
               pathData={zone2Path}
               equipmentImages={[
-                { id: 'machine1', x: 8, y: 173, src: bmachine },
+                { id: 'machine1', x: 8, y: 173, src: imageURI('bench.png') },
 
-                { id: 'machine2', x: 8, y: 159, src: bmachine },
+                { id: 'machine2', x: 8, y: 159, src: imageURI('incline-bench.png') },
 
-                { id: 'machine3', x: 8, y: 145, src: bmachine },
+                { id: 'machine3', x: 8, y: 145, src: imageURI('decline-bench.png') },
 
-                { id: 'machine4', x: 8, y: 131, src: bmachine },
+                { id: 'machine4', x: 8, y: 131, src: imageURI('bench.png') },
 
-                { id: 'machine5', x: 8, y: 117, src: bmachine },
-                { id: 'machine6', x: 30.5, y: 117, src: bmachine },
-                { id: 'machine7', x: 53, y: 117, src: bmachine },
+                { id: 'machine5', x: 8, y: 117, src: imageURI('ab-bench.png') },
+                { id: 'machine6', x: 30.5, y: 117, src: imageURI('assisted-dip.png') },
+                { id: 'machine7', x: 53, y: 117, src: imageURI('assisted-dip.png') },
 
-                { id: 'machine8', x: 8, y: 103, src: bmachine },
-                { id: 'machine9', x: 30.5, y: 103, src: bmachine },
-                { id: 'machine10', x: 53, y: 103, src: bmachine },
+                { id: 'machine8', x: 8, y: 103, src: imageURI('bench.png') },
+                { id: 'machine9', x: 30.5, y: 103, src: imageURI('lat-pulldown.png') },
+                { id: 'machine10', x: 53, y: 103, src: imageURI('lat-pulldown.png') },
 
-                { id: 'machine11', x: 8, y: 89, src: bmachine },
-                { id: 'machine12', x: 30.5, y: 89, src: bmachine },
-                { id: 'machine13', x: 53, y: 89, src: bmachine },
+                { id: 'machine11', x: 8, y: 89, src: imageURI('bench.png') },
+                { id: 'machine12', x: 30.5, y: 89, src: imageURI('cable-complex.png') },
+                { id: 'machine13', x: 53, y: 89, src: imageURI('cable-complex.png') },
 
-                { id: 'machine14', x: 8, y: 75, src: bmachine },
-                { id: 'machine15', x: 30.5, y: 75, src: bmachine },
-                { id: 'machine16', x: 53, y: 75, src: bmachine },
+                { id: 'machine14', x: 8, y: 75, src: imageURI('bench.png') },
+                { id: 'machine15', x: 30.5, y: 75, src: imageURI('cable-complex.png') },
+                { id: 'machine16', x: 53, y: 75, src: imageURI('cable-complex.png') },
 
-                { id: 'machine17', x: 8, y: 61, src: bmachine },
-                { id: 'machine18', x: 30.5, y: 61, src: bmachine },
-                { id: 'machine19', x: 53, y: 61, src: bmachine },
+                { id: 'machine17', x: 8, y: 61, src: imageURI('bench.png') },
+                { id: 'machine18', x: 30.5, y: 61, src: imageURI('lat-pulldown.png') },
+                { id: 'machine19', x: 53, y: 61, src: imageURI('lat-pulldown.png') },
 
-                { id: 'machine20', x: 8, y: 47, src: bmachine },
-                { id: 'machine21', x: 30.5, y: 47, src: bmachine },
-                { id: 'machine22', x: 53, y: 47, src: bmachine },
+                { id: 'machine20', x: 8, y: 47, src: imageURI('bench.png') },
+                { id: 'machine21', x: 30.5, y: 47, src: imageURI('cable-complex.png') },
+                { id: 'machine22', x: 53, y: 47, src: imageURI('cable-complex.png') },
 
                 { id: 'machine23', x: 8, y: 33, src: bmachine },
-                { id: 'machine24', x: 30.5, y: 33, src: bmachine },
-                { id: 'machine25', x: 53, y: 33, src: bmachine },
+                { id: 'machine24', x: 30.5, y: 33, src: imageURI('cable-complex.png') },
+                { id: 'machine25', x: 53, y: 33, src: imageURI('cable-complex.png') },
 
-                { id: 'machine26', x: 8, y: 19, src: bmachine },
-                { id: 'machine27', x: 30.5, y: 19, src: bmachine },
-                { id: 'machine28', x: 53, y: 19, src: bmachine },
+                { id: 'machine27', x: 30.5, y: 19, src: imageURI('lat-pulldown.png') },
+                { id: 'machine28', x: 53, y: 19, src: imageURI('lat-pulldown.png') },
 
-                { id: 'machine29', x: 8, y: 5, src: bmachine },
-                { id: 'machine30', x: 30.5, y: 5, src: bmachine },
-                { id: 'machine31', x: 53, y: 5, src: bmachine },
-
-                { id: 'machine32', x: 8, y: 103, src: bmachine },
-                { id: 'machine33', x: 30.5, y: 103, src: bmachine },
-                { id: 'machine34', x: 53, y: 103, src: bmachine },
-
-                { id: 'machine35', x: 8, y: 103, src: bmachine },
-                { id: 'machine36', x: 30.5, y: 103, src: bmachine },
-                { id: 'machine37', x: 53, y: 103, src: bmachine },
-
-                { id: 'machine38', x: 8, y: 103, src: bmachine },
-                { id: 'machine39', x: 30.5, y: 103, src: bmachine },
-                { id: 'machine40', x: 53, y: 103, src: bmachine },
+                { id: 'machine29', x: 8, y: 5, src: imageURI('bench.png') },
+                { id: 'machine30', x: 30.5, y: 5, src: imageURI('cable-complex.png') },
+                { id: 'machine31', x: 53, y: 5, src: imageURI('cable-complex.png') },
               ]}
             />
           ) : (
