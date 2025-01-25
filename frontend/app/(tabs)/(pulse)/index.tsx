@@ -529,49 +529,49 @@ function SelectedSectionView({
               zone="Zone 3"
               pathData={zone3Path}
               equipmentImages={[
-                { id: 'machine1', x: 8, y: 156, src: bmachine },
-                { id: 'machine2', x: 30.5, y: 156, src: bmachine },
-                { id: 'machine3', x: 53, y: 156, src: bmachine },
+                { id: 'machine1', x: 8, y: 156, src: imageURI('bench.png') },
+                { id: 'machine2', x: 30.5, y: 156, src: imageURI('cable-complex.png') },
+                { id: 'machine3', x: 53, y: 156, src: imageURI('cable-complex.png') },
 
-                { id: 'machine4', x: 8, y: 142, src: bmachine },
-                { id: 'machine5', x: 30.5, y: 142, src: bmachine },
-                { id: 'machine6', x: 53, y: 142, src: bmachine },
+                { id: 'machine4', x: 8, y: 142, src: imageURI('incline-bench.png') },
+                { id: 'machine5', x: 30.5, y: 142, src: imageURI('lat-pulldown.png') },
+                { id: 'machine6', x: 53, y: 142, src: imageURI('lat-pulldown.png') },
 
-                { id: 'machine7', x: 8, y: 128, src: bmachine },
-                { id: 'machine8', x: 30.5, y: 128, src: bmachine },
-                { id: 'machine9', x: 53, y: 128, src: bmachine },
+                { id: 'machine7', x: 8, y: 128, src: imageURI('bench.png') },
+                { id: 'machine8', x: 30.5, y: 128, src: imageURI('pec-fly.png') },
+                { id: 'machine9', x: 53, y: 128, src: imageURI('pec-fly.png') },
 
-                { id: 'machine10', x: 8, y: 114, src: bmachine },
+                { id: 'machine10', x: 8, y: 114, src: imageURI('decline-bench.png') },
 
-                { id: 'machine11', x: 8, y: 100, src: bmachine },
-                { id: 'machine12', x: 30.5, y: 100, src: bmachine },
-                { id: 'machine13', x: 53, y: 100, src: bmachine },
-                { id: 'machine14', x: 75.5, y: 100, src: bmachine },
+                { id: 'machine11', x: 8, y: 100, src: imageURI('bench.png') },
+                { id: 'machine12', x: 30.5, y: 100, src: imageURI('incline-chest-press-panatta.png') },
+                { id: 'machine13', x: 53, y: 100, src: imageURI('calves-machine.png') },
+                { id: 'machine14', x: 75.5, y: 100, src: imageURI('rear-delt-machine.png') },
 
-                { id: 'machine15', x: 8, y: 86, src: bmachine },
-                { id: 'machine16', x: 30.5, y: 86, src: bmachine },
-                { id: 'machine17', x: 53, y: 86, src: bmachine },
-                { id: 'machine18', x: 75.5, y: 86, src: bmachine },
+                { id: 'machine15', x: 8, y: 86, src: imageURI('bench.png') },
+                { id: 'machine16', x: 30.5, y: 86, src: imageURI('decline-chest-press-panatta.png') },
+                { id: 'machine17', x: 53, y: 86, src: imageURI('shoulder-press-panatta.png') },
+                { id: 'machine18', x: 75.5, y: 86, src: imageURI('lateral-raise-standing.png') },
 
-                { id: 'machine19', x: 8, y: 72, src: bmachine },
-                { id: 'machine20', x: 30.5, y: 72, src: bmachine },
-                { id: 'machine21', x: 53, y: 72, src: bmachine },
-                { id: 'machine22', x: 75.5, y: 72, src: bmachine },
+                { id: 'machine19', x: 8, y: 72, src: imageURI('bench.png') },
+                { id: 'machine20', x: 30.5, y: 72, src: imageURI('vertical-chest-press-panatta.png') },
+                { id: 'machine21', x: 53, y: 72, src: imageURI('super-row.png') },
+                { id: 'machine22', x: 75.5, y: 72, src: imageURI('smith-machine.png') },
 
-                { id: 'machine23', x: 8, y: 58, src: bmachine },
-                { id: 'machine24', x: 30.5, y: 58, src: bmachine },
-                { id: 'machine25', x: 53, y: 58, src: bmachine },
-                { id: 'machine26', x: 75.5, y: 58, src: bmachine },
+                { id: 'machine23', x: 8, y: 58, src: imageURI('shoulder-bench-press.png') },
+                { id: 'machine24', x: 30.5, y: 58, src: imageURI('chest-press-gymleco.png') },
+                { id: 'machine25', x: 53, y: 58, src: imageURI('t-bar-row.png') },
+                { id: 'machine26', x: 75.5, y: 58, src: imageURI('cable-complex.png') },
 
-                { id: 'machine27', x: 8, y: 44, src: bmachine },
-                { id: 'machine28', x: 30.5, y: 44, src: bmachine },
-                { id: 'machine29', x: 53, y: 44, src: bmachine },
-                { id: 'machine30', x: 75.5, y: 44, src: bmachine },
+                { id: 'machine27', x: 8, y: 44, src: imageURI('preacher-curl.png') },
+                { id: 'machine28', x: 30.5, y: 44, src: imageURI('super-high-row.png') },
+                { id: 'machine29', x: 53, y: 44, src: imageURI('super-low-row.png') },
+                { id: 'machine30', x: 75.5, y: 44, src: imageURI('cable-complex.png') },
 
-                { id: 'machine31', x: 8, y: 30, src: bmachine },
-                { id: 'machine32', x: 30.5, y: 30, src: bmachine },
-                { id: 'machine33', x: 53, y: 30, src: bmachine },
-                { id: 'machine34', x: 75.5, y: 30, src: bmachine },
+                { id: 'machine31', x: 8, y: 30, src: imageURI('preacher-curl.png') },
+                { id: 'machine32', x: 30.5, y: 30, src: imageURI('super-lat-pulldown-panatta-convergent.png') },
+                { id: 'machine33', x: 53, y: 30, src: imageURI('circular-lat-pulldown.png') },
+                { id: 'machine34', x: 75.5, y: 30, src: imageURI('preacher-curl.png') },
               ]}
             />
           )}
