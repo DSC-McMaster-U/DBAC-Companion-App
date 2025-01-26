@@ -87,10 +87,12 @@ function EquipmentCard({
     <TouchableOpacity
       style={styles.equipmentCard}
       onPress={() => {
+        const equipmentName = `${equipmentType} #${equipmentID}`;
         router.push({
           pathname: "/(tabs)/(pulse)/equipmenttabularmenu",
           params: {
             image: `http://localhost:8383/assets/images/${equipmentPicture}`,
+            name: equipmentName, // Passing combined name
           },
         });
       }}

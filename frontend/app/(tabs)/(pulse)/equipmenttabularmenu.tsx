@@ -336,7 +336,11 @@ export default function EquipmentTabularMenuScreen() {
   let [isUserCurrentlyUsing, setIsUserCurrentlyUsing] = useState(false);
   let [setsLeft, setSetsLeft] = useState(3);
 
-  const { image } = useLocalSearchParams();
+  const { image, name } = useLocalSearchParams();
+
+  // Ensure the values are strings and not arrays
+  const imageUrl = Array.isArray(image) ? image[0] : image;
+  const equipmentName = Array.isArray(name) ? name[0] : name;
 
   let [usingUsers, setUsingUsers] = useState([
     {
@@ -360,7 +364,7 @@ export default function EquipmentTabularMenuScreen() {
     <Screen style={styles.screen}>
       <ScrollView>
         <View style={styles.contaier}>
-          <Text style={styles.machineNameTextStyle}>Power Rack #1</Text>
+          <Text style={styles.machineNameTextStyle}>{equipmentName}</Text>
 
           <View style={styles.machineImageContainer}>
             <Image source={{ uri: image }} style={styles.machineImageStyle} />
