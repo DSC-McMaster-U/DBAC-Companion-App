@@ -8,21 +8,24 @@ import {
   ScrollView,
   View,
   TextInput,
-  Text,
   Image
 } from 'react-native';
 
 import CircularProgressBar from '@/components/CircularProgressBar';
-import Svg, { Path, Text as SvgText, Rect, G } from 'react-native-svg';
+import Svg, { Path, Text as SvgText, ImageProps, Rect, G } from 'react-native-svg';
 import { ThemedText } from '@/components/ThemedText';
 import Screen from '@/components/Screen';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import IconText from '@/components/IconText';
 import { iconTextGreen, iconTextYellow } from '@/constants/Colors';
 import { useRouter } from 'expo-router';
+import EquipmentMapAvailability from '@/components/EquipmentMapAvailability';
+import { PanGestureHandler, GestureHandlerRootView, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
+
+import bmachine from '@/assets/images/bicepcurl-machine.png';
 
 // Define SectionType
-type SectionType = 'Zone 1' | 'Zone 2';
+type SectionType = 'Zone 1' | 'Zone 2' | 'Zone 3';
 
 function SearchBar(): JSX.Element {
   return (
@@ -88,12 +91,11 @@ function MapView(): JSX.Element {
     setSelectedSection(section);
   };
 
-  const handleBackPress = (): void => {
-    setSelectedSection(null);
-  };
+  const handleSelectedSectionViewGesture = (e: PanGestureHandlerGestureEvent) => {
+    const { translationX } = e.nativeEvent;
 
-  const handleZoneSwitch = (zone: SectionType): void => {
-    setSelectedSection(zone);
+    if(translationX > 10)
+      setSelectedSection(null);
   };
 
   return (
@@ -101,11 +103,15 @@ function MapView(): JSX.Element {
       {!selectedSection ? (
         <GymMap onSectionPress={handleSectionPress} />
       ) : (
-        <SelectedSectionView
-          selectedSection={selectedSection}
-          onBackPress={handleBackPress}
-          onZoneSwitch={handleZoneSwitch}
-        />
+        <GestureHandlerRootView style={{flex: 1}}>
+          <PanGestureHandler onGestureEvent={handleSelectedSectionViewGesture}>
+            <View style={{flex: 1}}>
+              <SelectedSectionView
+                selectedSection={selectedSection}
+              />
+            </View>
+          </PanGestureHandler>
+        </GestureHandlerRootView>
       )}
     </View>
   );
@@ -136,23 +142,36 @@ function GymMap({ onSectionPress }: GymMapProps): JSX.Element {
   `;
 
   const zone2Path = `
-    M5 5 
-    L85 5
-    L85 55
+    M5 55
     L78 55
     L90 70
     L78 85 
     L90 105
-    L75 105
-    L65 105
-    L35 105
     L5 105
+    Z
+  `;
+
+  const zone3Path = `
+    M5 5
+    L85 5
+    L85 55
+    L5 55
     Z
   `;
 
   return (
     <View style={{ position: 'relative', width: svgWidth, height: svgHeight }}>
       <Svg height={svgHeight} width={svgWidth} viewBox={viewBox}>
+        <ZoneSection
+          zone="Zone 3"
+          pathData={zone3Path}
+          occupancy="75"
+          equipmentImages={[
+            { x: '30', y: '30', width: '15', height: '15' },
+            { x: '55', y: '30', width: '15', height: '15' },
+          ]}
+          onPress={() => onSectionPress('Zone 3')}
+        />
         <ZoneSection
           zone="Zone 2"
           pathData={zone2Path}
@@ -196,7 +215,7 @@ function GymMap({ onSectionPress }: GymMapProps): JSX.Element {
 
       <View style={{ 
         position: 'absolute', 
-        top: 155, 
+        top: 230, 
         left: 115, 
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
@@ -207,6 +226,23 @@ function GymMap({ onSectionPress }: GymMapProps): JSX.Element {
           strokeWidth={7}
           label="Zone 2 Occupancy"
           progress={75} // Replace with dynamic value
+          style={{ width: 60, height: 60 }}
+        />
+      </View>
+
+      <View style={{ 
+        position: 'absolute', 
+        top: 70, 
+        left: 115, 
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
+        elevation: 10, }}>
+        <CircularProgressBar
+          strokeWidth={7}
+          label="Zone 3 Occupancy"
+          progress={40} // Replace with dynamic value
           style={{ width: 60, height: 60 }}
         />
       </View>
@@ -231,17 +267,17 @@ function ZoneSection({ zone, pathData, occupancy, onPress }: ZoneSectionProps): 
 
       {/* Zone label */}
       <Rect
-        x={zone === 'Zone 1' ? '15' : '15'}
-        y={zone === 'Zone 1' ? '115' : '30'}
+        x={'15'}
+        y={zone === 'Zone 1' ? '115' : zone === 'Zone 2' ? '70' : '20'}
         width="50"
-        height={zone === 'Zone 1' ? '40' : '50'}
+        height={zone === 'Zone 1' ? '40' : '30'}
         fill="#e6e6e6"
         stroke="black"
         strokeWidth="0.5"
       />
       <SvgText
-        x={zone === 'Zone 1' ? '40' : '40'}
-        y={zone === 'Zone 1' ? '130' : '45'}
+        x={'40'}
+        y={zone === 'Zone 1' ? '130' : zone === 'Zone 2' ? '97' : '45'}
         fontSize="8"
         fill="black"
         textAnchor="middle"
@@ -249,25 +285,8 @@ function ZoneSection({ zone, pathData, occupancy, onPress }: ZoneSectionProps): 
         {zone}
       </SvgText>
 
-      {/* Icons for Zone 1 and Zone 2 */}
+      {/* Icons for Zone 1, Zone 2, and Zone 3 */}
       {zone === 'Zone 1' && (
-        <>
-          <View style={{ position: 'absolute', top: 150, left: 75 }}>
-            <MaterialCommunityIcons name="dumbbell" size={25} color="black" />
-          </View>
-          <View style={{ position: 'absolute', top: 218, left: 75 }}>
-            <MaterialCommunityIcons name="weight-lifter" size={25} color="black" />
-          </View>
-          <View style={{ position: 'absolute', top: 218, left: 195 }}>
-            <MaterialCommunityIcons name="run" size={25} color="black" />
-          </View>
-          <View style={{ position: 'absolute', top: 150, left: 195 }}>
-            <MaterialCommunityIcons name="human-handsup" size={25} color="black" />
-          </View>
-          
-        </>
-      )}
-      {zone === 'Zone 2' && (
           <>
           <View style={{ position: 'absolute', top: 400, left: 75 }}>
             <MaterialCommunityIcons name="dumbbell" size={24} color="black" />
@@ -285,10 +304,46 @@ function ZoneSection({ zone, pathData, occupancy, onPress }: ZoneSectionProps): 
         </>
       )}
 
+      {zone === 'Zone 2' && (
+        <>
+          <View style={{ position: 'absolute', top: 215, left: 75 }}>
+            <MaterialCommunityIcons name="dumbbell" size={25} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 275, left: 75 }}>
+            <MaterialCommunityIcons name="weight-lifter" size={25} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 275, left: 195 }}>
+            <MaterialCommunityIcons name="run" size={25} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 215, left: 195 }}>
+            <MaterialCommunityIcons name="human-handsup" size={25} color="black" />
+          </View>
+          
+        </>
+      )}
+
+      {zone === 'Zone 3' && (
+          <>
+          <View style={{ position: 'absolute', top: 65, left: 75 }}>
+            <MaterialCommunityIcons name="dumbbell" size={24} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 125, left: 75 }}>
+            <MaterialCommunityIcons name="weight-lifter" size={24} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 65, left: 195 }}>
+            <MaterialCommunityIcons name="run" size={24} color="black" />
+          </View>
+          <View style={{ position: 'absolute', top: 125, left: 195 }}>
+            <MaterialCommunityIcons name="human-handsup" size={24} color="black" />
+          </View>
+          
+        </>
+      )}
+
       {/* Smaller Press Here Button - Top Left for Zone 2, Bottom Left for Zone 1 */}
       <Rect
-        x={zone === 'Zone 1' ? '7' : '7'}
-        y={zone === 'Zone 1' ? '168' : '7'}
+        x={'7'}
+        y={zone === 'Zone 1' ? '168' : zone === 'Zone 2' ? '57' : '7'}
         width="30"
         height="10"
         fill="#7a003c"
@@ -297,8 +352,8 @@ function ZoneSection({ zone, pathData, occupancy, onPress }: ZoneSectionProps): 
         onPress={onPress}
       />
       <SvgText
-        x={zone === 'Zone 1' ? '22' : '22'}
-        y={zone === 'Zone 1' ? '174' : '13'}
+        x={'22'}
+        y={zone === 'Zone 1' ? '174' : zone === 'Zone 2' ? '63' : '13'}
         fontSize="4"
         fill="white"
         fontWeight="bold"
@@ -316,76 +371,207 @@ function ZoneSection({ zone, pathData, occupancy, onPress }: ZoneSectionProps): 
 
 type SelectedSectionViewProps = {
   selectedSection: SectionType;
-  onBackPress: () => void;
-  onZoneSwitch: (zone: SectionType) => void;
 };
 
 function SelectedSectionView({
   selectedSection,
-  onBackPress,
-  onZoneSwitch,
 }: SelectedSectionViewProps): JSX.Element {
   const svgWidth = 350;
-  const svgHeight = 550;
+  const svgHeight = 590;
   const viewBox = '0 0 120 180';
 
   const zone1Path = `
-    M10 100 
-    L90 100 
-    L100 110 
-    L80 130 
-    L80 140
-    L90 140
-    L90 150
-    L75 150
-    L55 170
-    L50 175 
-    L10 175 
+    M 6 4 
+    L 108 4 
+    L 117 25 
+    L 105 36 
+    L 105 50 
+    L 116 50 
+    L 116 71 
+    L 105 71 
+    L 98 95 
+    L 99 187 
+    L 7 187 
     Z
   `;
 
   const zone2Path = `
-    M10 10 
-    L90 10
-    L90 60
-    L83 60
-    L95 75
-    L83 90 
-    L95 110
-    L80 110
-    L70 110
-    L40 110
-    L10 110
+    M 6 4 
+    L 100 4 
+    L 114 61 
+    L 89 89 
+    L 110 187 
+    L 7 187 
     Z
   `;
 
+  const zone3Path = `
+    M 7 19 
+    L 114 19 
+    L 114 170 
+    L 7 170 
+    Z
+  `;
+
+  const imageURI = (name: string) => {
+    return `http://localhost:8383/assets/images/${name}`;
+  };
+
   return (
     <View style={styles.selectedSectionContainer}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={onBackPress} style={styles.backButton}>
-          <Text style={styles.backButtonText}>Back</Text>
-        </TouchableOpacity>
-      </View>
       <View style={styles.svgContainer}>
         <Svg height={svgHeight} width={svgWidth} viewBox={viewBox}>
           {selectedSection === 'Zone 1' ? (
             <ZoneDetail
               zone="Zone 1"
               pathData={zone1Path}
-              occupancy="50"
               equipmentImages={[
-                { x: '20', y: '160', width: '15', height: '15' },
-                { x: '65', y: '160', width: '15', height: '15' },
+                { id: 'machine1', x: 8, y: 173, src: imageURI('oblique-machine.png') },
+                { id: 'machine2', x: 75.5, y: 173, src: imageURI('power-bench-machine.png') },
+
+                { id: 'machine3', x: 8, y: 159, src: imageURI('leg-curl.png') },
+
+                { id: 'machine5', x: 8, y: 145, src: imageURI('leg-extension.png') },
+                { id: 'machine6', x: 75.5, y: 145, src: imageURI('leg-extension.png') },
+
+                { id: 'machine7', x: 8, y: 131, src: imageURI('hip-abductor.png') },
+                { id: 'machine8', x: 75.5, y: 131, src: imageURI('leg-curl.png') },
+
+                { id: 'machine9', x: 8, y: 117, src: imageURI('pec-fly-machine.png') },
+                { id: 'machine10', x: 75.5, y: 117, src: imageURI('incline-curl-machine.png') },
+
+                { id: 'machine11', x: 8, y: 103, src: imageURI('seated-row.png') },
+                { id: 'machine12', x: 30.5, y: 103, src: imageURI('nordic.png') },
+                { id: 'machine14', x: 75.5, y: 103, src: imageURI('preacher-curl-machine.png') },
+
+                { id: 'machine15', x: 8, y: 89, src: imageURI('lat-pulldown.png') },
+                { id: 'machine16', x: 30.5, y: 89, src: imageURI('calf-raise.png') },
+                { id: 'machine18', x: 75.5, y: 89, src: imageURI('preacher-tricep-pushdown.png') },
+
+                { id: 'machine19', x: 8, y: 75, src: imageURI('incline-bicep-curl.png') },
+                { id: 'machine20', x: 30.5, y: 75, src: imageURI('hack-squat.png') },
+                { id: 'machine21', x: 53, y: 75, src: imageURI('belt-squat.png') },
+                { id: 'machine22', x: 75.5, y: 75, src: imageURI('tricep-pushdown.png') },
+
+                { id: 'machine23', x: 8, y: 61, src: imageURI('tricep-pushdown.png') },
+                { id: 'machine24', x: 30.5, y: 61, src: imageURI('leg-press-45.png') },
+                { id: 'machine25', x: 53, y: 61, src: imageURI('moving-leg-press.png') },
+                { id: 'machine26', x: 75.5, y: 61, src: imageURI('lateral-raise-machine.png') },
+
+                { id: 'machine27', x: 8, y: 47, src: imageURI('shoulder-press-machine.png') },
+                { id: 'machine28', x: 30.5, y: 47, src: imageURI('pendulum-squat-machine.png') },
+                { id: 'machine29', x: 53, y: 47, src: imageURI('vertical-squat.png') },
+                { id: 'machine30', x: 75.5, y: 47, src: imageURI('shoulder-press-machine.png') },
+
+                { id: 'machine31', x: 8, y: 33, src: imageURI('chest-press-gymleco.png') },
+                { id: 'machine34', x: 75.5, y: 33, src: imageURI('chest-press-gymleco.png') },
+
+                { id: 'machine36', x: 30.5, y: 19, src: imageURI('power-squat-machine.png') },
+                { id: 'machine37', x: 53, y: 19, src: imageURI('super-squat-machine.png') },
+                { id: 'machine38', x: 75.5, y: 19, src: imageURI('moving-leg-press.png') },
+
+                { id: 'machine40', x: 30.5, y: 5, src: imageURI('independent-leg-ex.png') },
+                { id: 'machine41', x: 53, y: 5, src: imageURI('independent-leg-curl.png') },
+                { id: 'machine42', x: 75.5, y: 5, src: imageURI('lying-leg-curl.png') },
+              ]}
+            />
+          ) : selectedSection === 'Zone 2' ? (
+            <ZoneDetail
+              zone="Zone 2"
+              pathData={zone2Path}
+              equipmentImages={[
+                { id: 'machine1', x: 8, y: 173, src: imageURI('bench.png') },
+
+                { id: 'machine2', x: 8, y: 159, src: imageURI('incline-bench.png') },
+
+                { id: 'machine3', x: 8, y: 145, src: imageURI('decline-bench.png') },
+
+                { id: 'machine4', x: 8, y: 131, src: imageURI('bench.png') },
+
+                { id: 'machine5', x: 8, y: 117, src: imageURI('ab-bench.png') },
+                { id: 'machine6', x: 30.5, y: 117, src: imageURI('assisted-dip.png') },
+                { id: 'machine7', x: 53, y: 117, src: imageURI('assisted-dip.png') },
+
+                { id: 'machine8', x: 8, y: 103, src: imageURI('bench.png') },
+                { id: 'machine9', x: 30.5, y: 103, src: imageURI('lat-pulldown.png') },
+                { id: 'machine10', x: 53, y: 103, src: imageURI('lat-pulldown.png') },
+
+                { id: 'machine11', x: 8, y: 89, src: imageURI('bench.png') },
+                { id: 'machine12', x: 30.5, y: 89, src: imageURI('cable-complex.png') },
+                { id: 'machine13', x: 53, y: 89, src: imageURI('cable-complex.png') },
+
+                { id: 'machine14', x: 8, y: 75, src: imageURI('bench.png') },
+                { id: 'machine15', x: 30.5, y: 75, src: imageURI('cable-complex.png') },
+                { id: 'machine16', x: 53, y: 75, src: imageURI('cable-complex.png') },
+
+                { id: 'machine17', x: 8, y: 61, src: imageURI('bench.png') },
+                { id: 'machine18', x: 30.5, y: 61, src: imageURI('lat-pulldown.png') },
+                { id: 'machine19', x: 53, y: 61, src: imageURI('lat-pulldown.png') },
+
+                { id: 'machine20', x: 8, y: 47, src: imageURI('bench.png') },
+                { id: 'machine21', x: 30.5, y: 47, src: imageURI('cable-complex.png') },
+                { id: 'machine22', x: 53, y: 47, src: imageURI('cable-complex.png') },
+
+                { id: 'machine23', x: 8, y: 33, src: bmachine },
+                { id: 'machine24', x: 30.5, y: 33, src: imageURI('cable-complex.png') },
+                { id: 'machine25', x: 53, y: 33, src: imageURI('cable-complex.png') },
+
+                { id: 'machine27', x: 30.5, y: 19, src: imageURI('lat-pulldown.png') },
+                { id: 'machine28', x: 53, y: 19, src: imageURI('lat-pulldown.png') },
+
+                { id: 'machine29', x: 8, y: 5, src: imageURI('bench.png') },
+                { id: 'machine30', x: 30.5, y: 5, src: imageURI('cable-complex.png') },
+                { id: 'machine31', x: 53, y: 5, src: imageURI('cable-complex.png') },
               ]}
             />
           ) : (
             <ZoneDetail
-              zone="Zone 2"
-              pathData={zone2Path}
-              occupancy="75"
+              zone="Zone 3"
+              pathData={zone3Path}
               equipmentImages={[
-                { x: '25', y: '60', width: '15', height: '15' },
-                { x: '50', y: '60', width: '15', height: '15' },
+                { id: 'machine1', x: 8, y: 156, src: imageURI('bench.png') },
+                { id: 'machine2', x: 30.5, y: 156, src: imageURI('cable-complex.png') },
+                { id: 'machine3', x: 53, y: 156, src: imageURI('cable-complex.png') },
+
+                { id: 'machine4', x: 8, y: 142, src: imageURI('incline-bench.png') },
+                { id: 'machine5', x: 30.5, y: 142, src: imageURI('lat-pulldown.png') },
+                { id: 'machine6', x: 53, y: 142, src: imageURI('lat-pulldown.png') },
+
+                { id: 'machine7', x: 8, y: 128, src: imageURI('bench.png') },
+                { id: 'machine8', x: 30.5, y: 128, src: imageURI('pec-fly.png') },
+                { id: 'machine9', x: 53, y: 128, src: imageURI('pec-fly.png') },
+
+                { id: 'machine10', x: 8, y: 114, src: imageURI('decline-bench.png') },
+
+                { id: 'machine11', x: 8, y: 100, src: imageURI('bench.png') },
+                { id: 'machine12', x: 30.5, y: 100, src: imageURI('incline-chest-press-panatta.png') },
+                { id: 'machine13', x: 53, y: 100, src: imageURI('calves-machine.png') },
+                { id: 'machine14', x: 75.5, y: 100, src: imageURI('rear-delt-machine.png') },
+
+                { id: 'machine15', x: 8, y: 86, src: imageURI('bench.png') },
+                { id: 'machine16', x: 30.5, y: 86, src: imageURI('decline-chest-press-panatta.png') },
+                { id: 'machine17', x: 53, y: 86, src: imageURI('shoulder-press-panatta.png') },
+                { id: 'machine18', x: 75.5, y: 86, src: imageURI('lateral-raise-standing.png') },
+
+                { id: 'machine19', x: 8, y: 72, src: imageURI('bench.png') },
+                { id: 'machine20', x: 30.5, y: 72, src: imageURI('vertical-chest-press-panatta.png') },
+                { id: 'machine21', x: 53, y: 72, src: imageURI('super-row.png') },
+                { id: 'machine22', x: 75.5, y: 72, src: imageURI('smith-machine.png') },
+
+                { id: 'machine23', x: 8, y: 58, src: imageURI('shoulder-bench-press.png') },
+                { id: 'machine24', x: 30.5, y: 58, src: imageURI('chest-press-gymleco.png') },
+                { id: 'machine25', x: 53, y: 58, src: imageURI('t-bar-row.png') },
+                { id: 'machine26', x: 75.5, y: 58, src: imageURI('cable-complex.png') },
+
+                { id: 'machine27', x: 8, y: 44, src: imageURI('preacher-curl.png') },
+                { id: 'machine28', x: 30.5, y: 44, src: imageURI('super-high-row.png') },
+                { id: 'machine29', x: 53, y: 44, src: imageURI('super-low-row.png') },
+                { id: 'machine30', x: 75.5, y: 44, src: imageURI('cable-complex.png') },
+
+                { id: 'machine31', x: 8, y: 30, src: imageURI('preacher-curl.png') },
+                { id: 'machine32', x: 30.5, y: 30, src: imageURI('super-lat-pulldown-panatta-convergent.png') },
+                { id: 'machine33', x: 53, y: 30, src: imageURI('circular-lat-pulldown.png') },
+                { id: 'machine34', x: 75.5, y: 30, src: imageURI('preacher-curl.png') },
               ]}
             />
           )}
@@ -398,106 +584,36 @@ function SelectedSectionView({
 type ZoneDetailProps = {
   zone: SectionType;
   pathData: string;
-  occupancy: string;
-  equipmentImages: { x: string; y: string; width: string; height: string }[];
+  equipmentImages: { id: string, x: number, y: number, src: ImageProps['href'] | string, capacity?: number }[];
 };
-function ZoneDetail({ zone, pathData, occupancy, equipmentImages }: ZoneDetailProps): JSX.Element {
+function ZoneDetail({ zone, pathData, equipmentImages }: ZoneDetailProps): JSX.Element {
   return (
     <G>
-      {/* Draw the zone path */}
-      <Path d={pathData} fill="white" stroke="black" strokeWidth="0.5" />
-      <Rect
-        x={zone === 'Zone 1' ? '15' : '20'}
-        y={zone === 'Zone 1' ? '115' : '30'}
-        width="50"
-        height={zone === 'Zone 1' ? '40' : '50'}
-        fill="#e6e6e6"
-        stroke="black"
-        strokeWidth="0.5"
-      />
       <SvgText
-        x={zone === 'Zone 1' ? '40' : '45'}
-        y={zone === 'Zone 1' ? '130' : '45'}
-        fontSize="10"
+        x={'56.25'}
+        y={'-1'}
+        fontSize="14"
         fill="black"
+        fontWeight="bold"
         textAnchor="middle"
       >
-        {zone}
+        { zone }
       </SvgText>
 
-      {/* CircularProgressBar for Zone 1 and Zone 2 */}
-      {zone === 'Zone 1' ? (
-        <View style={{ 
-          position: 'absolute', 
-          top: 400, 
-          left: 90, 
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 6,
-          elevation: 10,
-         }}>
-          <CircularProgressBar
-            strokeWidth={7}
-            label="Zone 1 Occupancy"
-            progress={parseInt(occupancy)}
-            style={{ width: 60, height: 60 }}
-          />
-        </View>
-      ) : (
-        <View style={{ 
-          position: 'absolute', 
-          top: 160, 
-          left: 103,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 6,
-          elevation: 10,
-         }}>
-          <CircularProgressBar
-            strokeWidth={7}
-            label="Zone 2 Occupancy"
-            progress={parseInt(occupancy)}
-            style={{ width: 60, height: 60 }}
-          />
-        </View>
-      )}
+      {/* Draw the zone path */}
+      <Path d={pathData} fill="white" stroke="black" strokeWidth="0.5" />
 
-      {zone === 'Zone 1' && (
-        <>
-        <View style={{ position: 'absolute', top: 395, left: 50 }}>
-          <MaterialCommunityIcons name="dumbbell" size={24} color="black" />
-        </View>
-        <View style={{ position: 'absolute', top: 435, left: 50 }}>
-          <MaterialCommunityIcons name="weight-lifter" size={24} color="black" />
-        </View>
-        <View style={{ position: 'absolute', top: 395, left: 165 }}>
-          <MaterialCommunityIcons name="run" size={24} color="black" />
-        </View>
-        <View style={{ position: 'absolute', top: 435, left: 165 }}>
-          <MaterialCommunityIcons name="human-handsup" size={24} color="black" />
-        </View>
-        
-      </>
-
-      )}
-      {zone === 'Zone 2' && (
-        <>
-        <View style={{ position: 'absolute', top: 150, left: 65 }}>
-          <MaterialCommunityIcons name="dumbbell" size={25} color="black" />
-        </View>
-        <View style={{ position: 'absolute', top: 218, left: 65 }}>
-          <MaterialCommunityIcons name="weight-lifter" size={25} color="black" />
-        </View>
-        <View style={{ position: 'absolute', top: 218, left: 178 }}>
-          <MaterialCommunityIcons name="run" size={25} color="black" />
-        </View>
-        <View style={{ position: 'absolute', top: 150, left: 178 }}>
-          <MaterialCommunityIcons name="human-handsup" size={25} color="black" />
-        </View>
-      </>
-      )}
+      {
+        equipmentImages.map(equipment => (
+          <EquipmentMapAvailability
+            key={equipment.id}
+            x={equipment.x}
+            y={equipment.y}
+            equipmentImage={equipment.src}
+            availabilityColor="green"
+          />
+        ))
+      }
     </G>
   );
 }
@@ -651,13 +767,6 @@ const styles = StyleSheet.create({
   mapContainer: { flex: 1, backgroundColor: '#f5f5f5', alignItems: 'center', justifyContent: 'center' },
   selectedSectionContainer: { flex: 1, backgroundColor: '#f5f5f5', alignItems: 'center', justifyContent: 'center' },
   svgContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  header: { 
-    width: '100%', 
-    alignItems: 'center', 
-    justifyContent: 'center',  
-    paddingTop: 20,
-    paddingBottom: 10,
-  },
   navigationButtons: { flexDirection: 'row' },
   zoneButton: { marginHorizontal: 10, padding: 10, backgroundColor: '#ccc', borderRadius: 5 },
   activeZoneButton: { backgroundColor: '#aaa' },
