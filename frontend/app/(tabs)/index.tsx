@@ -141,7 +141,7 @@ interface FacilityRequest {
   facility: string;
 }
 
-const fetchPulseData = async (): Promise<PulseData> => {
+const fetchCapacity = async (facility: string, capacityType: string): Promise<PulseData> => {
   const networkState = await NetInfo.fetch();
 
   if (!networkState.isConnected) {
@@ -151,9 +151,9 @@ const fetchPulseData = async (): Promise<PulseData> => {
   try {
     // Use GET with query parameters instead of POST with body
     const response = await axios.get<PulseData>(
-      `${BASE_URL}/facility/user_capacity`, {
+      `${BASE_URL}/facility/${capacityType}`, {
       params: {
-        facility: 'pulse'
+        facility: facility
       },
       headers: {
         'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ const fetchPulseData = async (): Promise<PulseData> => {
   }
 };
 
-const fetchMachineData = async (): Promise<MachineData> => {
+const fetchMachineCapacity = async (): Promise<MachineData> => {
   const networkState = await NetInfo.fetch();
 
   if (!networkState.isConnected) {
@@ -207,192 +207,11 @@ const fetchMachineData = async (): Promise<MachineData> => {
       if (error.response?.data?.error) {
         throw new Error(error.response.data.error);
       }
-      throw new Error('Failed to machine facility data');
-    }
-    throw error;
-  }
-};
-
-//const fetchBadmintonData = async (): Promise<PulseData> => {
-//  const networkState = await NetInfo.fetch();
-//
-//  if (!networkState.isConnected) {
-//    throw new Error('No internet connection');
-//  }
-//
-//  try {
-//    // Use GET with query parameters instead of POST with body
-//    const response = await axios.get<PulseData>(
-//      `${BASE_URL}/facility/user_capacity`, {
-//      params: {
-//        facility: 'pulse'
-//      },
-//      headers: {
-//        'Content-Type': 'application/json',
-//      },
-//      timeout: 5000,
-//    }
-//    );
-//
-//    return response.data;
-//  } catch (error) {
-//    if (axios.isAxiosError(error)) {
-//      if (error.code === 'ECONNABORTED') {
-//        throw new Error('Request timed out');
-//      }
-//      if (error.response?.data?.error) {
-//        throw new Error(error.response.data.error);
-//      }
-//      throw new Error('Failed to fetch facility data');
-//    }
-//    throw error;
-//  }
-//};
-
-const fetchTabletennisData = async (): Promise<PulseData> => {
-  const networkState = await NetInfo.fetch();
-
-  if (!networkState.isConnected) {
-    throw new Error('No internet connection');
-  }
-
-  try {
-    // Use GET with query parameters instead of POST with body
-    const response = await axios.get<PulseData>(
-      `${BASE_URL}/facility/user_capacity`, {
-      params: {
-        facility: 'tabletennis'
-      },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      timeout: 5000,
-    }
-    );
-
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.code === 'ECONNABORTED') {
-        throw new Error('Request timed out');
-      }
-      if (error.response?.data?.error) {
-        throw new Error(error.response.data.error);
-      }
       throw new Error('Failed to fetch facility data');
     }
     throw error;
   }
 };
-
-const fetchBasketballData = async (): Promise<PulseData> => {
-  const networkState = await NetInfo.fetch();
-
-  if (!networkState.isConnected) {
-    throw new Error('No internet connection');
-  }
-
-  try {
-    // Use GET with query parameters instead of POST with body
-    const response = await axios.get<PulseData>(
-      `${BASE_URL}/facility/user_capacity`, {
-      params: {
-        facility: 'basketball'
-      },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      timeout: 5000,
-    }
-    );
-
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.code === 'ECONNABORTED') {
-        throw new Error('Request timed out');
-      }
-      if (error.response?.data?.error) {
-        throw new Error(error.response.data.error);
-      }
-      throw new Error('Failed to fetch facility data');
-    }
-    throw error;
-  }
-};
-
-const fetchVolleyballData = async (): Promise<PulseData> => {
-  const networkState = await NetInfo.fetch();
-
-  if (!networkState.isConnected) {
-    throw new Error('No internet connection');
-  }
-
-  try {
-    // Use GET with query parameters instead of POST with body
-    const response = await axios.get<PulseData>(
-      `${BASE_URL}/facility/user_capacity`, {
-      params: {
-        facility: 'volleyball'
-      },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      timeout: 5000,
-    }
-    );
-
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.code === 'ECONNABORTED') {
-        throw new Error('Request timed out');
-      }
-      if (error.response?.data?.error) {
-        throw new Error(error.response.data.error);
-      }
-      throw new Error('Failed to fetch facility data');
-    }
-    throw error;
-  }
-};
-
-const fetchSoccerData = async (): Promise<PulseData> => {
-  const networkState = await NetInfo.fetch();
-
-  if (!networkState.isConnected) {
-    throw new Error('No internet connection');
-  }
-
-  try {
-    // Use GET with query parameters instead of POST with body
-    const response = await axios.get<PulseData>(
-      `${BASE_URL}/facility/user_capacity`, {
-      params: {
-        facility: 'soccer'
-      },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      timeout: 5000,
-    }
-    );
-
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.code === 'ECONNABORTED') {
-        throw new Error('Request timed out');
-      }
-      if (error.response?.data?.error) {
-        throw new Error(error.response.data.error);
-      }
-      throw new Error('Failed to fetch facility data');
-    }
-    throw error;
-  }
-};
-
 
 // Calculate percentage from occupancy data
 const calculatePulsePercentage = (current: number, max: number): number => {
@@ -462,7 +281,7 @@ export default function HomeScreen() {
     const loadPulseData = async () => {
       setIsLoading(true);
       try {
-        const pulse_data = await fetchPulseData();
+        const pulse_data = await fetchCapacity('pulse','user_capacity');
         setPulseData(pulse_data);
         const pulse_percentage = calculatePulsePercentage(
           pulse_data.num_active_users,
@@ -470,7 +289,7 @@ export default function HomeScreen() {
         );
         setPulseVal(pulse_percentage);
 
-        const basketball_data = await fetchBasketballData();
+        const basketball_data = await fetchCapacity('basketball','user_capacity');
         setPulseData(basketball_data);
         const basketball_percentage = calculatePulsePercentage(
           basketball_data.num_active_users,
@@ -478,7 +297,7 @@ export default function HomeScreen() {
         );
         setDropInsBasketballVal(basketball_percentage);
 
-        const volleyball_data = await fetchVolleyballData();
+        const volleyball_data = await fetchCapacity('volleyball', 'user_capacity');
         setPulseData(volleyball_data);
         const volleyball_percentage = calculatePulsePercentage(
           volleyball_data.num_active_users,
@@ -486,7 +305,7 @@ export default function HomeScreen() {
         );
         setDropInsVolleyBallVal(volleyball_percentage);
 
-        const tabletennis_data = await fetchTabletennisData();
+        const tabletennis_data = await fetchCapacity('tabletennis', 'user_capacity');
         setPulseData(tabletennis_data);
         const tabletennis_percentage = calculatePulsePercentage(
           tabletennis_data.num_active_users,
@@ -494,7 +313,7 @@ export default function HomeScreen() {
         );
         setDropInsTableTennisVal(tabletennis_percentage);
 
-        const soccer_data = await fetchSoccerData();
+        const soccer_data = await fetchCapacity('soccer', 'user_capacity');
         setPulseData(soccer_data);
         const soccer_percentage = calculatePulsePercentage(
           soccer_data.num_active_users,
@@ -503,7 +322,7 @@ export default function HomeScreen() {
         setDropInsSoccerVal(soccer_percentage);
 
         //TODO change variable names to accurately reflect backend variable names when they are changed (example: bench_press will be power_rack in final)
-        const machine_data = await fetchMachineData();
+        const machine_data = await fetchMachineCapacity();
         setMachineData(machine_data);
         const cardio_percentage = calculatePulsePercentage(
           machine_data.occupied_cardio_count.stairmaster + machine_data.occupied_cardio_count.treadmill,
