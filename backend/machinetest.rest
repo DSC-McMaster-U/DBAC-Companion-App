@@ -19,7 +19,7 @@ Content-Type: application/json
 
 {
     "machineid": "1",
-    "sets_left": 5
+    "sets_left": 2
 }
 
 ### UPDATE QUEUE
@@ -29,4 +29,14 @@ Content-Type: application/json
 {
     "machineid": "1",
     "queue": [ "400527630", "400213254" ]
+}
+
+### POPULATE GYM
+POST http://localhost:8383/machines
+Content-Type: application/json
+
+{
+    "machineid": "4",
+    "availability": "Occupied"
+    
 }

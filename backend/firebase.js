@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, collection, setDoc, doc } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -18,4 +18,16 @@ const app = initializeApp(firebaseConfig);
 // Initialize Cloud Firestore and get a reference to the service
 const db = getFirestore(app);
 
-export {db}
+// Function to add a document with a custom ID
+const addDocumentWithId = async (collectionName, docId, documentData) => {
+  try {
+    await setDoc(doc(db, collectionName, docId), documentData);
+    console.log("Document written with ID: ", docId);
+    return docId; // Return the custom document ID
+  } catch (error) {
+    console.error("Error adding document: ", error);
+    throw error; // Re-throw the error for further handling
+  }
+};
+
+export { db, addDocumentWithId };
