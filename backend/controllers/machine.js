@@ -10,9 +10,16 @@ import {
 import { collection, getDocs } from "firebase/firestore";
 
 export const getMachines = async (req, res) => {
-  const machinesSnap = await getDocs(collection(db, "machines"));
-
-  res.status(200).send(machinesSnap.docs.map((doc) => doc.data()));
+  try {
+    const machinesSnap = await getDocs(collection(db, "machines"));
+    const machines = machinesSnap.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    res.status(200).send(machines);
+  } catch (error) {
+    res.status(500).send({ error: "Failed to fetch machines" });
+  }
 };
 
 export const getMachineInfo = async (req, res) => {
@@ -60,7 +67,7 @@ export const updateMachineUser = async (req, res) => {
     await updateMachineData(
       machine_ref,
       new_availability,
-      5,
+      3,
       updatedFacility.new_queue,
       userid
     );

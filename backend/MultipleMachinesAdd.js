@@ -19,7 +19,7 @@ const addNewUser = async (customDocId) => {
 };
 
 const addMultipleUsers = async () => {
-    for (let customDocId = 26; customDocId <= 29; customDocId++) {
+    for (let customDocId = 41; customDocId <= 43; customDocId++) {
         await addNewUser(customDocId);
     }
 };

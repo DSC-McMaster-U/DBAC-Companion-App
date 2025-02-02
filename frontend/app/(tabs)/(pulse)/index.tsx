@@ -10,7 +10,6 @@ import {
   TextInput,
   Image,
 } from "react-native";
-
 import CircularProgressBar from "@/components/CircularProgressBar";
 import Svg, {
   Path,
@@ -33,6 +32,39 @@ import {
 } from "react-native-gesture-handler";
 
 import bmachine from "@/assets/images/bicepcurl-machine.png";
+import axios from 'axios';
+
+// Update the axios baseURL and service methods
+const api = axios.create({
+  baseURL: 'http://localhost:8383',
+});
+
+export const EquipmentService = {
+  async getAllEquipment() {
+    const response = await api.get('/machines');
+    return response.data;
+  },
+
+  async getEquipmentById(id: string) {
+    const response = await api.get(`/machines/${id}`);
+    return response.data;
+  },
+
+  async updateMachineUser(machineid: string, userid: string, workin: boolean) {
+    const response = await api.patch('/machines/users', { machineid, userid, workin });
+    return response.data;
+  },
+
+  async updateSetsLeft(machineid: string, setsLeft: number) {
+    const response = await api.patch('/machines/setsleft', { machineid, sets_left: setsLeft });
+    return response.data;
+  },
+
+  async updateWorkIn(machineid: string, workin: boolean) {
+    const response = await api.patch('/machines/workin', { machineid, workin });
+    return response.data;
+  }
+};
 
 // Define SectionType
 type SectionType = "Zone 1" | "Zone 2" | "Zone 3";
@@ -75,7 +107,7 @@ type EquipmentCardProps = ViewProps & {
 
 function EquipmentCard({
   equipmentType,
-  equipmentID,
+  equipmentID,  // This is now the string document ID ("1", "2", etc)
   available,
   equipmentPicture,
   setsLeft,
@@ -87,12 +119,12 @@ function EquipmentCard({
     <TouchableOpacity
       style={styles.equipmentCard}
       onPress={() => {
-        const equipmentName = `${equipmentType} #${equipmentID}`;
         router.push({
           pathname: "/(tabs)/(pulse)/equipmenttabularmenu",
           params: {
+            machineId: equipmentID,  // Already a string, no need for toString()
             image: `http://localhost:8383/assets/images/${equipmentPicture}`,
-            name: equipmentName, // Passing combined name
+            name: `${equipmentType} #${equipmentID}`,
           },
         });
       }}
@@ -136,7 +168,7 @@ function EquipmentCard({
           </>
         )}
       </View>
-    </TouchableOpacity>
+    </TouchableOpacity >
   );
 }
 
@@ -1125,7 +1157,30 @@ function ZoneDetail({
 
 export default function PulseScreen(): JSX.Element {
   const [isMapView, setIsMapView] = useState(false);
+  const [machines, setMachines] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  // Add this useEffect to fetch machines
+  useEffect(() => {
+    const fetchMachines = async () => {
+      try {
+        const response = await api.get('/machines');
+        const pulseMachines = response.data.filter((machine: any) =>
+          machine.facility === 'pulse'
+        );
+        setMachines(pulseMachines);
+      } catch (err) {
+        setError(err.message || 'Failed to fetch machines');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMachines();
+  }, []);
+
+  // Update your render section
   return (
     <Screen style={styles.screen}>
       <View style={{ paddingHorizontal: 10 }}>
@@ -1141,543 +1196,33 @@ export default function PulseScreen(): JSX.Element {
         )}
       </View>
 
-      {isMapView ? (
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ThemedText>Loading equipment...</ThemedText>
+        </View>
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <ThemedText style={{ color: 'red' }}>{error}</ThemedText>
+        </View>
+      ) : isMapView ? (
         <MapView />
       ) : (
         <ScrollView
           style={{ width: "100%", marginTop: 20, paddingHorizontal: 10 }}
         >
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="powerrack-1.png"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={2}
-            available={false}
-            equipmentPicture="powerrack-1.png"
-            setsLeft={3}
-            usedBy="Jack"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={3}
-            available={true}
-            equipmentPicture="powerrack-1.png"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={4}
-            available={true}
-            equipmentPicture="powerrack-1.png"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={5}
-            available={true}
-            equipmentPicture="powerrack-1.png"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={6}
-            available={false}
-            equipmentPicture="powerrack-1.png"
-            setsLeft={3}
-            usedBy="Jack"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={7}
-            available={true}
-            equipmentPicture="powerrack-1.png"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={8}
-            available={true}
-            equipmentPicture="powerrack-1.png"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={9}
-            available={true}
-            equipmentPicture="powerrack-1.png"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={10}
-            available={false}
-            equipmentPicture="powerrack-1.png"
-            setsLeft={3}
-            usedBy="Jack"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={11}
-            available={true}
-            equipmentPicture="powerrack-1.png"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={12}
-            available={true}
-            equipmentPicture="powerrack-1.png"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={13}
-            available={false}
-            equipmentPicture="powerrack-1.png"
-            setsLeft={3}
-            usedBy="Jack"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={14}
-            available={true}
-            equipmentPicture="powerrack-1.png"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={15}
-            available={true}
-            equipmentPicture="powerrack-1.png"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={16}
-            available={true}
-            equipmentPicture="powerrack-1.png"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={17}
-            available={false}
-            equipmentPicture="powerrack-1.png"
-            setsLeft={3}
-            usedBy="Jack"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={18}
-            available={true}
-            equipmentPicture="powerrack-1.png"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={19}
-            available={true}
-            equipmentPicture="powerrack-1.png"
-          />
-          <EquipmentCard
-            equipmentType="Power Rack"
-            equipmentID={20}
-            available={true}
-            equipmentPicture="powerrack-1.png"
-          />
-          <EquipmentCard
-            equipmentType="Preacher Curl"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="preacher-curl.png"
-          />
-          <EquipmentCard
-            equipmentType="Preacher Curl"
-            equipmentID={2}
-            available={true}
-            equipmentPicture="preacher-curl.png"
-          />
-          <EquipmentCard
-            equipmentType="Super Lat Pulldown"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="super-lat-pulldown-panatta-convergent.png"
-          />
-          <EquipmentCard
-            equipmentType="Super High Row"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="super-high-row.png"
-          />
-          <EquipmentCard
-            equipmentType="Chest Press"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="chest-press-gymleco.png"
-          />
-          <EquipmentCard
-            equipmentType="Chest Press"
-            equipmentID={2}
-            available={true}
-            equipmentPicture="chest-press-gymleco.png"
-          />
-          <EquipmentCard
-            equipmentType="Chest Press"
-            equipmentID={3}
-            available={true}
-            equipmentPicture="chest-press-gymleco.png"
-          />
-          <EquipmentCard
-            equipmentType="Vertical Chest Press"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="vertical-chest-press-panatta.png"
-          />
-          <EquipmentCard
-            equipmentType="Decline Chest Press"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="decline-chest-press-panatta.png"
-          />
-          <EquipmentCard
-            equipmentType="Incline Chest Press"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="incline-chest-press-panatta.png"
-          />
-          <EquipmentCard
-            equipmentType="Circular Lat Pulldown"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="circular-lat-pulldown.png"
-          />
-          <EquipmentCard
-            equipmentType="Super Low Row"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="super-low-row.png"
-          />
-          <EquipmentCard
-            equipmentType="T Bar Row"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="t-bar-row.png"
-          />
-          <EquipmentCard
-            equipmentType="Super Row Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="super-row.png"
-          />
-          <EquipmentCard
-            equipmentType="Shoulder Press (Panatta)"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="shoulder-press-panatta.png"
-          />
-          <EquipmentCard
-            equipmentType="Shoulder Press (Panatta)"
-            equipmentID={2}
-            available={true}
-            equipmentPicture="shoulder-press-panatta.png"
-          />
-          <EquipmentCard
-            equipmentType="Shoulder Press Machine"
-            equipmentID={3}
-            available={true}
-            equipmentPicture="shoulder-press-machine.png"
-          />
-          <EquipmentCard
-            equipmentType="Calves Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="calves-machine.png"
-          />
-          <EquipmentCard
-            equipmentType="Hammer Curl"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="hammer-curl.png"
-          />
-          <EquipmentCard
-            equipmentType="Pec Fly Cables"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="pec-fly.png"
-          />
-          <EquipmentCard
-            equipmentType="Pec Fly Cables"
-            equipmentID={2}
-            available={true}
-            equipmentPicture="pec-fly.png"
-          />
-          <EquipmentCard
-            equipmentType="Pec Fly Cables"
-            equipmentID={3}
-            available={true}
-            equipmentPicture="pec-fly.png"
-          />
-          <EquipmentCard
-            equipmentType="Pec Fly Cables"
-            equipmentID={4}
-            available={true}
-            equipmentPicture="pec-fly.png"
-          />
-          <EquipmentCard
-            equipmentType="Cable Complex"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="cable-complex.png"
-          />
-          <EquipmentCard
-            equipmentType="Cable Complex"
-            equipmentID={2}
-            available={true}
-            equipmentPicture="cable-complex.png"
-          />
-          <EquipmentCard
-            equipmentType="Cable Complex"
-            equipmentID={3}
-            available={true}
-            equipmentPicture="cable-complex.png"
-          />
-          <EquipmentCard
-            equipmentType="Cable Complex"
-            equipmentID={4}
-            available={true}
-            equipmentPicture="cable-complex.png"
-          />
-          <EquipmentCard
-            equipmentType="Cable Complex"
-            equipmentID={5}
-            available={true}
-            equipmentPicture="cable-complex.png"
-          />
-          <EquipmentCard
-            equipmentType="Cable Complex"
-            equipmentID={6}
-            available={true}
-            equipmentPicture="cable-complex.png"
-          />
-          <EquipmentCard
-            equipmentType="Smith Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="smith-machine.png"
-          />
-          <EquipmentCard
-            equipmentType="Lateral Standing Raise"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="lateral-raise-standing.png"
-          />
-          <EquipmentCard
-            equipmentType="Rear Delt Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="rear-delt-machine.png"
-          />
-          <EquipmentCard
-            equipmentType="Assisted Dip"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="assisted-dip.png"
-          />
-          <EquipmentCard
-            equipmentType="Tricep Pushdown"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="tricep-pushdown.png"
-          />
-          <EquipmentCard
-            equipmentType="Tricep Pushdown"
-            equipmentID={2}
-            available={true}
-            equipmentPicture="tricep-pushdown.png"
-          />
-          <EquipmentCard
-            equipmentType="Incline Bicep Curl"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="incline-bicep-curl.png"
-          />
-          <EquipmentCard
-            equipmentType="Lat Pulldown"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="lat-pulldown.png"
-          />
-          <EquipmentCard
-            equipmentType="Row Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="seated-row.png"
-          />
-          <EquipmentCard
-            equipmentType="Pec Fly Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="pec-fly-machine.png"
-          />
-          <EquipmentCard
-            equipmentType="Hip Abductor Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="hip-abductor.png"
-          />
-          <EquipmentCard
-            equipmentType="Leg Extension Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="leg-extension.png"
-          />
-          <EquipmentCard
-            equipmentType="Leg Extension Machine"
-            equipmentID={2}
-            available={true}
-            equipmentPicture="leg-extension.png"
-          />
-          <EquipmentCard
-            equipmentType="Leg Curl Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="leg-curl.png"
-          />
-          <EquipmentCard
-            equipmentType="Leg Curl Machine"
-            equipmentID={2}
-            available={true}
-            equipmentPicture="leg-curl.png"
-          />
-          <EquipmentCard
-            equipmentType="Oblique Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="oblique-machine.png"
-          />
-          <EquipmentCard
-            equipmentType="Independent Leg Extension"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="independent-leg-ex.png"
-          />
-          <EquipmentCard
-            equipmentType="Power Squat Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="power-squat-machine.png"
-          />
-          <EquipmentCard
-            equipmentType="Pendulum Squat Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="pendulum-squat-machine.png"
-          />
-          <EquipmentCard
-            equipmentType="Leg Press Machine (45 degrees)"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="leg-press-45.png"
-          />
-          <EquipmentCard
-            equipmentType="Hack Squat Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="hack-squat.png"
-          />
-          <EquipmentCard
-            equipmentType="Calf Raise Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="calf-raise.png"
-          />
-          <EquipmentCard
-            equipmentType="Nordic Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="nordic.png"
-          />
-          <EquipmentCard
-            equipmentType="Independent Leg Curl"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="independent-leg-curl.png"
-          />
-          <EquipmentCard
-            equipmentType="Super Squat Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="super-squat-machine.png"
-          />
-          <EquipmentCard
-            equipmentType="Vertical Squat Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="vertical-squat.png"
-          />
-          <EquipmentCard
-            equipmentType="Leg Press Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="leg-press.png"
-          />
-          <EquipmentCard
-            equipmentType="Belt Squat Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="belt-squat.png"
-          />
-          <EquipmentCard
-            equipmentType="Lying Leg Curl Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="lying-leg-curl.png"
-          />
-          <EquipmentCard
-            equipmentType="Leg Press Machine (Moving Seat)"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="moving-leg-press.png"
-          />
-          <EquipmentCard
-            equipmentType="Lateral Raise Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="lateral-raise-machine.png"
-          />
-          <EquipmentCard
-            equipmentType="Preacher Tricep Pushdown Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="preacher-tricep-pushdown.png"
-          />
-          <EquipmentCard
-            equipmentType="Preacher Curl Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="preacher-curl-machine.png"
-          />
-          <EquipmentCard
-            equipmentType="Incline Curl Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="incline-curl-machine.png"
-          />
-          <EquipmentCard
-            equipmentType="Power Bench Machine"
-            equipmentID={1}
-            available={true}
-            equipmentPicture="power-bench-machine.png"
-          />
-          {/* <EquipmentCard equipmentType="Squat Machine" equipmentID={1} available={true} equipmentPicture='vsquat-machine.png' />
-          <EquipmentCard equipmentType="Squat Machine" equipmentID={2} available={true} equipmentPicture='vsquat-machine.png' />
-          <EquipmentCard equipmentType="Bicep Curl Machine" equipmentID={1} available={true} equipmentPicture='bicepcurl-machine.png' />
-          <EquipmentCard equipmentType="Bicep Curl Machine" equipmentID={2} available={true} equipmentPicture='bicepcurl-machine.png' />
-          <EquipmentCard equipmentType="Chest Press Machine" equipmentID={1} available={true} equipmentPicture='bicepcurl-machine.png' />
-          <EquipmentCard equipmentType="Tricep Pres Machine" equipmentID={1} available={true} equipmentPicture='bicepcurl-machine.png' />
-          <EquipmentCard equipmentType="Hip Abductor Machine" equipmentID={1} available={true} equipmentPicture='bicepcurl-machine.png' />
-          <EquipmentCard equipmentType="Hamstring Curl Machine" equipmentID={1} available={true} equipmentPicture='bicepcurl-machine.png' />
-          <EquipmentCard equipmentType="Leg Extension Machine" equipmentID={1} available={true} equipmentPicture='bicepcurl-machine.png' />
-          <EquipmentCard equipmentType="Leg Extension Machine" equipmentID={2} available={true} equipmentPicture='bicepcurl-machine.png' />
-          <EquipmentCard equipmentType="Leg Extension Machine" equipmentID={3} available={true} equipmentPicture='bicepcurl-machine.png' />
-          <EquipmentCard equipmentType="Lying Hamstring Curl" equipmentID={1} available={true} equipmentPicture='bicepcurl-machine.png' />
-          <EquipmentCard equipmentType="Chest Fly Machine" equipmentID={1} available={true} equipmentPicture='bicepcurl-machine.png' />
-          <EquipmentCard equipmentType="Lateral Raise Machine" equipmentID={1} available={true} equipmentPicture='bicepcurl-machine.png' /> */}
+          {machines.map((machine) => (
+            <EquipmentCard
+              key={machine.id}
+              equipmentType={machine.machine_type.replace(/_/g, ' ')}
+              equipmentID={parseInt(machine.id)}
+              available={machine.availability === "Free"}
+              equipmentPicture={`${machine.machine_type.replace(/_/g, '-')}.png`}
+              setsLeft={parseInt(machine.sets_left)}
+              usedBy={machine.userid !== "NA" ? machine.userid : undefined}
+            />
+          ))}
         </ScrollView>
       )}
-
       <View style={styles.switchView}>
         <TouchableOpacity
           style={[styles.switchButton, !isMapView && styles.activeSwitchButton]}
@@ -1781,4 +1326,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   backButtonText: { color: "black", fontWeight: "bold" },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
 });
+

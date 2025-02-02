@@ -13,18 +13,18 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-
+import { ThemedText } from "@/components/ThemedText";
 import MacMarauders from '@/assets/images/Macmarauders.png';
 import ProfilePicture from '@/assets/images/profile-picture.png';
 import CircularProgressBar from '@/components/CircularProgressBar';
 import Screen from '@/components/Screen';
 
 // Define the base URL based on platform
-const BASE_URL = Platform.select({
-  android: 'http://10.0.2.2:8383', // Android Emulator
-  ios: 'http://localhost:8383',    // iOS Simulator
-  default: 'http://localhost:8383' // Web/default
-});
+// const BASE_URL = Platform.select({
+//   android: 'http://localhost:8383', // Android Emulator
+//   ios: 'http://localhost:8383',    // iOS Simulator
+//   default: 'http://localhost:8383' // Web/default
+// });
 
 
 /*************************************HOME SCREEN TITLE*************************************/
@@ -124,7 +124,7 @@ interface MachineData {
   };
   occupied_cardio_count: {
     stairmaster: number,
-    treadmill: number  
+    treadmill: number
   };
   occupied_free_weight_count: {
     barbells: number,
@@ -151,7 +151,7 @@ const fetchPulseData = async (): Promise<PulseData> => {
   try {
     // Use GET with query parameters instead of POST with body
     const response = await axios.get<PulseData>(
-      `${BASE_URL}/facility/user_capacity`, {
+      `http://localhost:8383/facility/user_capacity`, {
       params: {
         facility: 'pulse'
       },
@@ -187,7 +187,7 @@ const fetchMachineData = async (): Promise<MachineData> => {
   try {
     // Use GET with query parameters instead of POST with body
     const response = await axios.get<MachineData>(
-      `${BASE_URL}/facility/machine_capacity`, {
+      `http://localhost:8383/facility/machine_capacity`, {
       params: {
         facility: 'pulse'
       },
@@ -223,7 +223,7 @@ const fetchMachineData = async (): Promise<MachineData> => {
 //  try {
 //    // Use GET with query parameters instead of POST with body
 //    const response = await axios.get<PulseData>(
-//      `${BASE_URL}/facility/user_capacity`, {
+//      `http://localhost:8383/facility/user_capacity`, {
 //      params: {
 //        facility: 'pulse'
 //      },
@@ -259,7 +259,7 @@ const fetchTabletennisData = async (): Promise<PulseData> => {
   try {
     // Use GET with query parameters instead of POST with body
     const response = await axios.get<PulseData>(
-      `${BASE_URL}/facility/user_capacity`, {
+      `http://localhost:8383/facility/user_capacity`, {
       params: {
         facility: 'tabletennis'
       },
@@ -295,7 +295,7 @@ const fetchBasketballData = async (): Promise<PulseData> => {
   try {
     // Use GET with query parameters instead of POST with body
     const response = await axios.get<PulseData>(
-      `${BASE_URL}/facility/user_capacity`, {
+      `http://localhost:8383/facility/user_capacity`, {
       params: {
         facility: 'basketball'
       },
@@ -331,7 +331,7 @@ const fetchVolleyballData = async (): Promise<PulseData> => {
   try {
     // Use GET with query parameters instead of POST with body
     const response = await axios.get<PulseData>(
-      `${BASE_URL}/facility/user_capacity`, {
+      `http://localhost:8383/facility/user_capacity`, {
       params: {
         facility: 'volleyball'
       },
@@ -367,7 +367,7 @@ const fetchSoccerData = async (): Promise<PulseData> => {
   try {
     // Use GET with query parameters instead of POST with body
     const response = await axios.get<PulseData>(
-      `${BASE_URL}/facility/user_capacity`, {
+      `http://localhost:8383/facility/user_capacity`, {
       params: {
         facility: 'soccer'
       },
@@ -426,7 +426,7 @@ export default function HomeScreen() {
     },
     occupied_cardio_count: {
       stairmaster: 0,
-      treadmill: 0  
+      treadmill: 0
     },
     occupied_free_weight_count: {
       barbells: 0,
