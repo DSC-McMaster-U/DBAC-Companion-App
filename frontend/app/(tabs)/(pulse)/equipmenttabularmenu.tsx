@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Image,
   StyleSheet,
@@ -12,12 +12,17 @@ import {
 
 import { iconTextGreen, iconTextYellow, maroon, red } from "@/constants/Colors";
 import PowerRack from "@/assets/images/powerrack-1.png";
-
+import { ThemedText } from "@/components/ThemedText";
 import Screen from "@/components/Screen";
 import CheckBox from "@/components/CheckBox";
 import IconText from "@/components/IconText";
 import { useLocalSearchParams } from "expo-router";
+import axios from 'axios';
 
+// Update the axios baseURL and service methods
+const api = axios.create({
+  baseURL: 'http://localhost:8383',
+});
 const MAX_SETS_LEFT = 10;
 
 /**************************************EQUIPMENT TABULAR SCREEN SECTION*************************************/
@@ -303,7 +308,7 @@ function EquipmentTabularMenuButtons({
           ) : (
             <>
               <EquipmentTabularMenuButton
-                text="Join Queue"
+                text="Use Machine"
                 textColor="#FFFFFF"
                 color={maroon}
                 onPress={() => {
@@ -331,40 +336,68 @@ function EquipmentTabularMenuButtons({
 
 /**************************************EQUIPMENT TABULAR SCREEN*************************************/
 export default function EquipmentTabularMenuScreen() {
-  let [isAvailable, setIsAvailable] = useState(true);
-  let [workinAvailable, setWorkinAvailable] = useState(true);
-  let [isUserCurrentlyUsing, setIsUserCurrentlyUsing] = useState(false);
-  let [setsLeft, setSetsLeft] = useState(3);
-
   const { image, name } = useLocalSearchParams();
+  const [machine, setMachine] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isAvailable, setIsAvailable] = useState(true);
+  const [workinAvailable, setWorkinAvailable] = useState(true);
+  const [isUserCurrentlyUsing, setIsUserCurrentlyUsing] = useState(false);
+  const [setsLeft, setSetsLeft] = useState(3);
 
-  // Ensure the values are strings and not arrays
-  const imageUrl = Array.isArray(image) ? image[0] : image;
-  const equipmentName = Array.isArray(name) ? name[0] : name;
+  // Extract machine ID from name
+  const machineId = name?.split('#').pop() || '';
 
-  let [usingUsers, setUsingUsers] = useState([
-    {
-      username: "Ryan",
-      exercise: "Incline Bench",
-    },
-    {
-      username: "Aarav",
-      exercise: "Incline Bench",
-    },
-  ]);
+  useEffect(() => {
+    const fetchMachineData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8383/machines/${machineId}`);
+        const machineData = response.data;
 
-  let [exercises, setExercises] = useState([
-    { name: "Squat" },
-    { name: "Incline Bench" },
-    { name: "Barbell Back Squat" },
-    { name: "Bench Press" },
-  ]);
+        setMachine(machineData);
+        setIsAvailable(machineData.availability === "Free");
+        setWorkinAvailable(machineData.workin === "Available");
+        setSetsLeft(parseInt(machineData.sets_left));
+      } catch (err) {
+        setError(err.response?.data?.error || 'Failed to fetch machine details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (machineId) fetchMachineData();
+  }, [machineId]);
+
+  const handleUpdateStatus = async (newStatus: boolean) => {
+    try {
+      await axios.patch(`http://localhost:8383/machines/${machineId}`, {
+        availability: newStatus ? "Free" : "Occupied",
+        userid: newStatus ? "NA" : "current_user_id" // Replace with actual user ID
+      });
+      setIsAvailable(newStatus);
+    } catch (err) {
+      console.error("Failed to update machine status:", err);
+    }
+  };
+
+  const handleUpdateSets = async (newSets: number) => {
+    try {
+      await axios.patch(`http://localhost:8383/machines/setsleft`, {
+        machineid: machineId,
+        sets_left: newSets
+      });
+      setSetsLeft(newSets);
+    } catch (err) {
+      console.error("Failed to update sets left:", err);
+    }
+  };
+
 
   return (
     <Screen style={styles.screen}>
       <ScrollView>
         <View style={styles.contaier}>
-          <Text style={styles.machineNameTextStyle}>{equipmentName}</Text>
+          <Text style={styles.machineNameTextStyle}>{name}</Text>
 
           <View style={styles.machineImageContainer}>
             <Image source={{ uri: image }} style={styles.machineImageStyle} />
@@ -377,25 +410,31 @@ export default function EquipmentTabularMenuScreen() {
             workinAvailable={workinAvailable}
           />
 
-          {/* Render used by section only if the machine is being used */}
-          {!isAvailable && <UsedBySection usingUsers={usingUsers} />}
+          {!isAvailable && (
+            <UsedBySection usingUsers={[
+              { username: machine.userid, exercise: "Current Exercise" }
+            ]} />
+          )}
 
-          {/* Render the workout controls if the user is currently using this machine */}
           {isUserCurrentlyUsing && (
             <WorkoutControlsSection
               setsLeft={setsLeft}
-              setSetsLeft={setSetsLeft}
+              setSetsLeft={handleUpdateSets}
               workinAvailable={workinAvailable}
               setWorkinAvailable={setWorkinAvailable}
             />
           )}
 
-          <PossibleExercisesSection exercises={exercises} />
+          <PossibleExercisesSection exercises={[
+            { name: "Standard Exercise 1" },
+            { name: "Standard Exercise 2" }
+          ]} />
         </View>
       </ScrollView>
+
       <EquipmentTabularMenuButtons
         isAvailable={isAvailable}
-        setAvailability={setIsAvailable}
+        setAvailability={handleUpdateStatus}
         workinAvailable={workinAvailable}
         setWorkinAvailable={setWorkinAvailable}
         isUserUsingMachine={isUserCurrentlyUsing}
