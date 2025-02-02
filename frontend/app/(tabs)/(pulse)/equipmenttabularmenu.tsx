@@ -392,21 +392,6 @@ export default function EquipmentTabularMenuScreen() {
     }
   };
 
-  if (loading) {
-    return (
-      <Screen>
-        <ThemedText>Loading machine details...</ThemedText>
-      </Screen>
-    );
-  }
-
-  if (error || !machine) {
-    return (
-      <Screen>
-        <ThemedText style={{ color: 'red' }}>{error || 'Machine not found'}</ThemedText>
-      </Screen>
-    );
-  }
 
   return (
     <Screen style={styles.screen}>

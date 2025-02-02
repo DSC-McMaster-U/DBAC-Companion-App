@@ -537,7 +537,7 @@ export default function HomeScreen() {
     loadPulseData();
 
     // Set up polling every 5 minutes
-    const pollInterval = setInterval(loadPulseData, 5 * 60 * 1000);
+    const pollInterval = setInterval(loadPulseData, 10 * 60 * 1000);
 
     // Cleanup interval on component unmount
     return () => clearInterval(pollInterval);

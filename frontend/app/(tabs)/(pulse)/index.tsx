@@ -107,7 +107,7 @@ type EquipmentCardProps = ViewProps & {
 
 function EquipmentCard({
   equipmentType,
-  equipmentID,  // This is now the string document ID ("1", "2", etc)
+  equipmentID,
   available,
   equipmentPicture,
   setsLeft,
@@ -769,25 +769,25 @@ function SelectedSectionView({
               zone="Zone 2"
               pathData={zone2Path}
               equipmentImages={[
-                { id: "machine1", x: 8, y: 173, src: imageURI("bench.png") },
+                { id: "machine1", x: 8, y: 173, src: imageURI("bench-press.png") },
 
                 {
                   id: "machine2",
                   x: 8,
                   y: 159,
-                  src: imageURI("incline-bench.png"),
+                  src: imageURI("incline-bench-press.png"),
                 },
 
                 {
                   id: "machine3",
                   x: 8,
                   y: 145,
-                  src: imageURI("decline-bench.png"),
+                  src: imageURI("decline-bench-press.png"),
                 },
 
-                { id: "machine4", x: 8, y: 131, src: imageURI("bench.png") },
+                { id: "machine4", x: 8, y: 131, src: imageURI("bench-press.png") },
 
-                { id: "machine5", x: 8, y: 117, src: imageURI("ab-bench.png") },
+                { id: "machine5", x: 8, y: 117, src: imageURI("ab-bench-press.png") },
                 {
                   id: "machine6",
                   x: 30.5,
@@ -801,7 +801,7 @@ function SelectedSectionView({
                   src: imageURI("assisted-dip.png"),
                 },
 
-                { id: "machine8", x: 8, y: 103, src: imageURI("bench.png") },
+                { id: "machine8", x: 8, y: 103, src: imageURI("bench-press.png") },
                 {
                   id: "machine9",
                   x: 30.5,
@@ -815,7 +815,7 @@ function SelectedSectionView({
                   src: imageURI("lat-pulldown.png"),
                 },
 
-                { id: "machine11", x: 8, y: 89, src: imageURI("bench.png") },
+                { id: "machine11", x: 8, y: 89, src: imageURI("bench-press.png") },
                 {
                   id: "machine12",
                   x: 30.5,
@@ -829,7 +829,7 @@ function SelectedSectionView({
                   src: imageURI("cable-complex.png"),
                 },
 
-                { id: "machine14", x: 8, y: 75, src: imageURI("bench.png") },
+                { id: "machine14", x: 8, y: 75, src: imageURI("bench-press.png") },
                 {
                   id: "machine15",
                   x: 30.5,
@@ -843,7 +843,7 @@ function SelectedSectionView({
                   src: imageURI("cable-complex.png"),
                 },
 
-                { id: "machine17", x: 8, y: 61, src: imageURI("bench.png") },
+                { id: "machine17", x: 8, y: 61, src: imageURI("bench-press.png") },
                 {
                   id: "machine18",
                   x: 30.5,
@@ -857,7 +857,7 @@ function SelectedSectionView({
                   src: imageURI("lat-pulldown.png"),
                 },
 
-                { id: "machine20", x: 8, y: 47, src: imageURI("bench.png") },
+                { id: "machine20", x: 8, y: 47, src: imageURI("bench-press.png") },
                 {
                   id: "machine21",
                   x: 30.5,
@@ -898,7 +898,7 @@ function SelectedSectionView({
                   src: imageURI("lat-pulldown.png"),
                 },
 
-                { id: "machine29", x: 8, y: 5, src: imageURI("bench.png") },
+                { id: "machine29", x: 8, y: 5, src: imageURI("bench-press.png") },
                 {
                   id: "machine30",
                   x: 30.5,
@@ -918,7 +918,7 @@ function SelectedSectionView({
               zone="Zone 3"
               pathData={zone3Path}
               equipmentImages={[
-                { id: "machine1", x: 8, y: 156, src: imageURI("bench.png") },
+                { id: "machine1", x: 8, y: 156, src: imageURI("bench-press.png") },
                 {
                   id: "machine2",
                   x: 30.5,
@@ -936,7 +936,7 @@ function SelectedSectionView({
                   id: "machine4",
                   x: 8,
                   y: 142,
-                  src: imageURI("incline-bench.png"),
+                  src: imageURI("incline-bench-press.png"),
                 },
                 {
                   id: "machine5",
@@ -951,7 +951,7 @@ function SelectedSectionView({
                   src: imageURI("lat-pulldown.png"),
                 },
 
-                { id: "machine7", x: 8, y: 128, src: imageURI("bench.png") },
+                { id: "machine7", x: 8, y: 128, src: imageURI("bench-press.png") },
                 {
                   id: "machine8",
                   x: 30.5,
@@ -964,10 +964,10 @@ function SelectedSectionView({
                   id: "machine10",
                   x: 8,
                   y: 114,
-                  src: imageURI("decline-bench.png"),
+                  src: imageURI("decline-bench-press.png"),
                 },
 
-                { id: "machine11", x: 8, y: 100, src: imageURI("bench.png") },
+                { id: "machine11", x: 8, y: 100, src: imageURI("bench-press.png") },
                 {
                   id: "machine12",
                   x: 30.5,
@@ -987,7 +987,7 @@ function SelectedSectionView({
                   src: imageURI("rear-delt-machine.png"),
                 },
 
-                { id: "machine15", x: 8, y: 86, src: imageURI("bench.png") },
+                { id: "machine15", x: 8, y: 86, src: imageURI("bench-press.png") },
                 {
                   id: "machine16",
                   x: 30.5,
@@ -1007,7 +1007,7 @@ function SelectedSectionView({
                   src: imageURI("lateral-raise-standing.png"),
                 },
 
-                { id: "machine19", x: 8, y: 72, src: imageURI("bench.png") },
+                { id: "machine19", x: 8, y: 72, src: imageURI("bench-press.png") },
                 {
                   id: "machine20",
                   x: 30.5,
