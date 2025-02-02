@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, setDoc, doc } from "firebase/firestore";
+import { getFirestore, collection, setDoc, getDocs, doc, updateDoc } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -30,4 +30,13 @@ const addDocumentWithId = async (collectionName, docId, documentData) => {
   }
 };
 
-export { db, addDocumentWithId };
+const updateDocument = async (collectionName, docId, data) => {
+  const docRef = doc(db, collectionName, docId);
+  await updateDoc(docRef, data);
+};
+const getAllDocuments = async (collectionName) => {
+  const querySnapshot = await getDocs(collection(db, collectionName));
+  return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+export { db, addDocumentWithId, getAllDocuments, updateDocument };

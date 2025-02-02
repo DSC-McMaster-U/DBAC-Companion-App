@@ -88,11 +88,11 @@ const determineAvailabilityAndIncrement = (machine_snap, userid) => {
 
   // Handle cases where there is no user ID
   if (userid == null) {
-    if (availability === "Unoccupied") {
-      new_availability = "Unoccupied";
+    if (availability === "Free") {
+      new_availability = "Free";
     } else if (availability === "Occupied") {
-      new_availability = "Unoccupied";
-      increment = -1; // Decrease sets left since machine becomes unoccupied
+      new_availability = "Free";
+      increment = -1; // Decrease sets left since machine becomes Free
     }
   } else {
     // When there is a user ID, handle occupancy and work-in rules
