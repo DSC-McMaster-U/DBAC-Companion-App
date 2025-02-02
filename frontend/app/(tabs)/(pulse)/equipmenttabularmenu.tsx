@@ -308,7 +308,7 @@ function EquipmentTabularMenuButtons({
           ) : (
             <>
               <EquipmentTabularMenuButton
-                text="Join Queue"
+                text="Use Machine"
                 textColor="#FFFFFF"
                 color={maroon}
                 onPress={() => {

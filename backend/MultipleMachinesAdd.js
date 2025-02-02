@@ -4,7 +4,7 @@ const addNewUser = async (customDocId) => {
     const userData = {
         availability: "Free",
         facility: "pulse",
-        machine_type: "chest_press",
+        machine_type: "lat_pulldown",
         sets_left: "0",
         userid: "NA",
         workin: "NA"
@@ -19,7 +19,7 @@ const addNewUser = async (customDocId) => {
 };
 
 const addMultipleUsers = async () => {
-    for (let customDocId = 41; customDocId <= 43; customDocId++) {
+    for (let customDocId = 41; customDocId <= 49; customDocId++) {
         await addNewUser(customDocId);
     }
 };
