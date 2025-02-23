@@ -8,6 +8,7 @@ type CircularProgressBarProps = ViewProps & {
     label: string,
     progress: number,
     maxProgress?: number,
+    displayValue?: string, // New prop to override the percentage text
     percentageTextStyle?: TextStyle,
     labelTextStyle?: TextStyle
 }
@@ -17,6 +18,7 @@ export default function CircularProgressBar({
     label,
     progress,
     maxProgress = 100,
+    displayValue,
     percentageTextStyle = styles.defaultPercentageText,
     labelTextStyle = styles.defaultLabelText,
     ...rest
@@ -73,7 +75,7 @@ export default function CircularProgressBar({
                         </Svg>
 
                         <Text style={[styles.centeredText, styles.centeredCircleText, percentageTextStyle, { fontSize: actualSize * 0.1 }]}>
-                            {`${Math.round(progressRatio * 1000) / 10}%`} {/* Multiply by 100(percentage) x 10(rounding to 1 decimal place) */}
+                            {displayValue ? displayValue : `${Math.round(progressRatio * 1000) / 10}%`}
                         </Text>
                     </View>
 

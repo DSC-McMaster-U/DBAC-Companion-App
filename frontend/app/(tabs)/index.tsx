@@ -213,77 +213,77 @@ const fetchMachineData = async (): Promise<MachineData> => {
   }
 };
 
-//const fetchBadmintonData = async (): Promise<PulseData> => {
-//  const networkState = await NetInfo.fetch();
-//
-//  if (!networkState.isConnected) {
-//    throw new Error('No internet connection');
-//  }
-//
-//  try {
-//    // Use GET with query parameters instead of POST with body
-//    const response = await axios.get<PulseData>(
-//      `http://localhost:8383/facility/user_capacity`, {
-//      params: {
-//        facility: 'pulse'
-//      },
-//      headers: {
-//        'Content-Type': 'application/json',
-//      },
-//      timeout: 5000,
-//    }
-//    );
-//
-//    return response.data;
-//  } catch (error) {
-//    if (axios.isAxiosError(error)) {
-//      if (error.code === 'ECONNABORTED') {
-//        throw new Error('Request timed out');
-//      }
-//      if (error.response?.data?.error) {
-//        throw new Error(error.response.data.error);
-//      }
-//      throw new Error('Failed to fetch facility data');
-//    }
-//    throw error;
-//  }
-//};
+const fetchBadmintonData = async (): Promise<PulseData> => {
+ const networkState = await NetInfo.fetch();
 
-const fetchTabletennisData = async (): Promise<PulseData> => {
-  const networkState = await NetInfo.fetch();
+ if (!networkState.isConnected) {
+   throw new Error('No internet connection');
+ }
 
-  if (!networkState.isConnected) {
-    throw new Error('No internet connection');
-  }
+ try {
+   // Use GET with query parameters instead of POST with body
+   const response = await axios.get<PulseData>(
+     `http://localhost:8383/facility/user_capacity`, {
+     params: {
+       facility: 'badminton'
+     },
+     headers: {
+       'Content-Type': 'application/json',
+     },
+     timeout: 5000,
+   }
+   );
 
-  try {
-    // Use GET with query parameters instead of POST with body
-    const response = await axios.get<PulseData>(
-      `http://localhost:8383/facility/user_capacity`, {
-      params: {
-        facility: 'tabletennis'
-      },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      timeout: 5000,
-    }
-    );
-
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.code === 'ECONNABORTED') {
-        throw new Error('Request timed out');
-      }
-      if (error.response?.data?.error) {
-        throw new Error(error.response.data.error);
-      }
-      throw new Error('Failed to fetch facility data');
-    }
-    throw error;
-  }
+   return response.data;
+ } catch (error) {
+   if (axios.isAxiosError(error)) {
+     if (error.code === 'ECONNABORTED') {
+       throw new Error('Request timed out');
+     }
+     if (error.response?.data?.error) {
+       throw new Error(error.response.data.error);
+     }
+     throw new Error('Failed to fetch facility data');
+   }
+   throw error;
+ }
 };
+
+// const fetchTabletennisData = async (): Promise<PulseData> => {
+//   const networkState = await NetInfo.fetch();
+
+//   if (!networkState.isConnected) {
+//     throw new Error('No internet connection');
+//   }
+
+//   try {
+//     // Use GET with query parameters instead of POST with body
+//     const response = await axios.get<PulseData>(
+//       `http://localhost:8383/facility/user_capacity`, {
+//       params: {
+//         facility: 'tabletennis'
+//       },
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       timeout: 5000,
+//     }
+//     );
+
+//     return response.data;
+//   } catch (error) {
+//     if (axios.isAxiosError(error)) {
+//       if (error.code === 'ECONNABORTED') {
+//         throw new Error('Request timed out');
+//       }
+//       if (error.response?.data?.error) {
+//         throw new Error(error.response.data.error);
+//       }
+//       throw new Error('Failed to fetch facility data');
+//     }
+//     throw error;
+//   }
+// };
 
 const fetchBasketballData = async (): Promise<PulseData> => {
   const networkState = await NetInfo.fetch();
@@ -442,10 +442,30 @@ export default function HomeScreen() {
   let [pulseFreeWeightsVal, setPulseFreeWeightsVal] = useState(90.5);
   let [pulseMachinesVal, setPulseMachinesVal] = useState(60.5);
 
+    // let [dropInsTabelTennisVal, setDropInsTableTennisVal] = useState(63.2);
   let [dropInsBasketballVal, setDropInsBasketballVal] = useState(84.3);
-  let [dropInsTabelTennisVal, setDropInsTableTennisVal] = useState(63.2);
+  let [basketballData, setBasketballData] = useState<PulseData>({
+    num_active_users: 0,
+    capacity: 100, // Default value
+  });
+
+  let [dropInsBadmintonVal, setDropInsBadmintonVal] = useState(63.2);
+  let [badmintonData, setBadmintonData] = useState<PulseData>({
+    num_active_users: 0,
+    capacity: 100, // Default value
+  });
+
   let [dropInsgSoccerVal, setDropInsSoccerVal] = useState(20.5);
+  let [soccerData, setSoccerData] = useState<PulseData>({
+    num_active_users: 0,
+    capacity: 100, // Default value
+  });
+
   let [dropInsVolleyBallVal, setDropInsVolleyBallVal] = useState(43.2);
+  let [volleyballData, setVolleyballData] = useState<PulseData>({
+    num_active_users: 0,
+    capacity: 100, // Default value
+  });
 
   let [friends, _] = useState([
     {
@@ -472,6 +492,7 @@ export default function HomeScreen() {
 
         const basketball_data = await fetchBasketballData();
         setPulseData(basketball_data);
+        setBasketballData(basketball_data);
         const basketball_percentage = calculatePulsePercentage(
           basketball_data.num_active_users,
           basketball_data.capacity
@@ -480,22 +501,33 @@ export default function HomeScreen() {
 
         const volleyball_data = await fetchVolleyballData();
         setPulseData(volleyball_data);
+        setVolleyballData(volleyball_data);
         const volleyball_percentage = calculatePulsePercentage(
           volleyball_data.num_active_users,
           volleyball_data.capacity
         );
         setDropInsVolleyBallVal(volleyball_percentage);
 
-        const tabletennis_data = await fetchTabletennisData();
-        setPulseData(tabletennis_data);
-        const tabletennis_percentage = calculatePulsePercentage(
-          tabletennis_data.num_active_users,
-          tabletennis_data.capacity
+        // const tabletennis_data = await fetchTabletennisData();
+        // setPulseData(tabletennis_data);
+        // const tabletennis_percentage = calculatePulsePercentage(
+        //   tabletennis_data.num_active_users,
+        //   tabletennis_data.capacity
+        // );
+        // setDropInsTableTennisVal(tabletennis_percentage);
+
+        const badminton_data = await fetchBadmintonData();
+        setPulseData(badminton_data);
+        setBadmintonData(badminton_data);
+        const badminton_percentage = calculatePulsePercentage(
+          badminton_data.num_active_users,
+          badminton_data.capacity
         );
-        setDropInsTableTennisVal(tabletennis_percentage);
+        setDropInsBadmintonVal(badminton_percentage);
 
         const soccer_data = await fetchSoccerData();
         setPulseData(soccer_data);
+        setSoccerData(soccer_data);
         const soccer_percentage = calculatePulsePercentage(
           soccer_data.num_active_users,
           soccer_data.capacity
@@ -591,6 +623,7 @@ export default function HomeScreen() {
               <View style={styles.dropInsPart}>
                 <CircularProgressBar
                   style={{ width: "50%" }}
+                  displayValue={basketballData.num_active_users.toString()}
                   strokeWidth={7}
                   label='Basketball'
                   progress={dropInsBasketballVal}
@@ -599,14 +632,16 @@ export default function HomeScreen() {
               <View style={styles.dropInsPart}>
                 <CircularProgressBar
                   style={{ width: "50%" }}
+                  displayValue={badmintonData.num_active_users.toString()}
                   strokeWidth={7}
-                  label='Table Tennis'
-                  progress={dropInsTabelTennisVal}
+                  label='Badminton'
+                  progress={dropInsBadmintonVal}
                 />
               </View>
               <View style={styles.dropInsPart}>
                 <CircularProgressBar
                   style={{ width: "50%" }}
+                  displayValue={soccerData.num_active_users.toString()}
                   strokeWidth={7}
                   label='Soccer'
                   progress={dropInsgSoccerVal}
@@ -615,6 +650,7 @@ export default function HomeScreen() {
               <View style={styles.dropInsPart}>
                 <CircularProgressBar
                   style={{ width: "50%" }}
+                  displayValue={volleyballData.num_active_users.toString()}
                   strokeWidth={7}
                   label='Volley Ball'
                   progress={dropInsVolleyBallVal}
