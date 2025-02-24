@@ -18,6 +18,7 @@ import MacMarauders from '@/assets/images/Macmarauders.png';
 import ProfilePicture from '@/assets/images/profile-picture.png';
 import CircularProgressBar from '@/components/CircularProgressBar';
 import Screen from '@/components/Screen';
+import { useAuth } from '@/components/AuthContext';
 
 // Define the base URL based on platform
 // const BASE_URL = Platform.select({
@@ -40,7 +41,7 @@ function HomeScreenTitle({ username, ...rest }: HomeScreenTitleProps) {
         <Text style={styles.titleText}>
           Welcome,
         </Text>
-        <Text style={styles.titleText} numberOfLines={1} ellipsizeMode='tail'>
+        <Text style={styles.titleText} ellipsizeMode='tail'>
           {username}!
         </Text>
       </View>
@@ -402,7 +403,7 @@ const calculatePulsePercentage = (current: number, max: number): number => {
 
 /*************************************HOME SCREEN*************************************/
 export default function HomeScreen() {
-  let [username, setUsername] = useState("Username")
+  const { user, loading } = useAuth();
 
   let [pulseVal, setPulseVal] = useState(67.5);
   const [isLoading, setIsLoading] = useState(true);
@@ -580,7 +581,11 @@ export default function HomeScreen() {
       {/* Transparent background for the scroll view */}
       <ScrollView>
         <View style={styles.container}>
-          <HomeScreenTitle username={username} />
+          {
+            !loading ? 
+              ( <HomeScreenTitle username={user?.displayName} /> ) : 
+              ( <Text style={styles.titleText}>Loading...</Text> )
+          }
 
           { /* The pulse home screen section */}
           <HomeScreenSection text='The Pulse'>

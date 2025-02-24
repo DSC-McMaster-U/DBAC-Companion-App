@@ -1,2 +1,5 @@
 .env
 node_modules
+.DS_Store
+google-services.json
+GoogleService-Info.plist
