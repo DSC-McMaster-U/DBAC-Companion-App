@@ -31,4 +31,20 @@ const getAllDocuments = async (collectionName) => {
   return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 };
 
-export { db, auth, addDocumentWithId, getAllDocuments, updateDocument };
+/**
+ * Gets the information of a user given a uid from Firebase Auth
+ * 
+ * @param {string} uid The users id
+ * @returns {object} The object containing the data of the user
+ */
+async function getUserById(uid) {
+  try {
+    const user = await auth.getUser(uid);
+
+    return user.toJSON();
+  } catch(error) {
+    return undefined;
+  }
+}
+
+export { db, auth, addDocumentWithId, getAllDocuments, updateDocument, getUserById };
