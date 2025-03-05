@@ -69,7 +69,7 @@ export const getMachineCapacityInfo = async (req, res) => {
         const facilityRef = db.collection('facilities').doc(facility);
         const facilitySnap = await facilityRef.get();
 
-        if (!facilitySnap.exists()) {
+        if (!facilitySnap.exists) {
             return res.status(404).json({
                 error: `Facility ${facility} not found`
             });

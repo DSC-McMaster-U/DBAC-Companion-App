@@ -20,7 +20,7 @@ export const getMachineInfo = async (req, res) => {
   const machineSnap = await machineRef.get();
 
   // check if machine exists
-  if (!machineid || !machineSnap.exists()) {
+  if (!machineid || !machineSnap.exists) {
     return res.sendStatus(404);
   }
 

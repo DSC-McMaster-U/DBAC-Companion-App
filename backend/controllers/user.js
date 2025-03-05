@@ -14,7 +14,7 @@ export const getUser = async (req, res) => {
     const userSnap = await userRef.get();
 
     // check if student exists
-    if (!studentnum || !userSnap.exists()) {
+    if (!studentnum || !userSnap.exists) {
         return res.sendStatus(404)
     }
 
