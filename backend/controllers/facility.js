@@ -1,9 +1,9 @@
-import { db } from '../firebase.js';
+import { db, getUserById } from '../firebase.js';
 
 export const getFacilityCapacityInfo = async (req, res) => {
     try {
         // Support both GET and POST methods
-        const facility = req.method === 'GET' ? req.query.facility : req.body.facility;
+        const facility = req.body.facility;
 
         if (!facility) {
             return res.status(400).json({
@@ -14,7 +14,7 @@ export const getFacilityCapacityInfo = async (req, res) => {
         const facilityRef = db.collection('facilities').doc(facility);
         const facilitySnap = await facilityRef.get();
 
-        if (!facilitySnap.exists()) {
+        if (!facilitySnap.exists) {
             return res.status(404).json({
                 error: `Facility ${facility} not found`
             });
@@ -29,16 +29,25 @@ export const getFacilityCapacityInfo = async (req, res) => {
             });
         }
 
+        const activeUsersList = facilityData.active_users_list;
+
+        // Loop over user ids and fill user display names
+        for(let i=0; i < activeUsersList.length; i++) {
+            const uid = activeUsersList[i];
+            const userData = await getUserById(uid);
+            activeUsersList[i] = userData !== undefined ? userData.displayName : '';
+        }
+
 
         // Rename/add to this when new variables/maps are created in firestore
-        res.status(200).json({
+        return res.status(200).json({
             num_active_users: facilityData.num_active_users,
             capacity: facilityData.capacity,
+            active_users_list: activeUsersList
         });
-
     } catch (error) {
         console.error('Error in getFacilityCapacityInfo:', error);
-        res.status(500).json({
+        return res.status(500).json({
             error: 'Internal server error',
             details: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
