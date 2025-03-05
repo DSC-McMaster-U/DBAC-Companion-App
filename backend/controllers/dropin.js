@@ -11,45 +11,53 @@ import { db, getUserById, updateDocument } from "../firebase.js";
  * @returns The response object
  */
 export async function leaveDropin(req, res) {
-    if(req.method !== 'POST')
-        return res.status(400);
+    try {
+        if(req.method !== 'POST')
+            return res.status(400);
 
-    const dropinName = req.body.dropin;
-    const userId = req.body.uid;
+        const dropinName = req.body.dropin;
+        const userId = req.body.uid;
 
-    const facilitiesCollection = db.collection('facilities');
-    const dropinDocRef = facilitiesCollection.doc(dropinName);
-    const dropinDoc = await dropinDocRef.get();
+        const facilitiesCollection = db.collection('facilities');
+        const dropinDocRef = facilitiesCollection.doc(dropinName);
+        const dropinDoc = await dropinDocRef.get();
 
-    if(!dropinDoc.exists) 
+        if(!dropinDoc.exists) 
+            return res.status(200).json({
+                success: false,
+                msg: `No ${dropinName} dropin exists! Please try again!`
+            });
+
+        const dropinData = dropinDoc.data();
+        const userData = await getUserById(userId);
+
+        if(userData === undefined)
+            return res.status(200).json({
+                success: false,
+                msg: "Unable to verify user!"
+            });
+
+        const dropinActiveUsers = dropinData.active_users_list;
+        const userIndex = dropinActiveUsers.indexOf(userData.uid);
+
+        if(userIndex <= -1)
+            return res.status(200).json({
+                success: false,
+                msg: `User not found in the ${dropinName} dropin!`
+            });
+
+        dropinActiveUsers.splice(userIndex, 1);
+        
+        await updateDocument('facilities', dropinName, {active_users_list: dropinActiveUsers});
+
         return res.status(200).json({
-            success: false,
-            msg: `No ${dropinName} dropin exists! Please try again!`
+            success: true
         });
-
-    const dropinData = dropinDoc.data();
-    const userData = await getUserById(userId);
-
-    if(userData === undefined)
-        return res.status(200).json({
-            success: false,
-            msg: "Unable to verify user!"
+    } catch(error) {
+        console.log(`Error in leaveDropin: ${String(error)}`);
+        res.status(500).json({
+            error: 'Internal server error',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
-
-    const dropinActiveUsers = dropinData.active_users_list;
-    const userIndex = dropinActiveUsers.indexOf(userData.uid);
-
-    if(userIndex <= -1)
-        return res.status(200).json({
-            success: false,
-            msg: `User not found in the ${dropinName} dropin!`
-        });
-
-    dropinActiveUsers.splice(userIndex, 1);
-    
-    await updateDocument('facilities', dropinName, {active_users_list: dropinActiveUsers});
-
-    return res.status(200).json({
-        success: true
-    });
+    }
 }
