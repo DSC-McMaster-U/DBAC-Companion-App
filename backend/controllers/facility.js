@@ -1,5 +1,4 @@
 import { db } from '../firebase.js';
-import { doc, getDoc } from "firebase/firestore";
 
 export const getFacilityCapacityInfo = async (req, res) => {
     try {
@@ -12,8 +11,8 @@ export const getFacilityCapacityInfo = async (req, res) => {
             });
         }
 
-        const facilityRef = doc(db, "facilities", facility);
-        const facilitySnap = await getDoc(facilityRef);
+        const facilityRef = db.collection('facilities').doc(facility);
+        const facilitySnap = await facilityRef.get();
 
         if (!facilitySnap.exists()) {
             return res.status(404).json({
@@ -58,8 +57,8 @@ export const getMachineCapacityInfo = async (req, res) => {
             });
         }
 
-        const facilityRef = doc(db, "facilities", facility);
-        const facilitySnap = await getDoc(facilityRef);
+        const facilityRef = db.collection('facilities').doc(facility);
+        const facilitySnap = await facilityRef.get();
 
         if (!facilitySnap.exists()) {
             return res.status(404).json({

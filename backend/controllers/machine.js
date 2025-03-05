@@ -1,17 +1,8 @@
 import { db } from "../firebase.js";
-import {
-  doc,
-  deleteDoc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  getDocFromCache,
-} from "firebase/firestore";
-import { collection, getDocs } from "firebase/firestore";
 
 export const getMachines = async (req, res) => {
   try {
-    const machinesSnap = await getDocs(collection(db, "machines"));
+    const machinesSnap = await db.collection('machines').get();
     const machines = machinesSnap.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
@@ -25,8 +16,8 @@ export const getMachines = async (req, res) => {
 export const getMachineInfo = async (req, res) => {
   const { machineid } = req.params;
 
-  const machineRef = doc(db, "machines", machineid);
-  const machineSnap = await getDoc(machineRef);
+  const machineRef = db.collection('machines').doc(machineid);
+  const machineSnap = await machineRef.get();
 
   // check if machine exists
   if (!machineid || !machineSnap.exists()) {
@@ -40,14 +31,14 @@ export const updateMachineUser = async (req, res) => {
   const { machineid, userid, workin } = req.body; // Add 'workin' here
 
   try {
-    const machine_ref = doc(db, "machines", machineid);
-    const machine_snap = (await getDoc(machine_ref)).data();
-    const facility_ref = doc(db, "facilities", machine_snap.facility);
-    const facility_snap = (await getDoc(facility_ref)).data();
+    const machine_ref = db.collection("machines").doc(machineid);
+    const machine_snap = (await machine_ref.get()).data();
+    const facility_ref = db.collection("facilities").doc(machine_snap.facility);
+    const facility_snap = (await facility_ref.get()).data();
 
     // If 'workin' is provided, update it in the machine document
     if (workin !== undefined) {
-      await updateDoc(machine_ref, {
+      await machine_ref.update({
         workin: workin,
       });
     }
@@ -72,7 +63,7 @@ export const updateMachineUser = async (req, res) => {
       userid
     );
 
-    const updated_machine = (await getDoc(machine_ref)).data();
+    const updated_machine = (await machine_ref.get()).data();
     res.status(200).send(updated_machine);
   } catch (error) {
     res
@@ -117,7 +108,7 @@ const updateFacilityData = async (
     facility_snap.occupied_machine_count[machine_type] + increment;
   const updated_num_users = facility_snap.num_active_users + increment;
 
-  await updateDoc(facility_ref, {
+  await facility_ref.update({
     occupied_machine_count: {
       [machine_type]: updated_occupied_count,
     },
@@ -139,7 +130,7 @@ const updateMachineData = async (
   new_queue,
   new_userid
 ) => {
-  await updateDoc(machine_ref, {
+  await machine_ref.update({
     userid: new_userid,
     availability: new_availability,
     sets_left: new_sets_left,
@@ -150,13 +141,13 @@ const updateMachineData = async (
 export const updateSetsLeft = async (req, res) => {
   const { machineid, sets_left } = req.body;
 
-  const machineRef = doc(db, "machines", machineid);
+  const machineRef = db.collection("machines").doc(machineid);
 
-  await updateDoc(machineRef, {
+  await machineRef.update({
     sets_left: sets_left,
   });
 
-  var machineSnap = await getDoc(machineRef);
+  var machineSnap = await machineRef.get();
 
   res.status(200).send(machineSnap.data());
 };
@@ -164,13 +155,13 @@ export const updateSetsLeft = async (req, res) => {
 export const updateWorkIn = async (req, res) => {
   const { machineid, workin } = req.body;
 
-  const machineRef = doc(db, "machines", machineid);
+  const machineRef = db.collection("machines").doc(machineid);
 
-  await updateDoc(machineRef, {
+  await machineRef.update({
     workin: workin,
   });
 
-  var machineSnap = await getDoc(machineRef);
+  var machineSnap = await machineRef.get();
 
   res.status(200).send(machineSnap.data());
 };
@@ -178,13 +169,13 @@ export const updateWorkIn = async (req, res) => {
 export const updateQueue = async (req, res) => {
   const { machineid, queue } = req.body;
 
-  const machineRef = doc(db, "machines", machineid);
+  const machineRef = db.collection("machines").doc(machineid);
 
-  updateDoc(machineRef, {
+  machineRef.update({
     queue: queue,
   });
 
-  var machineSnap = await getDoc(machineRef);
+  var machineSnap = await machineRef.get();
 
   res.status(200).send(machineSnap.data());
 };
