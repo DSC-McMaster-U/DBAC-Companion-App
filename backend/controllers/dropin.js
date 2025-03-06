@@ -18,6 +18,12 @@ export async function leaveDropin(req, res) {
         const dropinName = req.body.dropin;
         const userId = req.body.uid;
 
+        if(!dropinName || !userId)
+            return res.status(400).json({
+                success: false,
+                msg: "Missing required parameters dropin and/or uid!"
+            });
+
         const facilitiesCollection = db.collection('facilities');
         const dropinDocRef = facilitiesCollection.doc(dropinName);
         const dropinDoc = await dropinDocRef.get();
@@ -48,7 +54,10 @@ export async function leaveDropin(req, res) {
 
         dropinActiveUsers.splice(userIndex, 1);
         
-        await updateDocument('facilities', dropinName, {active_users_list: dropinActiveUsers});
+        await updateDocument('facilities', dropinName, {
+            capacity: dropinData.capacity-1,
+            active_users_list: dropinActiveUsers
+        });
 
         return res.status(200).json({
             success: true
