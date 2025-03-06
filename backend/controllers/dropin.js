@@ -58,7 +58,7 @@ export async function joinDropin(req, res) {
         }
         
         await updateDocument('facilities', dropinName, {
-            capacity: dropinData.capacity+1,
+            num_active_users: dropinData.num_active_users+1,
             active_users_list: dropinActiveUsers
         });
 
@@ -129,7 +129,7 @@ export async function leaveDropin(req, res) {
         dropinActiveUsers.splice(userIndex, 1);
         
         await updateDocument('facilities', dropinName, {
-            capacity: dropinData.capacity-1,
+            num_active_users: dropinData.num_active_users-1,
             active_users_list: dropinActiveUsers
         });
 
