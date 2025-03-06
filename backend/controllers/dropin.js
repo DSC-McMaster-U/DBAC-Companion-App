@@ -39,7 +39,7 @@ export async function joinDropin(req, res) {
         if(dropinData.num_active_users >= dropinData.capacity)
             return res.status(400).json({
                 success: false,
-                msg: `The ${dropinName} is currently at capacity. Please try to join later!`
+                msg: `The ${dropinName} dropin is currently at capacity. Please try to join later!`
             });
 
         const userData = await getUserById(userId);
