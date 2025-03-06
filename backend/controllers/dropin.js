@@ -35,6 +35,13 @@ export async function joinDropin(req, res) {
             });
 
         const dropinData = dropinDoc.data();
+
+        if(dropinData.num_active_users >= dropinData.capacity)
+            return res.status(400).json({
+                success: false,
+                msg: `The ${dropinName} is currently at capacity. Please try to join later!`
+            });
+
         const userData = await getUserById(userId);
 
         if(userData === undefined)
