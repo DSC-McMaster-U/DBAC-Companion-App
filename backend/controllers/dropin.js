@@ -29,7 +29,7 @@ export async function joinDropin(req, res) {
         const dropinDoc = await dropinDocRef.get();
 
         if(!dropinDoc.exists) 
-            return res.status(200).json({
+            return res.status(400).json({
                 success: false,
                 msg: `No ${dropinName} dropin exists! Please try again!`
             });
@@ -45,7 +45,7 @@ export async function joinDropin(req, res) {
         const userData = await getUserById(userId);
 
         if(userData === undefined)
-            return res.status(200).json({
+            return res.status(400).json({
                 success: false,
                 msg: "Unable to verify user!"
             });
@@ -110,7 +110,7 @@ export async function leaveDropin(req, res) {
         const dropinDoc = await dropinDocRef.get();
 
         if(!dropinDoc.exists) 
-            return res.status(200).json({
+            return res.status(400).json({
                 success: false,
                 msg: `No ${dropinName} dropin exists! Please try again!`
             });
@@ -119,7 +119,7 @@ export async function leaveDropin(req, res) {
         const userData = await getUserById(userId);
 
         if(userData === undefined)
-            return res.status(200).json({
+            return res.status(400).json({
                 success: false,
                 msg: "Unable to verify user!"
             });
@@ -128,7 +128,7 @@ export async function leaveDropin(req, res) {
         const userIndex = dropinActiveUsers.indexOf(userData.uid);
 
         if(userIndex <= -1)
-            return res.status(200).json({
+            return res.status(400).json({
                 success: false,
                 msg: `User not found in the ${dropinName} dropin!`
             });
