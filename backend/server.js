@@ -1,4 +1,5 @@
 import express from 'express'
+import dropinRouter from "./routes/dropin.js"
 import userRouter from "./routes/user.js"
 import machineRouter from "./routes/machine.js"
 import facilityRouter from "./routes/facility.js"
@@ -8,6 +9,7 @@ const app = express()
 const port = 8383
 app.use(cors());
 app.use(express.json())
+app.use(dropinRouter)
 app.use(userRouter)
 app.use(machineRouter)
 app.use(facilityRouter)
