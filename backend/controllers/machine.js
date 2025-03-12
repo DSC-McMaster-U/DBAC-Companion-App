@@ -1,4 +1,4 @@
-import { db, getUserById } from "../firebase.js";
+import { db, getUserById, updateDocument } from "../firebase.js";
 
 export const getMachines = async (req, res) => {
   try {
@@ -67,6 +67,75 @@ export const getMachineInfo = async (req, res) => {
     });
   }
 };
+
+/**
+ * {
+ *  machineId: The id of the machine the users wants to use,
+ *  userId: The id of the user
+ * }
+ * 
+ * @param {*} req The request object containing the request information
+ * @param {object} res The response object that will be used to send a response to the client
+ * @returns The response object
+ */
+export async function useMachine(req, res) {
+  try {
+    const { machineId, userId } = req.body;
+
+    if(!machineId || !userId)
+      return res.status(400).json({
+        success: false,
+        error: "A required field is missing."
+      });
+
+    const machineSnap = await db.collection('machines').doc(String(machineId)).get();
+    const userData = await getUserById(userId);
+
+    if(!machineSnap.exists)
+      return res.status(400).json({
+        success: false,
+        error: 'No machine found with the provided id.'
+      });
+
+    if(!userData)
+      return res.status(400).json({
+        success: false,
+        error: 'User with the given ID cannot be verified.'
+      });
+
+    const machineData = machineSnap.data();
+
+    if(machineData.availability !== "Free")
+      return res.status(400).json({
+        success: false,
+        error: "Machine is currently occupied."
+      });
+
+    // Reset machine data
+    machineData.sets_left = 0;
+    machineData.workin = false;
+
+    // Update machine data with new ID
+    machineData.availability = "Occupied";
+    machineData.userIds.push(userId);
+
+    await updateDocument('machines', String(machineId), machineData);
+
+    delete machineData.userIds;
+    machineData.ativeUsers = [userData.displayName];
+
+    return res.status(200).json({
+      success: true,
+      machine: machineData
+    });
+  } catch (error) {
+    console.error('Error in getMachineInfo:', error);
+    return res.status(500).json({
+        error: 'Internal server error',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+}
 
 export const updateMachineUser = async (req, res) => {
   const { machineid, userid, workin } = req.body; // Add 'workin' here

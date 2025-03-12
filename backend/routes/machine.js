@@ -6,7 +6,8 @@ import {
     updateMachineUser,
     updateSetsLeft,
     updateQueue,
-    updateWorkIn
+    updateWorkIn,
+    useMachine
 } from "../controllers/machine.js";
 
 const router = express.Router()
@@ -14,6 +15,7 @@ const router = express.Router()
 // Existing routes
 router.get("/machines", getMachines)
 router.post("/machines/machine", getMachineInfo)
+router.post("/machines/use", useMachine);
 router.patch("/machines/users", updateMachineUser)
 router.patch("/machines/setsleft", updateSetsLeft)
 router.patch("/machines/queue", updateQueue)
