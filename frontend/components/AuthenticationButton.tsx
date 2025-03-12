@@ -39,23 +39,24 @@ export default function AuthenticationButton({ title, icon, backgroundColor, onP
 
 const styles = StyleSheet.create({
     authenticationButtonTouchableOpacity: {
-        flexDirection: 'row'
+        width: 290,
+        height: 56,
+        justifyContent: 'center',
+        borderRadius: 10,
     },
     authenticationButtonView: {
-        flex: 1, 
-        paddingHorizontal: "3%", 
-        paddingVertical: "1%", 
-        flexDirection: "row", 
+        flexDirection: 'row', 
         justifyContent: 'center', 
-        alignItems: 'center'
+        alignItems: 'center',
+        columnGap: 5,
     },
     authenticationButtonImage: {
-        width: 35, 
-        height: 35
+        width: 20, 
+        height: 20
     },
     authenticationButtonText: {
-        fontSize: 30, 
-        flex: 2, 
+        fontSize: 16,
+        color: '#737373', 
         textAlign: 'center'
     }
 });
