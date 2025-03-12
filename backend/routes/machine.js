@@ -13,7 +13,7 @@ const router = express.Router()
 
 // Existing routes
 router.get("/machines", getMachines)
-router.get("/machines/:machineid", getMachineInfo)
+router.post("/machines/machine", getMachineInfo)
 router.patch("/machines/users", updateMachineUser)
 router.patch("/machines/setsleft", updateSetsLeft)
 router.patch("/machines/queue", updateQueue)

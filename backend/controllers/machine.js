@@ -1,4 +1,4 @@
-import { db } from "../firebase.js";
+import { db, getUserById } from "../firebase.js";
 
 export const getMachines = async (req, res) => {
   try {
@@ -13,18 +13,54 @@ export const getMachines = async (req, res) => {
   }
 };
 
+/**
+ * {
+ *    machineId: The id of the machine to retrieve
+ * }
+ * 
+ * @param {object} req The request object containing the request information
+ * @param {object} res The response object that will be used to send a response to the client
+ * @returns The response object
+ */
 export const getMachineInfo = async (req, res) => {
-  const { machineid } = req.params;
+  try {
+    const { machineId } = req.body;
 
-  const machineRef = db.collection('machines').doc(machineid);
-  const machineSnap = await machineRef.get();
+    if(!machineId)
+      return res.status(404).json({
+        error: "Machine Id parameter is required."
+      });
 
-  // check if machine exists
-  if (!machineid || !machineSnap.exists) {
-    return res.sendStatus(404);
+    const machineRef = db.collection('machines').doc(String(machineId));
+    const machineSnap = await machineRef.get();
+
+    // check if machine exists
+    if (!machineSnap.exists) {
+      return res.status(404).json({
+        error: "Machine with the given Id is not found."
+      });
+    }
+
+    const machineData = machineSnap.data();
+    const userIdList = machineData.userIds;
+
+    for(var i=0; i < userIdList.length; i++) {
+      const uid = userIdList[i];
+      const userData = await getUserById(uid);
+      userIdList[i] = userData !== undefined ? userData.displayName : '';
+    }
+
+    delete machineData.userIds;
+    machineData.ativeUsers = userIdList;
+
+    return res.status(200).json(machineData);
+  } catch (error) {
+    console.error('Error in getMachineInfo:', error);
+    return res.status(500).json({
+        error: 'Internal server error',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
-
-  res.status(200).send(machineSnap.data());
 };
 
 export const updateMachineUser = async (req, res) => {
