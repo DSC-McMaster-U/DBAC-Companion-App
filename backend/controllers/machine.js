@@ -28,6 +28,7 @@ export const getMachineInfo = async (req, res) => {
 
     if(!machineId)
       return res.status(404).json({
+        success: false,
         error: "Machine Id parameter is required."
       });
 
@@ -37,6 +38,7 @@ export const getMachineInfo = async (req, res) => {
     // check if machine exists
     if (!machineSnap.exists) {
       return res.status(404).json({
+        success: false,
         error: "Machine with the given Id is not found."
       });
     }
@@ -53,7 +55,10 @@ export const getMachineInfo = async (req, res) => {
     delete machineData.userIds;
     machineData.ativeUsers = userIdList;
 
-    return res.status(200).json(machineData);
+    return res.status(200).json({
+      success: true,
+      machine: machineData
+    });
   } catch (error) {
     console.error('Error in getMachineInfo:', error);
     return res.status(500).json({
