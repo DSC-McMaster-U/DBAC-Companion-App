@@ -136,3 +136,76 @@ export async function useMachine(req, res) {
     });
   }
 }
+
+/**
+ * {
+ *  machineId: The id of the machine the user wants to leave,
+ *  userId: The id of the user leaving the machine
+ * }
+ * 
+ * @param {*} req The request object containing the request information
+ * @param {object} res The response object that will be used to send a response to the client
+ * @returns The response object 
+ */
+export async function leaveMachine(req, res) {
+  const { machineId, userId } = req.body;
+
+  if(!machineId || !userId)
+    return res.status(400).json({
+      success: false,
+      error: "A required field is missing."
+    });
+
+  const machineSnap = await db.collection('machines').doc(String(machineId)).get();
+  const userData = await getUserById(userId);
+
+  if(!machineSnap.exists)
+    return res.status(400).json({
+      success: false,
+      error: 'No machine found with the provided id.'
+    });
+
+  if(!userData)
+    return res.status(400).json({
+      success: false,
+      error: 'User with the given ID cannot be verified.'
+    });
+
+  const machineData = machineSnap.data();
+  const userIds = machineData.userIds;
+  const userIndex = userIds.indexOf(userId);
+
+  if(userIndex <= -1)
+    return res.status(400).json({
+        success: false,
+        error: `User is not using this machine.`
+    });
+
+  // Update machine data
+  userIds.splice(userIndex, 1);
+  machineData.userIds = userIds;
+
+  if(userIds.length == 0) { // This is the last user using the machine?
+    machineData.availability = "Free";
+    machineData.sets_left = 0;
+    machineData.workin = false;
+  }
+
+  // Update doc in database
+  await updateDocument('machines', String(machineId), machineData);
+
+  // Get remaining user data
+  for(var i=0; i < userIds.length; i++) {
+    const uid = userIds[i];
+    const userData = await getUserById(uid);
+    userIds[i] = userData !== undefined ? userData.displayName : '';
+  }
+
+  delete machineData.userIds;
+  machineData.ativeUsers = userIds;
+
+  return res.status(200).json({
+    success: true,
+    machine: machineData
+  });
+}
