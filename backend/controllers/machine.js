@@ -217,3 +217,74 @@ export async function leaveMachine(req, res) {
     });
   }
 }
+
+/**
+ * {
+ *  machineId: The id of the machine the user wants to edit,
+ *  userId: The id of the user trying to edit the machine,
+ *  setsLeft: The number of sets left to set,
+ *  workin: The workin status of the machine
+ * }
+ * 
+ * @param {*} req The request object containing the request information
+ * @param {object} res The response object that will be used to send a response to the client
+ * @returns The response object 
+ */
+export async function editMachineUsageParams(req, res) {
+  try {
+    const { machineId, userId, setsLeft, workin } = req.body;
+
+    if(!machineId || !userId || !setsLeft || workin === undefined)
+      return res.status(400).json({
+        success: false,
+        msg: 'Missing required request parameters.'
+      });
+
+    if(setsLeft < 0 || setsLeft > 10) // Sets left can only be in the range [0, 10] (ie 0 <= setsLeft <= 10)
+      return res.status(400).json({
+        success: false,
+        msg: "The amounts of sets left can only fall in the range [0, 10]."
+      });
+    
+    const machineSnap = await db.collection('machines').doc(String(machineId)).get();
+    const userData = await getUserById(userId);
+
+    if(!machineSnap.exists) // Invalid machine?
+      return res.status(400).json({
+        success: false,
+        msg: 'No machine found with the provided id.'
+      });
+
+    if(!userData) // Invalid user?
+      return res.status(400).json({
+        success: false,
+        msg: 'User with the given ID cannot be verified.'
+      });
+
+    const machineData = machineSnap.data();
+
+    const userIndex = machineData.userIds.indexOf(userId);
+
+    if(userIndex != 0) // Only the first user to use the machine can update the machine
+      return res.status(400).json({
+        success: false,
+        msg: 'This user does not have permissions to edit this machine.'
+      });
+
+    machineData.sets_left = setsLeft;
+    machineData.workin = workin;
+
+    await updateDocument('machines', String(machineId), machineData);
+
+    return res.status(200).json({
+      success: true,
+      machine: machineData
+    });
+  } catch (error) {
+    console.error('Error in getMachineInfo:', error);
+    return res.status(500).json({
+        error: 'Internal server error',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+}
