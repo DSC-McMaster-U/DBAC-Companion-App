@@ -105,7 +105,7 @@ export async function useMachine(req, res) {
 
     const machineData = machineSnap.data();
 
-    if(machineData.availability !== "Free")
+    if(machineData.availability !== "Free" && !machineData.workin) // Check if the user can use/join this machine.
       return res.status(400).json({
         success: false,
         msg: "Machine is currently occupied."
