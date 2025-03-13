@@ -129,7 +129,7 @@ export async function useMachine(req, res) {
       machine: machineData
     });
   } catch (error) {
-    console.error('Error in getMachineInfo:', error);
+    console.error('Error in useMachine:', error);
     return res.status(500).json({
         error: 'Internal server error',
         details: process.env.NODE_ENV === 'development' ? error.message : undefined
@@ -210,7 +210,7 @@ export async function leaveMachine(req, res) {
       machine: machineData
     });
   } catch (error) {
-    console.error('Error in getMachineInfo:', error);
+    console.error('Error in leaveMachine:', error);
     return res.status(500).json({
         error: 'Internal server error',
         details: process.env.NODE_ENV === 'development' ? error.message : undefined
