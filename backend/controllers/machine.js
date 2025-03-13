@@ -29,7 +29,7 @@ export const getMachineInfo = async (req, res) => {
     if(!machineId)
       return res.status(404).json({
         success: false,
-        error: "Machine Id parameter is required."
+        msg: "Machine Id parameter is required."
       });
 
     const machineRef = db.collection('machines').doc(String(machineId));
@@ -39,7 +39,7 @@ export const getMachineInfo = async (req, res) => {
     if (!machineSnap.exists) {
       return res.status(404).json({
         success: false,
-        error: "Machine with the given Id is not found."
+        msg: "Machine with the given Id is not found."
       });
     }
 
@@ -85,7 +85,7 @@ export async function useMachine(req, res) {
     if(!machineId || !userId)
       return res.status(400).json({
         success: false,
-        error: "A required field is missing."
+        msg: "A required field is missing."
       });
 
     const machineSnap = await db.collection('machines').doc(String(machineId)).get();
@@ -94,13 +94,13 @@ export async function useMachine(req, res) {
     if(!machineSnap.exists)
       return res.status(400).json({
         success: false,
-        error: 'No machine found with the provided id.'
+        msg: 'No machine found with the provided id.'
       });
 
     if(!userData)
       return res.status(400).json({
         success: false,
-        error: 'User with the given ID cannot be verified.'
+        msg: 'User with the given ID cannot be verified.'
       });
 
     const machineData = machineSnap.data();
@@ -108,7 +108,7 @@ export async function useMachine(req, res) {
     if(machineData.availability !== "Free")
       return res.status(400).json({
         success: false,
-        error: "Machine is currently occupied."
+        msg: "Machine is currently occupied."
       });
 
     // Reset machine data
@@ -148,64 +148,72 @@ export async function useMachine(req, res) {
  * @returns The response object 
  */
 export async function leaveMachine(req, res) {
-  const { machineId, userId } = req.body;
+  try {
+    const { machineId, userId } = req.body;
 
-  if(!machineId || !userId)
-    return res.status(400).json({
-      success: false,
-      error: "A required field is missing."
-    });
-
-  const machineSnap = await db.collection('machines').doc(String(machineId)).get();
-  const userData = await getUserById(userId);
-
-  if(!machineSnap.exists)
-    return res.status(400).json({
-      success: false,
-      error: 'No machine found with the provided id.'
-    });
-
-  if(!userData)
-    return res.status(400).json({
-      success: false,
-      error: 'User with the given ID cannot be verified.'
-    });
-
-  const machineData = machineSnap.data();
-  const userIds = machineData.userIds;
-  const userIndex = userIds.indexOf(userId);
-
-  if(userIndex <= -1)
-    return res.status(400).json({
+    if(!machineId || !userId)
+      return res.status(400).json({
         success: false,
-        error: `User is not using this machine.`
+        msg: "A required field is missing."
+      });
+
+    const machineSnap = await db.collection('machines').doc(String(machineId)).get();
+    const userData = await getUserById(userId);
+
+    if(!machineSnap.exists)
+      return res.status(400).json({
+        success: false,
+        msg: 'No machine found with the provided id.'
+      });
+
+    if(!userData)
+      return res.status(400).json({
+        success: false,
+        msg: 'User with the given ID cannot be verified.'
+      });
+
+    const machineData = machineSnap.data();
+    const userIds = machineData.userIds;
+    const userIndex = userIds.indexOf(userId);
+
+    if(userIndex <= -1)
+      return res.status(400).json({
+          success: false,
+          msg: `User is not using this machine.`
+      });
+
+    // Update machine data
+    userIds.splice(userIndex, 1);
+    machineData.userIds = userIds;
+
+    if(userIds.length == 0) { // This is the last user using the machine?
+      machineData.availability = "Free";
+      machineData.sets_left = 0;
+      machineData.workin = false;
+    }
+
+    // Update doc in database
+    await updateDocument('machines', String(machineId), machineData);
+
+    // Get remaining user data
+    for(var i=0; i < userIds.length; i++) {
+      const uid = userIds[i];
+      const userData = await getUserById(uid);
+      userIds[i] = userData !== undefined ? userData.displayName : '';
+    }
+
+    delete machineData.userIds;
+    machineData.ativeUsers = userIds;
+
+    return res.status(200).json({
+      success: true,
+      machine: machineData
     });
-
-  // Update machine data
-  userIds.splice(userIndex, 1);
-  machineData.userIds = userIds;
-
-  if(userIds.length == 0) { // This is the last user using the machine?
-    machineData.availability = "Free";
-    machineData.sets_left = 0;
-    machineData.workin = false;
+  } catch (error) {
+    console.error('Error in getMachineInfo:', error);
+    return res.status(500).json({
+        error: 'Internal server error',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
-
-  // Update doc in database
-  await updateDocument('machines', String(machineId), machineData);
-
-  // Get remaining user data
-  for(var i=0; i < userIds.length; i++) {
-    const uid = userIds[i];
-    const userData = await getUserById(uid);
-    userIds[i] = userData !== undefined ? userData.displayName : '';
-  }
-
-  delete machineData.userIds;
-  machineData.ativeUsers = userIds;
-
-  return res.status(200).json({
-    success: true,
-    machine: machineData
-  });
 }
