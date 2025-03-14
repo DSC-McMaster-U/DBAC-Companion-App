@@ -18,10 +18,11 @@ import CheckBox from "@/components/CheckBox";
 import IconText from "@/components/IconText";
 import { useLocalSearchParams } from "expo-router";
 import axios from 'axios';
+import { API_URL, buildAPIURL } from "@/hooks/useBuildAPIURL";
 
 // Update the axios baseURL and service methods
 const api = axios.create({
-  baseURL: 'http://localhost:8383',
+  baseURL: API_URL,
 });
 const MAX_SETS_LEFT = 10;
 
@@ -351,7 +352,7 @@ export default function EquipmentTabularMenuScreen() {
   useEffect(() => {
     const fetchMachineData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8383/machines/${machineId}`);
+        const response = await axios.get(buildAPIURL(`/machines/${machineId}`));
         const machineData = response.data;
 
         setMachine(machineData);
@@ -370,7 +371,7 @@ export default function EquipmentTabularMenuScreen() {
 
   const handleUpdateStatus = async (newStatus: boolean) => {
     try {
-      await axios.patch(`http://localhost:8383/machines/${machineId}`, {
+      await axios.patch(buildAPIURL(`/machines/${machineId}`), {
         availability: newStatus ? "Free" : "Occupied",
         userid: newStatus ? "NA" : "current_user_id" // Replace with actual user ID
       });
@@ -382,7 +383,7 @@ export default function EquipmentTabularMenuScreen() {
 
   const handleUpdateSets = async (newSets: number) => {
     try {
-      await axios.patch(`http://localhost:8383/machines/setsleft`, {
+      await axios.patch(buildAPIURL(`/machines/setsleft`), {
         machineid: machineId,
         sets_left: newSets
       });
