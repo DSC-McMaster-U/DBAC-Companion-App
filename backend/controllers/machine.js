@@ -3,7 +3,10 @@ import { db, getUserById, updateDocument } from "../firebase.js";
 export const getMachines = async (req, res) => {
   try {
     const machinesSnap = await db.collection('machines').get();
-    const allMachines = machinesSnap.docs.map((doc) => doc.data());
+    const allMachines = machinesSnap.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data()
+    }));
 
     const filteredMachines = [];
     for(var i=0; i < allMachines.length; i++) {
