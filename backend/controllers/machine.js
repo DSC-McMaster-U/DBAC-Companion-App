@@ -56,7 +56,7 @@ export const getMachineInfo = async (req, res) => {
     }
 
     delete machineData.userIds;
-    machineData.ativeUsers = userIdList;
+    machineData.activeUsers = userIdList;
 
     return res.status(200).json({
       success: true,
