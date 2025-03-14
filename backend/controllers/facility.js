@@ -41,6 +41,7 @@ export const getFacilityCapacityInfo = async (req, res) => {
 
         // Rename/add to this when new variables/maps are created in firestore
         return res.status(200).json({
+            success: true,
             num_active_users: facilityData.num_active_users,
             capacity: facilityData.capacity,
             active_users_list: activeUsersList
@@ -91,6 +92,7 @@ export const getMachineCapacityInfo = async (req, res) => {
 
         // Rename/add to this when new variables/maps are created in firestore
         res.status(200).json({
+            success: true,
             num_cardio: {
                 stairmaster: facilityData.num_cardio.stairmaster,
                 treadmill: facilityData.num_cardio.treadmill

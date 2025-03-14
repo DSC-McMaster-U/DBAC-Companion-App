@@ -7,7 +7,10 @@ export const getMachines = async (req, res) => {
       id: doc.id,
       ...doc.data()
     }));
-    res.status(200).send(machines);
+    res.status(200).send({
+      success: true,
+      machines: machines
+    });
   } catch (error) {
     res.status(500).send({ error: "Failed to fetch machines" });
   }
@@ -27,7 +30,7 @@ export const getMachineInfo = async (req, res) => {
     const { machineId } = req.body;
 
     if(!machineId)
-      return res.status(404).json({
+      return res.status(400).json({
         success: false,
         msg: "Machine Id parameter is required."
       });
@@ -106,7 +109,7 @@ export async function useMachine(req, res) {
     const machineData = machineSnap.data();
 
     if(machineData.availability !== "Free" && !machineData.workin) // Check if the user can use/join this machine.
-      return res.status(400).json({
+      return res.status(200).json({
         success: false,
         msg: "Machine is currently occupied."
       });
@@ -161,7 +164,7 @@ export async function leaveMachine(req, res) {
     const userData = await getUserById(userId);
 
     if(!machineSnap.exists)
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
         msg: 'No machine found with the provided id.'
       });
