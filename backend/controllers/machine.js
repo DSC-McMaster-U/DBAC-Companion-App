@@ -3,16 +3,38 @@ import { db, getUserById, updateDocument } from "../firebase.js";
 export const getMachines = async (req, res) => {
   try {
     const machinesSnap = await db.collection('machines').get();
-    const machines = machinesSnap.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    res.status(200).send({
+    const allMachines = machinesSnap.docs.map((doc) => doc.data());
+
+    const filteredMachines = [];
+    for(var i=0; i < allMachines.length; i++) {
+      const machine = allMachines[i];
+      const userIdsArr = machine.userIds;
+
+      var userDisplayName = null;
+
+      if(userIdsArr.length >= 1) {
+        const userId = userIdsArr[0];
+        const user = await getUserById(userId);
+        userDisplayName = user.displayName;
+      }
+
+      // Add current active user (owner of machine session)
+      delete machine.userIds;
+      machine.activeUser = userDisplayName; 
+
+      filteredMachines.push(machine);
+    }
+
+    return res.status(200).json({
       success: true,
-      machines: machines
+      machines: filteredMachines
     });
   } catch (error) {
-    res.status(500).send({ error: "Failed to fetch machines" });
+    console.error('Error in getMachines:', error);
+    return res.status(500).json({
+        error: 'Internal server error',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
