@@ -51,6 +51,7 @@ export const getMachines = async (req, res) => {
  * @returns The response object
  */
 export const getMachineInfo = async (req, res) => {
+  console.log("getMachineInfo request");
   try {
     const { machineId } = req.body;
 
@@ -77,7 +78,7 @@ export const getMachineInfo = async (req, res) => {
     for(var i=0; i < userIdList.length; i++) {
       const uid = userIdList[i];
       const userData = await getUserById(uid);
-      userIdList[i] = userData !== undefined ? {userId: userData.uid, displayName: userData.displayName} : '';
+      userIdList[i] = userData !== undefined ? {userId: userData.uid, displayName: userData.displayName} : {};
     }
 
     delete machineData.userIds;
@@ -149,8 +150,16 @@ export async function useMachine(req, res) {
 
     await updateDocument('machines', String(machineId), machineData);
 
+    const userIdList = machineData.userIds;
+
+    for(var i=0; i < userIdList.length; i++) {
+      const uid = userIdList[i];
+      const userData = await getUserById(uid);
+      userIdList[i] = userData !== undefined ? {userId: userData.uid, displayName: userData.displayName} : {};
+    }
+
     delete machineData.userIds;
-    machineData.ativeUsers = [userData.displayName];
+    machineData.activeUsers = userIdList;
 
     return res.status(200).json({
       success: true,
@@ -201,8 +210,8 @@ export async function leaveMachine(req, res) {
       });
 
     const machineData = machineSnap.data();
-    const userIds = machineData.userIds;
-    const userIndex = userIds.indexOf(userId);
+    const userIdList = machineData.userIds;
+    const userIndex = userIdList.indexOf(userId);
 
     if(userIndex <= -1)
       return res.status(400).json({
@@ -211,10 +220,10 @@ export async function leaveMachine(req, res) {
       });
 
     // Update machine data
-    userIds.splice(userIndex, 1);
-    machineData.userIds = userIds;
+    userIdList.splice(userIndex, 1);
+    machineData.userIds = userIdList;
 
-    if(userIds.length == 0) { // This is the last user using the machine?
+    if(userIdList.length == 0) { // This is the last user using the machine?
       machineData.availability = "Free";
       machineData.sets_left = 0;
       machineData.workin = false;
@@ -224,14 +233,14 @@ export async function leaveMachine(req, res) {
     await updateDocument('machines', String(machineId), machineData);
 
     // Get remaining user data
-    for(var i=0; i < userIds.length; i++) {
-      const uid = userIds[i];
+    for(var i=0; i < userIdList.length; i++) {
+      const uid = userIdList[i];
       const userData = await getUserById(uid);
-      userIds[i] = userData !== undefined ? userData.displayName : '';
+      userIdList[i] = userData !== undefined ? {userId: userData.uid, displayName: userData.displayName} : {};
     }
 
     delete machineData.userIds;
-    machineData.ativeUsers = userIds;
+    machineData.activeUsers = userIdList;
 
     return res.status(200).json({
       success: true,
@@ -262,7 +271,7 @@ export async function editMachineUsageParams(req, res) {
   try {
     const { machineId, userId, setsLeft, workin } = req.body;
 
-    if(!machineId || !userId || !setsLeft || workin === undefined)
+    if(!machineId || !userId || setsLeft === undefined || workin === undefined)
       return res.status(400).json({
         success: false,
         msg: 'Missing required request parameters.'
