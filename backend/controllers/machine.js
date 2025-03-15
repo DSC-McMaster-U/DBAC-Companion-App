@@ -77,7 +77,7 @@ export const getMachineInfo = async (req, res) => {
     for(var i=0; i < userIdList.length; i++) {
       const uid = userIdList[i];
       const userData = await getUserById(uid);
-      userIdList[i] = userData !== undefined ? userData.displayName : '';
+      userIdList[i] = userData !== undefined ? {userId: userData.uid, displayName: userData.displayName} : '';
     }
 
     delete machineData.userIds;
