@@ -1,4 +1,24 @@
 import { db, getUserById, updateDocument } from "../firebase.js";
+import { io } from "../server.js";
+
+const machines_observer = db.collection('machines').onSnapshot((docs) => {
+  (async () => {
+    try {
+      const machinesData = []
+      for(const doc of docs.docs) {
+        var machine = doc.data();
+        machine = await fillMachineActiveUser(machine);
+
+        machinesData.push({ id: doc.id, ...machine });
+      }
+
+      // Emit machines
+      io.emit('machines_changed', { machines: machinesData });
+    } catch (error) {
+      console.log(`Handling machines change failed: ${error}`);
+    }
+  })();
+});
 
 export const getMachines = async (req, res) => {
   try {
@@ -10,20 +30,8 @@ export const getMachines = async (req, res) => {
 
     const filteredMachines = [];
     for(var i=0; i < allMachines.length; i++) {
-      const machine = allMachines[i];
-      const userIdsArr = machine.userIds;
-
-      var userDisplayName = null;
-
-      if(userIdsArr.length >= 1) {
-        const userId = userIdsArr[0];
-        const user = await getUserById(userId);
-        userDisplayName = user.displayName;
-      }
-
-      // Add current active user (owner of machine session)
-      delete machine.userIds;
-      machine.activeUser = userDisplayName; 
+      var machine = allMachines[i];
+      machine = await fillMachineActiveUser(machine);
 
       filteredMachines.push(machine);
     }
@@ -40,6 +48,29 @@ export const getMachines = async (req, res) => {
     });
   }
 };
+
+/**
+ * 
+ * @param {object} machine The machine
+ * @returns The machine with the displayName of the active user
+ */
+async function fillMachineActiveUser(machine) {
+  const userIdsArr = machine.userIds;
+
+  var userDisplayName = null;
+
+  if(userIdsArr.length >= 1) {
+    const userId = userIdsArr[0];
+    const user = await getUserById(userId);
+    userDisplayName = user.displayName;
+  }
+
+  // Add current active user (owner of machine session)
+  delete machine.userIds;
+  machine.activeUser = userDisplayName;
+
+  return machine;
+}
 
 /**
  * {
@@ -71,17 +102,8 @@ export const getMachineInfo = async (req, res) => {
       });
     }
 
-    const machineData = machineSnap.data();
-    const userIdList = machineData.userIds;
-
-    for(var i=0; i < userIdList.length; i++) {
-      const uid = userIdList[i];
-      const userData = await getUserById(uid);
-      userIdList[i] = userData !== undefined ? {userId: userData.uid, displayName: userData.displayName} : {};
-    }
-
-    delete machineData.userIds;
-    machineData.activeUsers = userIdList;
+    var machineData = machineSnap.data();
+    machineData = await fillActiveMachineUsers(machineData);
 
     return res.status(200).json({
       success: true,
@@ -131,7 +153,7 @@ export async function useMachine(req, res) {
         msg: 'User with the given ID cannot be verified.'
       });
 
-    const machineData = machineSnap.data();
+    var machineData = machineSnap.data();
 
     if(machineData.availability !== "Free" && !machineData.workin) // Check if the user can use/join this machine.
       return res.status(200).json({
@@ -153,14 +175,9 @@ export async function useMachine(req, res) {
 
     await updateDocument('machines', String(machineId), machineData);
 
-    for(var i=0; i < userIdList.length; i++) {
-      const uid = userIdList[i];
-      const userData = await getUserById(uid);
-      userIdList[i] = userData !== undefined ? {userId: userData.uid, displayName: userData.displayName} : {};
-    }
+    machineData = await fillActiveMachineUsers(machineData);
 
-    delete machineData.userIds;
-    machineData.activeUsers = userIdList;
+    io.emit(`machine_${machineId}_changed`, { machine: machineData });
 
     return res.status(200).json({
       success: true,
@@ -210,7 +227,7 @@ export async function leaveMachine(req, res) {
         msg: 'User with the given ID cannot be verified.'
       });
 
-    const machineData = machineSnap.data();
+    var machineData = machineSnap.data();
     const userIdList = machineData.userIds;
     const userIndex = userIdList.indexOf(userId);
 
@@ -233,15 +250,9 @@ export async function leaveMachine(req, res) {
     // Update doc in database
     await updateDocument('machines', String(machineId), machineData);
 
-    // Get remaining user data
-    for(var i=0; i < userIdList.length; i++) {
-      const uid = userIdList[i];
-      const userData = await getUserById(uid);
-      userIdList[i] = userData !== undefined ? {userId: userData.uid, displayName: userData.displayName} : {};
-    }
+    machineData = await fillActiveMachineUsers(machineData);
 
-    delete machineData.userIds;
-    machineData.activeUsers = userIdList;
+    io.emit(`machine_${machineId}_changed`, { machine: machineData });
 
     return res.status(200).json({
       success: true,
@@ -299,9 +310,10 @@ export async function editMachineUsageParams(req, res) {
         msg: 'User with the given ID cannot be verified.'
       });
 
-    const machineData = machineSnap.data();
+    var machineData = machineSnap.data();
 
-    const userIndex = machineData.userIds.indexOf(userId);
+    const userIdList = machineData.userIds;
+    const userIndex = userIdList.indexOf(userId);
 
     if(userIndex != 0) // Only the first user to use the machine can update the machine
       return res.status(400).json({
@@ -314,6 +326,10 @@ export async function editMachineUsageParams(req, res) {
 
     await updateDocument('machines', String(machineId), machineData);
 
+    machineData = await fillActiveMachineUsers(machineData);
+
+    io.emit(`machine_${machineId}_changed`, { machine: machineData });
+
     return res.status(200).json({
       success: true,
       machine: machineData
@@ -325,4 +341,25 @@ export async function editMachineUsageParams(req, res) {
         details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
+}
+
+/**
+ * 
+ * @param {object} machineData The data of the machine
+ * @returns The data of the machine with the activeUsers array
+ */
+async function fillActiveMachineUsers(machineData) {
+  const userIdList = machineData.userIds;
+
+  // Get remaining user data
+  for(var i=0; i < userIdList.length; i++) {
+    const uid = userIdList[i];
+    const userData = await getUserById(uid);
+    userIdList[i] = userData !== undefined ? {userId: userData.uid, displayName: userData.displayName} : {};
+  }
+
+  delete machineData.userIds;
+  machineData.activeUsers = userIdList;
+
+  return machineData
 }
