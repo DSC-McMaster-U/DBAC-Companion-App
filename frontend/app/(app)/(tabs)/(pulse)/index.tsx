@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import {
   StyleSheet,
@@ -34,6 +33,7 @@ import {
 import bmachine from "@/assets/images/bicepcurl-machine.png";
 import axios from 'axios';
 import { API_URL, buildAPIURL } from "@/hooks/useBuildAPIURL";
+import { useSocket } from "@/components/SocketContext";
 
 // Update the axios baseURL and service methods
 const api = axios.create({
@@ -1162,6 +1162,8 @@ export default function PulseScreen(): JSX.Element {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const socket = useSocket();
+
   // Add this useEffect to fetch machines
   useEffect(() => {
     const fetchMachines = async () => {
@@ -1179,6 +1181,10 @@ export default function PulseScreen(): JSX.Element {
     };
 
     fetchMachines();
+
+    socket?.on('machines_changed', ({ machines }) => {
+      setMachines(machines);
+    });
   }, []);
 
   // Update your render section

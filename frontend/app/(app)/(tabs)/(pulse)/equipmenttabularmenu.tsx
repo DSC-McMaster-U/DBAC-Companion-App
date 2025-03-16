@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Image,
   StyleSheet,
@@ -11,14 +11,14 @@ import {
 } from "react-native";
 
 import { iconTextGreen, iconTextYellow, maroon, red } from "@/constants/Colors";
-import PowerRack from "@/assets/images/powerrack-1.png";
-import { ThemedText } from "@/components/ThemedText";
 import Screen from "@/components/Screen";
 import CheckBox from "@/components/CheckBox";
 import IconText from "@/components/IconText";
 import { useLocalSearchParams } from "expo-router";
 import axios from 'axios';
 import { API_URL, buildAPIURL } from "@/hooks/useBuildAPIURL";
+import { useAuth } from "@/components/AuthContext";
+import { useSocket } from "@/components/SocketContext";
 
 // Update the axios baseURL and service methods
 const api = axios.create({
@@ -267,21 +267,24 @@ function EquipmentTabularMenuButton({
 }
 
 type EquipmentTabularMenuButtonsProps = ViewProps & {
+  machine: any,
+  currentUser: any,
   isAvailable: boolean;
-  setAvailability: (arg0: boolean) => void;
   workinAvailable: boolean;
-  setWorkinAvailable: (arg0: boolean) => void;
   isUserUsingMachine: boolean;
-  setIsUserUsingMachine: (arg0: boolean) => void;
+  handleJoinMachinePress: () => void,
+  handleCompleteMachinePress: () => void,
+
 };
 
 function EquipmentTabularMenuButtons({
+  machine,
+  currentUser,
   isAvailable,
-  setAvailability,
   workinAvailable,
-  setWorkinAvailable,
   isUserUsingMachine,
-  setIsUserUsingMachine,
+  handleJoinMachinePress,
+  handleCompleteMachinePress,
   style,
   ...rest
 }: EquipmentTabularMenuButtonsProps) {
@@ -292,7 +295,7 @@ function EquipmentTabularMenuButtons({
           text="Use Machine"
           textColor="#FFFFFF"
           color={maroon}
-          onPress={() => setAvailability(false)}
+          onPress={handleJoinMachinePress}
         />
       ) : (
         <>
@@ -301,32 +304,27 @@ function EquipmentTabularMenuButtons({
               text="Complete Workout"
               textColor="#FFFFFF"
               color={maroon}
-              onPress={() => {
-                setAvailability(true);
-                setIsUserUsingMachine(false);
-              }}
+              onPress={ handleCompleteMachinePress }
             />
           ) : (
             <>
-              <EquipmentTabularMenuButton
-                text="Use Machine"
-                textColor="#FFFFFF"
-                color={maroon}
-                onPress={() => {
-                  setWorkinAvailable(!workinAvailable);
-                }}
-              />
-
-              {workinAvailable && (
+              {
+              (workinAvailable && machine.activeUsers.map((user: any) => user.userId).indexOf(currentUser.uid) == -1) ? (
                 <EquipmentTabularMenuButton
                   text="Work In"
                   textColor={maroon}
                   color="#a28c8c"
-                  onPress={() => {
-                    setIsUserUsingMachine(true);
-                  }}
+                  onPress={ handleJoinMachinePress }
                 />
-              )}
+              ) : machine.activeUsers.map((user: any) => user.userId).indexOf(currentUser.uid) != -1 && (
+                <EquipmentTabularMenuButton
+                  text="Leave Workout"
+                  textColor="#FFFFFF"
+                  color={maroon}
+                  onPress={ handleCompleteMachinePress }
+                />
+              )
+            }
             </>
           )}
         </>
@@ -337,14 +335,17 @@ function EquipmentTabularMenuButtons({
 
 /**************************************EQUIPMENT TABULAR SCREEN*************************************/
 export default function EquipmentTabularMenuScreen() {
+  const { user, loading } = useAuth();
   const { image, name } = useLocalSearchParams();
   const [machine, setMachine] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [loadingMachine, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAvailable, setIsAvailable] = useState(true);
   const [workinAvailable, setWorkinAvailable] = useState(true);
   const [isUserCurrentlyUsing, setIsUserCurrentlyUsing] = useState(false);
   const [setsLeft, setSetsLeft] = useState(3);
+
+  const socket = useSocket();
 
   // Extract machine ID from name
   const machineId = name?.split('#').pop() || '';
@@ -352,95 +353,161 @@ export default function EquipmentTabularMenuScreen() {
   useEffect(() => {
     const fetchMachineData = async () => {
       try {
-        const response = await axios.get(buildAPIURL(`/machines/${machineId}`));
-        const machineData = response.data;
+        console.log(API_URL)
+        const response = (await axios.post(buildAPIURL(`/machines/machine`), { "machineId": machineId })).data;
+        console.log('request sent')
+        if(response.success) {
+          const machineData = response.machine;
 
-        setMachine(machineData);
-        setIsAvailable(machineData.availability === "Free");
-        setWorkinAvailable(machineData.workin === "Available");
-        setSetsLeft(parseInt(machineData.sets_left));
+          setMachine(machineData);
+          setIsAvailable(machineData.availability === "Free");
+          setWorkinAvailable(machineData.workin);
+          setSetsLeft(parseInt(machineData.sets_left));
+          setIsUserCurrentlyUsing(machineData.activeUsers.length >= 1 ? machineData.activeUsers[0].userId == user?.uid : false);
+        } else {
+          throw new Error(response.msg);
+        }
       } catch (err) {
-        setError(err.response?.data?.error || 'Failed to fetch machine details');
+        console.log(`Failed to fetch machine data: ${err.response ? err.response.data.msg : err.message || 'Failed to fetch machine details'}`);
+        setError(err.response ? err.response.data.msg : err.message || 'Failed to fetch machine details');
       } finally {
         setLoading(false);
       }
     };
 
     if (machineId) fetchMachineData();
-  }, [machineId]);
 
-  const handleUpdateStatus = async (newStatus: boolean) => {
-    try {
-      await axios.patch(buildAPIURL(`/machines/${machineId}`), {
-        availability: newStatus ? "Free" : "Occupied",
-        userid: newStatus ? "NA" : "current_user_id" // Replace with actual user ID
-      });
-      setIsAvailable(newStatus);
-    } catch (err) {
-      console.error("Failed to update machine status:", err);
-    }
-  };
+    socket?.on(`machine_${machineId}_changed`, ({ machine }) => {
+      console.log(machine);
+      setMachine(machine);
+      setIsAvailable(machine.availability === "Free");
+      setWorkinAvailable(machine.workin);
+      setSetsLeft(parseInt(machine.sets_left));
+      setIsUserCurrentlyUsing(machine.activeUsers.length >= 1 ? machine.activeUsers[0].userId == user?.uid : false);
+    });
+  }, [machineId]);
 
   const handleUpdateSets = async (newSets: number) => {
     try {
-      await axios.patch(buildAPIURL(`/machines/setsleft`), {
-        machineid: machineId,
-        sets_left: newSets
+      const request = await axios.post(buildAPIURL(`/machines/edit`), {
+        machineId: machineId,
+        userId: user?.uid,
+        setsLeft: newSets,
+        workin: machine.workin
       });
-      setSetsLeft(newSets);
+      const response = request.data;
+
+      if(!response.success)
+        throw new Error(response.msg);
     } catch (err) {
-      console.error("Failed to update sets left:", err);
+      console.error("Failed to update sets left:", err.response.data.msg ? err.response.data.msg : err.message);
     }
   };
 
+  const handleUpdateWorkin = async (newWorkin: boolean) => {
+    try {
+      const request = await axios.post(buildAPIURL(`/machines/edit`), {
+        machineId: machineId,
+        userId: user?.uid,
+        setsLeft: machine.sets_left,
+        workin: newWorkin
+      });
+      const response = request.data;
+
+      if(!response.success)
+        throw new Error(response.msg);
+    } catch (err) {
+      console.error("Failed to update workin availability:", err.response ? err.response.data.msg : err.message);
+    }
+  }
+
+  const handleJoinMachine = async () => {
+    try {
+      const request = await axios.post(buildAPIURL(`/machines/use`), {
+        machineId: machineId,
+        userId: user?.uid
+      });
+
+      const response = request.data;
+
+      if(!response.success)
+        throw new Error(response.msg);
+    } catch(err) {
+      console.log(`Error joining machine: ${err.response ? err.response.data.msg : err.message}`);
+    }
+  }
+
+  const handleLeaveMachine = async () => {
+    try {
+      const request = await axios.post(buildAPIURL(`/machines/leave`), {
+        machineId: machineId,
+        userId: user?.uid
+      });
+
+      const response = request.data;
+
+      if(!response.success)
+        throw new Error(response.msg);
+    } catch(err) {
+      console.log(`Error joining machine: ${err.response ? err.response.data.msg : err.message}`);
+    }
+  }
 
   return (
     <Screen style={styles.screen}>
-      <ScrollView>
-        <View style={styles.contaier}>
-          <Text style={styles.machineNameTextStyle}>{name}</Text>
+        {
+          !loadingMachine ? (
+            <>
+              <ScrollView>
+                <View style={styles.contaier}>
+                  <Text style={styles.machineNameTextStyle}>{name}</Text>
 
-          <View style={styles.machineImageContainer}>
-            <Image source={{ uri: image }} style={styles.machineImageStyle} />
-          </View>
+                  <View style={styles.machineImageContainer}>
+                    <Image source={{ uri: image }} style={styles.machineImageStyle} />
+                  </View>
 
-          <EquipmentAvailabilityMenu
-            style={styles.availabilityMenuStyle}
-            isAvailable={isAvailable}
-            setsLeft={setsLeft}
-            workinAvailable={workinAvailable}
-          />
+                  <EquipmentAvailabilityMenu
+                    style={styles.availabilityMenuStyle}
+                    isAvailable={isAvailable}
+                    setsLeft={setsLeft}
+                    workinAvailable={workinAvailable}
+                  />
 
-          {!isAvailable && (
-            <UsedBySection usingUsers={[
-              { username: machine.userid, exercise: "Current Exercise" }
-            ]} />
-          )}
+                  {!isAvailable && (
+                    <UsedBySection usingUsers={machine.activeUsers.map((user: any) => ({ username: user.displayName, exercise: "" }))} />
+                  )}
 
-          {isUserCurrentlyUsing && (
-            <WorkoutControlsSection
-              setsLeft={setsLeft}
-              setSetsLeft={handleUpdateSets}
-              workinAvailable={workinAvailable}
-              setWorkinAvailable={setWorkinAvailable}
-            />
-          )}
+                  {isUserCurrentlyUsing && (
+                    <WorkoutControlsSection
+                      setsLeft={setsLeft}
+                      setSetsLeft={handleUpdateSets}
+                      workinAvailable={workinAvailable}
+                      setWorkinAvailable={handleUpdateWorkin}
+                    />
+                  )}
 
-          <PossibleExercisesSection exercises={[
-            { name: "Standard Exercise 1" },
-            { name: "Standard Exercise 2" }
-          ]} />
-        </View>
-      </ScrollView>
-
-      <EquipmentTabularMenuButtons
-        isAvailable={isAvailable}
-        setAvailability={handleUpdateStatus}
-        workinAvailable={workinAvailable}
-        setWorkinAvailable={setWorkinAvailable}
-        isUserUsingMachine={isUserCurrentlyUsing}
-        setIsUserUsingMachine={setIsUserCurrentlyUsing}
-      />
+                  <PossibleExercisesSection exercises={[
+                    { name: "Standard Exercise 1" },
+                    { name: "Standard Exercise 2" }
+                  ]} />
+                </View>
+              </ScrollView>
+              <EquipmentTabularMenuButtons
+                machine={machine}
+                currentUser={user}
+                isAvailable={isAvailable}
+                workinAvailable={workinAvailable}
+                isUserUsingMachine={isUserCurrentlyUsing}
+                handleJoinMachinePress={handleJoinMachine}
+                handleCompleteMachinePress={handleLeaveMachine}
+              />
+            </>
+          ) : (
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', height: '100%'}}>
+              <Text>Loading...</Text>
+            </View>
+          )
+        }
     </Screen>
   );
 }
