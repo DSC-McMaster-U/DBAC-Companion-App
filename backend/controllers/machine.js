@@ -139,18 +139,20 @@ export async function useMachine(req, res) {
         success: false,
         msg: "Machine is currently occupied."
       });
+    
+    const userIdList = machineData.userIds;
 
-    // Reset machine data
-    machineData.sets_left = 0;
-    machineData.workin = false;
+    if(userIdList.length == 0) {
+      // Reset machine data
+      machineData.sets_left = 0;
+      machineData.workin = false;
+      machineData.availability = "Occupied";
+    }
 
     // Update machine data with new ID
-    machineData.availability = "Occupied";
     machineData.userIds.push(userId);
 
     await updateDocument('machines', String(machineId), machineData);
-
-    const userIdList = machineData.userIds;
 
     for(var i=0; i < userIdList.length; i++) {
       const uid = userIdList[i];
