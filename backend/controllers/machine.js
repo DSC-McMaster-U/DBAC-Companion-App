@@ -51,7 +51,6 @@ export const getMachines = async (req, res) => {
  * @returns The response object
  */
 export const getMachineInfo = async (req, res) => {
-  console.log("getMachineInfo request");
   try {
     const { machineId } = req.body;
 
