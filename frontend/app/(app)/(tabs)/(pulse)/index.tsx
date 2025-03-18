@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import {
   StyleSheet,
@@ -33,10 +32,12 @@ import {
 
 import bmachine from "@/assets/images/bicepcurl-machine.png";
 import axios from 'axios';
+import { API_URL, buildAPIURL } from "@/hooks/useBuildAPIURL";
+import { useSocket } from "@/components/SocketContext";
 
 // Update the axios baseURL and service methods
 const api = axios.create({
-  baseURL: 'http://localhost:8383',
+  baseURL: API_URL,
 });
 
 export const EquipmentService = {
@@ -123,7 +124,7 @@ function EquipmentCard({
           pathname: "/(tabs)/(pulse)/equipmenttabularmenu",
           params: {
             machineId: equipmentID,  // Already a string, no need for toString()
-            image: `http://localhost:8383/assets/images/${equipmentPicture}`,
+            image: buildAPIURL(`/assets/images/${equipmentPicture}`),
             name: `${equipmentType} #${equipmentID}`,
           },
         });
@@ -137,7 +138,7 @@ function EquipmentCard({
           borderRadius: 20,
         }}
         source={{
-          uri: `http://localhost:8383/assets/images/${equipmentPicture}`,
+          uri: buildAPIURL(`/assets/images/${equipmentPicture}`),
         }}
       />
       <View style={{ height: 128, gap: 5 }}>
@@ -533,7 +534,7 @@ function SelectedSectionView({
   `;
 
   const imageURI = (name: string) => {
-    return `http://localhost:8383/assets/images/${name}`;
+    return buildAPIURL(`/assets/images/${name}`);
   };
 
   return (
@@ -1161,12 +1162,14 @@ export default function PulseScreen(): JSX.Element {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const socket = useSocket();
+
   // Add this useEffect to fetch machines
   useEffect(() => {
     const fetchMachines = async () => {
       try {
         const response = await api.get('/machines');
-        const pulseMachines = response.data.filter((machine: any) =>
+        const pulseMachines = response.data.machines.filter((machine: any) =>
           machine.facility === 'pulse'
         );
         setMachines(pulseMachines);
@@ -1178,6 +1181,10 @@ export default function PulseScreen(): JSX.Element {
     };
 
     fetchMachines();
+
+    socket?.on('machines_changed', ({ machines }) => {
+      setMachines(machines);
+    });
   }, []);
 
   // Update your render section
@@ -1218,7 +1225,7 @@ export default function PulseScreen(): JSX.Element {
               available={machine.availability === "Free"}
               equipmentPicture={`${machine.machine_type.replace(/_/g, '-')}.png`}
               setsLeft={parseInt(machine.sets_left)}
-              usedBy={machine.userid !== "NA" ? machine.userid : undefined}
+              usedBy={machine.activeUser ? machine.activeUser : undefined}
             />
           ))}
         </ScrollView>

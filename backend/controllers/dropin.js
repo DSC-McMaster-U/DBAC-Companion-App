@@ -12,9 +12,6 @@ import { db, getUserById, updateDocument } from "../firebase.js";
  */
 export async function joinDropin(req, res) {
     try {
-        if(req.method !== 'POST')
-            return res.status(400);
-
         const dropinName = req.body.dropin;
         const userId = req.body.uid;
 
@@ -37,7 +34,7 @@ export async function joinDropin(req, res) {
         const dropinData = dropinDoc.data();
 
         if(dropinData.num_active_users >= dropinData.capacity)
-            return res.status(400).json({
+            return res.status(200).json({
                 success: false,
                 msg: `The ${dropinName} dropin is currently at capacity. Please try to join later!`
             });
@@ -58,7 +55,7 @@ export async function joinDropin(req, res) {
             // add the user to the drop-in
             dropinActiveUsers.push(userData.uid);
         } else {
-            return res.status(400).json({
+            return res.status(200).json({
                 success: false,
                 msg: "Student already in dropin!"
             });
@@ -93,9 +90,6 @@ export async function joinDropin(req, res) {
  */
 export async function leaveDropin(req, res) {
     try {
-        if(req.method !== 'POST')
-            return res.status(400);
-
         const dropinName = req.body.dropin;
         const userId = req.body.uid;
 

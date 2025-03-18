@@ -1,5 +1,6 @@
 import { Redirect, Stack } from 'expo-router';
 import { AuthProvider, useAuth } from '@/components/AuthContext';
+import { SocketProvider } from '@/components/SocketContext';
 
 function RootInner() {
     const { user, loading } = useAuth();
@@ -12,8 +13,10 @@ function RootInner() {
 export default function Root() {
     return (
         <AuthProvider>
-            <Stack screenOptions={{ headerShown: false, animation: "none" }} />
-            <RootInner />
+            <SocketProvider>
+                <Stack screenOptions={{ headerShown: false, animation: "none" }} />
+                <RootInner />
+            </SocketProvider>
         </AuthProvider>
     );
 }

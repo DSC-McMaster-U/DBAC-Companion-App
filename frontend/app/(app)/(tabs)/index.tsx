@@ -19,6 +19,7 @@ import ProfilePicture from '@/assets/images/profile-picture.png';
 import CircularProgressBar from '@/components/CircularProgressBar';
 import Screen from '@/components/Screen';
 import { useAuth } from '@/components/AuthContext';
+import { buildAPIURL } from '@/hooks/useBuildAPIURL';
 
 // Define the base URL based on platform
 // const BASE_URL = Platform.select({
@@ -152,7 +153,7 @@ const fetchPulseData = async (): Promise<PulseData> => {
   try {
     // Use GET with query parameters instead of POST with body
     const response = await axios.get<PulseData>(
-      `http://localhost:8383/facility/user_capacity`, {
+      buildAPIURL(`/facility/user_capacity`), {
       params: {
         facility: 'pulse'
       },
@@ -188,7 +189,7 @@ const fetchMachineData = async (): Promise<MachineData> => {
   try {
     // Use GET with query parameters instead of POST with body
     const response = await axios.get<MachineData>(
-      `http://localhost:8383/facility/machine_capacity`, {
+      buildAPIURL(`/facility/machine_capacity`), {
       params: {
         facility: 'pulse'
       },
@@ -224,7 +225,7 @@ const fetchBadmintonData = async (): Promise<PulseData> => {
  try {
    // Use GET with query parameters instead of POST with body
    const response = await axios.get<PulseData>(
-     `http://localhost:8383/facility/user_capacity`, {
+     buildAPIURL(`/facility/user_capacity`), {
      params: {
        facility: 'badminton'
      },
@@ -296,7 +297,7 @@ const fetchBasketballData = async (): Promise<PulseData> => {
   try {
     // Use GET with query parameters instead of POST with body
     const response = await axios.get<PulseData>(
-      `http://localhost:8383/facility/user_capacity`, {
+      buildAPIURL(`/facility/user_capacity`), {
       params: {
         facility: 'basketball'
       },
@@ -332,7 +333,7 @@ const fetchVolleyballData = async (): Promise<PulseData> => {
   try {
     // Use GET with query parameters instead of POST with body
     const response = await axios.get<PulseData>(
-      `http://localhost:8383/facility/user_capacity`, {
+      buildAPIURL(`/facility/user_capacity`), {
       params: {
         facility: 'volleyball'
       },
@@ -368,7 +369,7 @@ const fetchSoccerData = async (): Promise<PulseData> => {
   try {
     // Use GET with query parameters instead of POST with body
     const response = await axios.get<PulseData>(
-      `http://localhost:8383/facility/user_capacity`, {
+      buildAPIURL(`/facility/user_capacity`), {
       params: {
         facility: 'soccer'
       },

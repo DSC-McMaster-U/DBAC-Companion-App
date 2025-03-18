@@ -1,22 +1,20 @@
 // In backend/routes/machine.js
 import express from "express";
 import {
+    editMachineUsageParams,
     getMachineInfo,
     getMachines,
-    updateMachineUser,
-    updateSetsLeft,
-    updateQueue,
-    updateWorkIn
+    leaveMachine,
+    useMachine
 } from "../controllers/machine.js";
 
 const router = express.Router()
 
 // Existing routes
 router.get("/machines", getMachines)
-router.get("/machines/:machineid", getMachineInfo)
-router.patch("/machines/users", updateMachineUser)
-router.patch("/machines/setsleft", updateSetsLeft)
-router.patch("/machines/queue", updateQueue)
-router.patch("/machines/workin", updateWorkIn)
+router.post("/machines/machine", getMachineInfo)
+router.post("/machines/use", useMachine);
+router.post("/machines/leave", leaveMachine);
+router.post("/machines/edit", editMachineUsageParams);
 
 export default router
