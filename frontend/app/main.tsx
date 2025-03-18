@@ -49,19 +49,7 @@ export default function main() {
             console.log(error);
             alert("Registration Failed: " + error.message);
         }
-    };
-
-    const router = useRouter();
-
-    const onSignInClick = () => {
-        router.navigate("/signin");
-    };
-
-    const onSignUpClick = () => {
-        router.navigate("/signup");
-    };
-
-    
+    };   
 
     // Setup google auth callback method
     const [request, response, onGoogleSignInClick] = Google.useAuthRequest({
@@ -120,7 +108,7 @@ export default function main() {
                             <Text style={styles.textTheme}>forgot password?</Text>
                         </TouchableOpacity>
                         <TouchableOpacity 
-                            onPress={() => {signInEmailPassword}}
+                            onPress={() => { signInEmailPassword() }}
                             style={styles.signInButton}>
                                 <Text style={{color: 'white'}}>Sign in</Text>
                         </TouchableOpacity>
@@ -169,7 +157,7 @@ export default function main() {
                             />
                         </View>
                         <TouchableOpacity 
-                            onPress={() => {signUpEmailPassword}}
+                            onPress={() => { signUpEmailPassword() }}
                             style={styles.signInButton}>
                                 <Text style={{color: 'white'}}>Register</Text>
                         </TouchableOpacity>
