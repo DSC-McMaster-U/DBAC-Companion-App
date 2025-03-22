@@ -1,4 +1,4 @@
-import { db, getUserById } from '../firebase.js';
+import { db, getUserById, getUsersIdsToUserNamesArray } from '../firebase.js';
 
 export const getFacilityCapacityInfo = async (req, res) => {
     try {
@@ -29,15 +29,10 @@ export const getFacilityCapacityInfo = async (req, res) => {
             });
         }
 
-        const activeUsersList = facilityData.active_users_list;
+        const activeUserIdsList = facilityData.active_users_list;
 
-        // Loop over user ids and fill user display names
-        for(let i=0; i < activeUsersList.length; i++) {
-            const uid = activeUsersList[i];
-            const userData = await getUserById(uid);
-            activeUsersList[i] = userData !== undefined ? userData.displayName : '';
-        }
-
+        // Get users display names
+        const activeUsersList = await getUsersIdsToUserNamesArray(activeUserIdsList);
 
         // Rename/add to this when new variables/maps are created in firestore
         return res.status(200).json({
