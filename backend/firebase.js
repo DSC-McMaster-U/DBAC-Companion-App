@@ -35,7 +35,7 @@ const getAllDocuments = async (collectionName) => {
  * Gets the information of a user given a uid from Firebase Auth
  * 
  * @param {string} uid The users id
- * @returns {object} The object containing the data of the user
+ * @returns {Promise<object>} The object containing the data of the user
  */
 async function getUserById(uid) {
   try {
@@ -47,4 +47,21 @@ async function getUserById(uid) {
   }
 }
 
-export { db, auth, addDocumentWithId, getAllDocuments, updateDocument, getUserById };
+/**
+ * 
+ * @param {Array} userIds The list of userIds
+ * @returns {Promise<Array>} The list of usernames and ids in the format { userId: "uId", displayName: "Username" }
+ */
+async function getUsersIdsToUserNamesArray(userIds) {
+  const result = [];
+  
+  for(var i=0; i < userIds.length; i++) {
+    const uId = userIds[i];
+    const userData = await getUserById(uId);
+    result.push(userData !== undefined ? {userId: userData.uid, displayName: userData.displayName} : {});
+  }
+
+  return result;
+}
+
+export { db, auth, addDocumentWithId, getAllDocuments, updateDocument, getUserById, getUsersIdsToUserNamesArray };
