@@ -35,7 +35,7 @@ const getAllDocuments = async (collectionName) => {
  * Gets the information of a user given a uid from Firebase Auth
  * 
  * @param {string} uid The users id
- * @returns {object} The object containing the data of the user
+ * @returns {Promise<object>} The object containing the data of the user
  */
 async function getUserById(uid) {
   try {
