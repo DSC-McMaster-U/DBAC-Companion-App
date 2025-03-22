@@ -1,4 +1,5 @@
-import { db, getUserById, updateDocument } from "../firebase.js";
+import { db, getUserById, getUsersIdsToUserNamesArray, updateDocument } from "../firebase.js";
+import { io } from "../server.js";
 
 /**
  * {
@@ -60,14 +61,20 @@ export async function joinDropin(req, res) {
                 msg: "Student already in dropin!"
             });
         }
+
+        dropinData.num_active_users += 1;
+        dropinData.active_users_list = dropinActiveUsers;
         
-        await updateDocument('facilities', dropinName, {
-            num_active_users: dropinData.num_active_users+1,
-            active_users_list: dropinActiveUsers
-        });
+        await updateDocument('facilities', dropinName, dropinData);
+
+        dropinData.active_users_list = await getUsersIdsToUserNamesArray(dropinData.active_users_list);
+
+        // Emit changes to dropin
+        io.emit(`dropin_${dropinName}_updated`, dropinData);
 
         return res.status(200).json({
-            success: true
+            success: true,
+            dropin: dropinData
         });
     } catch(error) {
         console.log(`Error in joinDropin: ${String(error)}`);
@@ -128,14 +135,20 @@ export async function leaveDropin(req, res) {
             });
 
         dropinActiveUsers.splice(userIndex, 1);
+
+        dropinData.num_active_users -= 1;
+        dropinData.active_users_list = dropinActiveUsers;
         
-        await updateDocument('facilities', dropinName, {
-            num_active_users: dropinData.num_active_users-1,
-            active_users_list: dropinActiveUsers
-        });
+        await updateDocument('facilities', dropinName, dropinData);
+
+        dropinData.active_users_list = await getUsersIdsToUserNamesArray(dropinData.active_users_list);
+
+        // Emit changes to dropin
+        io.emit(`dropin_${dropinName}_updated`, dropinData);
 
         return res.status(200).json({
-            success: true
+            success: true,
+            dropin: dropinData
         });
     } catch(error) {
         console.log(`Error in leaveDropin: ${String(error)}`);
