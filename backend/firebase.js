@@ -60,6 +60,8 @@ async function getUsersIdsToUserNamesArray(userIds) {
     const userData = await getUserById(uId);
     result.push(userData !== undefined ? {userId: userData.uid, displayName: userData.displayName} : {});
   }
+
+  return result;
 }
 
 export { db, auth, addDocumentWithId, getAllDocuments, updateDocument, getUserById, getUsersIdsToUserNamesArray };
