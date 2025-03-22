@@ -47,4 +47,19 @@ async function getUserById(uid) {
   }
 }
 
-export { db, auth, addDocumentWithId, getAllDocuments, updateDocument, getUserById };
+/**
+ * 
+ * @param {Array} userIds The list of userIds
+ * @returns {Promise<Array>} The list of usernames and ids in the format { userId: "uId", displayName: "Username" }
+ */
+async function getUsersIdsToUserNamesArray(userIds) {
+  const result = [];
+  
+  for(var i=0; i < userIds.length; i++) {
+    const uId = userIds[i];
+    const userData = await getUserById(uId);
+    result.push(userData !== undefined ? {userId: userData.uid, displayName: userData.displayName} : {});
+  }
+}
+
+export { db, auth, addDocumentWithId, getAllDocuments, updateDocument, getUserById, getUsersIdsToUserNamesArray };
