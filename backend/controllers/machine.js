@@ -1,4 +1,4 @@
-import { db, getUserById, updateDocument } from "../firebase.js";
+import { db, getUserById, getUsersIdsToUserNamesArray, updateDocument } from "../firebase.js";
 import { io } from "../server.js";
 
 const machines_observer = db.collection('machines').onSnapshot((docs) => {
@@ -351,15 +351,8 @@ export async function editMachineUsageParams(req, res) {
 async function fillActiveMachineUsers(machineData) {
   const userIdList = machineData.userIds;
 
-  // Get remaining user data
-  for(var i=0; i < userIdList.length; i++) {
-    const uid = userIdList[i];
-    const userData = await getUserById(uid);
-    userIdList[i] = userData !== undefined ? {userId: userData.uid, displayName: userData.displayName} : {};
-  }
-
   delete machineData.userIds;
-  machineData.activeUsers = userIdList;
+  machineData.activeUsers = await getUsersIdsToUserNamesArray(userIdList);
 
   return machineData
 }

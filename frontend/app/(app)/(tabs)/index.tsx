@@ -152,16 +152,11 @@ const fetchPulseData = async (): Promise<PulseData> => {
 
   try {
     // Use GET with query parameters instead of POST with body
-    const response = await axios.get<PulseData>(
+    const response = await axios.post<PulseData>(
       buildAPIURL(`/facility/user_capacity`), {
-      params: {
-        facility: 'pulse'
-      },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      timeout: 5000,
-    }
+        facility: 'pulse',
+        timeout: 5000,
+      }
     );
 
     return response.data;
@@ -224,16 +219,12 @@ const fetchBadmintonData = async (): Promise<PulseData> => {
 
  try {
    // Use GET with query parameters instead of POST with body
-   const response = await axios.get<PulseData>(
-     buildAPIURL(`/facility/user_capacity`), {
-     params: {
-       facility: 'badminton'
-     },
-     headers: {
-       'Content-Type': 'application/json',
-     },
-     timeout: 5000,
-   }
+   const response = await axios.post<PulseData>(
+      buildAPIURL(`/facility/user_capacity`), 
+      {
+        facility: 'badminton',
+        timeout: 5000
+      }
    );
 
    return response.data;
@@ -296,16 +287,12 @@ const fetchBasketballData = async (): Promise<PulseData> => {
 
   try {
     // Use GET with query parameters instead of POST with body
-    const response = await axios.get<PulseData>(
-      buildAPIURL(`/facility/user_capacity`), {
-      params: {
-        facility: 'basketball'
-      },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      timeout: 5000,
-    }
+    const response = await axios.post<PulseData>(
+      buildAPIURL(`/facility/user_capacity`), 
+      {
+        facility: 'basketball',
+        timeout: 5000
+      }
     );
 
     return response.data;
@@ -332,16 +319,12 @@ const fetchVolleyballData = async (): Promise<PulseData> => {
 
   try {
     // Use GET with query parameters instead of POST with body
-    const response = await axios.get<PulseData>(
-      buildAPIURL(`/facility/user_capacity`), {
-      params: {
-        facility: 'volleyball'
-      },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      timeout: 5000,
-    }
+    const response = await axios.post<PulseData>(
+      buildAPIURL(`/facility/user_capacity`), 
+      {
+        facility: 'volleyball',
+        timeout: 5000,
+      }
     );
 
     return response.data;
@@ -368,16 +351,12 @@ const fetchSoccerData = async (): Promise<PulseData> => {
 
   try {
     // Use GET with query parameters instead of POST with body
-    const response = await axios.get<PulseData>(
-      buildAPIURL(`/facility/user_capacity`), {
-      params: {
-        facility: 'soccer'
-      },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      timeout: 5000,
-    }
+    const response = await axios.post<PulseData>(
+      buildAPIURL(`/facility/user_capacity`), 
+      {
+        facility: 'soccer',
+        timeout: 5000,
+      }
     );
 
     return response.data;
