@@ -29,18 +29,23 @@ export const getFacilityCapacityInfo = async (req, res) => {
             });
         }
 
-        const activeUserIdsList = facilityData.active_users_list;
-
-        // Get users display names
-        const activeUsersList = await getUsersIdsToUserNamesArray(activeUserIdsList);
-
-        // Rename/add to this when new variables/maps are created in firestore
-        return res.status(200).json({
+        const result = {
             success: true,
             num_active_users: facilityData.num_active_users,
-            capacity: facilityData.capacity,
-            active_users_list: activeUsersList
-        });
+            capacity: facilityData.capacity
+        }
+
+        if(facilityData.active_users_list) {
+            const activeUserIdsList = facilityData.active_users_list;
+
+            // Get users display names
+            const activeUsersList = await getUsersIdsToUserNamesArray(activeUserIdsList);
+
+            facilityData.active_users_list = activeUsersList;
+        }
+
+        // Rename/add to this when new variables/maps are created in firestore
+        return res.status(200).json(result);
     } catch (error) {
         console.error('Error in getFacilityCapacityInfo:', error);
         return res.status(500).json({
