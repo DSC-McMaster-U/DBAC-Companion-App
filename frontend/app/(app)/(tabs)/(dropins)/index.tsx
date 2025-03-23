@@ -110,7 +110,7 @@ export default function DropinsScreen() {
                     </View>
                 ) : (
                     <ScrollView
-                        style={{ width: "100%", marginTop: 20, paddingHorizontal: 10 }}
+                        style={{ width: "100%", marginBottom: 50, marginTop: 20, paddingHorizontal: 10 }}
                     >
                         {Object.keys(dropins).map((dropinKey) => (
                             <DropinCard
