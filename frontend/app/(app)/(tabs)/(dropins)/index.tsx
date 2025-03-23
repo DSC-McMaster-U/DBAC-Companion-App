@@ -5,17 +5,7 @@ import { API_URL, buildAPIURL } from "@/hooks/useBuildAPIURL";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View, Image, ViewProps, Text, ScrollView } from "react-native";
-
-type ActiveUser = {
-    userId: string,
-    displayName: string
-}
-
-type DropinData = {
-    capacity: number,
-    num_active_users: number,
-    active_users_list: Array<ActiveUser>
-}
+import { DropinData, ActiveUser } from "@/constants/Types";
 
 type DropinCardProps = ViewProps & {
     dropinName: string,
