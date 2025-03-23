@@ -3,26 +3,16 @@ import { useSocket } from "@/components/SocketContext";
 import { ThemedText } from "@/components/ThemedText";
 import { API_URL, buildAPIURL } from "@/hooks/useBuildAPIURL";
 import axios from "axios";
+import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View, Image, ViewProps, Text, ScrollView } from "react-native";
 import { DropinData, ActiveUser } from "@/constants/Types";
+import { getDropinCapacityTextColor } from "@/hooks/getDropinCapacityColor";
 
 type DropinCardProps = ViewProps & {
     dropinName: string,
     dropinData: DropinData
 };
-
-function getCapacityTextColor(active: number, capacity: number) {
-    const percentage = active / capacity;
-
-    if(percentage <= 1/3) {
-        return '#00a20d';
-    } else if(percentage <= 2/3) {
-        return '#f4a100';
-    } else {
-        return '#c41e3a';
-    }
-}
 
 function DropinCard({ dropinName, dropinData }: DropinCardProps) {
     const { num_active_users, capacity, active_users_list } = dropinData;
@@ -30,7 +20,14 @@ function DropinCard({ dropinName, dropinData }: DropinCardProps) {
     return (
         <TouchableOpacity
             style={ styles.dropinCard }
-            onPress={() => {}}
+            onPress={() => {
+                router.push({
+                    pathname: '/(app)/(tabs)/(dropins)/dropintabularmenu',
+                    params: {
+                        dropinName: dropinName
+                    }
+                });
+            }}
         >
             <Image
                 style={ styles.dropinCardImg }
@@ -46,7 +43,7 @@ function DropinCard({ dropinName, dropinData }: DropinCardProps) {
 
                 {/* Capacity text */}
                 <Text style={{ fontSize: 15 }}>
-                    Capacity: <Text style={{ color: getCapacityTextColor(num_active_users, capacity) }}>{ num_active_users }/{ capacity }</Text>
+                    Capacity: <Text style={{ color: getDropinCapacityTextColor(num_active_users, capacity) }}>{ num_active_users }/{ capacity }</Text>
                 </Text>
 
                 {/* Active users list (contains only 2 users) */}
