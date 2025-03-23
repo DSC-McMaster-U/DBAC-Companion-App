@@ -1,4 +1,70 @@
-import { db, getUserById, updateDocument } from "../firebase.js";
+import admin from "firebase-admin";
+import { db, getUserById, getUsersIdsToUserNamesArray, updateDocument } from "../firebase.js";
+import { io } from "../server.js";
+
+const { firestore } = admin;
+
+// Keep track and emit changes in dropins list
+const dropinsSnap = db.collection('facilities').where(
+    firestore.FieldPath.documentId(), 
+    'in',
+    ['badminton', 'basketball', 'volleyball', 'soccer', 'tabletennis']
+).onSnapshot((docs) => {
+    (async () => {
+        try {
+            const dropins = {};
+            for(const doc of docs.docs) {
+                var dropin = doc.data();
+                dropin.active_users_list = await getUsersIdsToUserNamesArray(dropin.active_users_list);
+        
+                dropins[doc.id] = dropin;
+            }
+    
+            // Emit dropins
+            io.emit('dropins_changed', { dropins: dropins });
+        } catch (error) {
+            console.log(`Handling dropins change failed: ${error}`);
+        }
+    })();
+});
+
+/**
+ * 
+ * @param {object} req The request object containing the request information
+ * @param {object} res The response object that will be used to send a response to the client 
+ * @returns The response object
+ */
+export async function getDropins(req, res) {
+    try {
+        const dropinsSnap = await db.collection('facilities').where(
+            firestore.FieldPath.documentId(), 
+            'in',
+            ['badminton', 'basketball', 'volleyball', 'soccer', 'tabletennis']
+        ).get();
+
+        const dropins = dropinsSnap.docs.reduce((acc, doc) => {
+            acc[doc.id] = doc.data();
+            return acc;
+        }, {});
+
+        for(const dropinName in dropins) {
+            const dropin = dropins[dropinName];
+            dropin.active_users_list = await getUsersIdsToUserNamesArray(dropin.active_users_list);
+        }
+
+        return res.status(200).json({
+            success: true,
+            dropins: dropins
+        });
+    } catch(error) {
+        console.error('Error in dropins:', error);
+        return res.status(500).json({
+            error: 'Internal server error',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+
+}
 
 /**
  * {
@@ -60,14 +126,20 @@ export async function joinDropin(req, res) {
                 msg: "Student already in dropin!"
             });
         }
+
+        dropinData.num_active_users += 1;
+        dropinData.active_users_list = dropinActiveUsers;
         
-        await updateDocument('facilities', dropinName, {
-            num_active_users: dropinData.num_active_users+1,
-            active_users_list: dropinActiveUsers
-        });
+        await updateDocument('facilities', dropinName, dropinData);
+
+        dropinData.active_users_list = await getUsersIdsToUserNamesArray(dropinData.active_users_list);
+
+        // Emit changes to dropin
+        io.emit(`dropin_${dropinName}_updated`, dropinData);
 
         return res.status(200).json({
-            success: true
+            success: true,
+            dropin: dropinData
         });
     } catch(error) {
         console.log(`Error in joinDropin: ${String(error)}`);
@@ -128,14 +200,20 @@ export async function leaveDropin(req, res) {
             });
 
         dropinActiveUsers.splice(userIndex, 1);
+
+        dropinData.num_active_users -= 1;
+        dropinData.active_users_list = dropinActiveUsers;
         
-        await updateDocument('facilities', dropinName, {
-            num_active_users: dropinData.num_active_users-1,
-            active_users_list: dropinActiveUsers
-        });
+        await updateDocument('facilities', dropinName, dropinData);
+
+        dropinData.active_users_list = await getUsersIdsToUserNamesArray(dropinData.active_users_list);
+
+        // Emit changes to dropin
+        io.emit(`dropin_${dropinName}_updated`, dropinData);
 
         return res.status(200).json({
-            success: true
+            success: true,
+            dropin: dropinData
         });
     } catch(error) {
         console.log(`Error in leaveDropin: ${String(error)}`);
