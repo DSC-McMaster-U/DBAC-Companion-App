@@ -41,6 +41,15 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
+          name="(dropins)"
+          options={{
+            title: 'Dropins',
+            tabBarIcon: ({ color }) => (
+              <FontAwesome6 name="medal" size={25} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
           name="profile"
           options={{
             title: 'Profile',
