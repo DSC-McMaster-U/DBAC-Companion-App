@@ -353,9 +353,8 @@ export default function EquipmentTabularMenuScreen() {
   useEffect(() => {
     const fetchMachineData = async () => {
       try {
-        console.log(API_URL)
         const response = (await axios.post(buildAPIURL(`/machines/machine`), { "machineId": machineId })).data;
-        console.log('request sent')
+
         if(response.success) {
           const machineData = response.machine;
 
