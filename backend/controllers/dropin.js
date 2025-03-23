@@ -134,8 +134,10 @@ export async function joinDropin(req, res) {
 
         dropinData.active_users_list = await getUsersIdsToUserNamesArray(dropinData.active_users_list);
 
+        console.log(dropinData);
+
         // Emit changes to dropin
-        io.emit(`dropin_${dropinName}_updated`, dropinData);
+        io.emit(`dropin_${dropinName}_updated`, { dropinData: dropinData });
 
         return res.status(200).json({
             success: true,
@@ -209,7 +211,7 @@ export async function leaveDropin(req, res) {
         dropinData.active_users_list = await getUsersIdsToUserNamesArray(dropinData.active_users_list);
 
         // Emit changes to dropin
-        io.emit(`dropin_${dropinName}_updated`, dropinData);
+        io.emit(`dropin_${dropinName}_updated`, { dropinData: dropinData });
 
         return res.status(200).json({
             success: true,
