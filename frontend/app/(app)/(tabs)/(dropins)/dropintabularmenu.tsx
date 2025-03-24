@@ -147,13 +147,15 @@ export default function DropinTabularMenu() {
                             </Text>
 
                             <Text style={styles.subtitleText}>Active Users</Text>
-                            {dropin.active_users_list?.map((user: ActiveUser) => (
-                                <ActiveUserBar
-                                    key={user.userId}
-                                    username={user.displayName}
-                                    profilePicture={ProfilePicture}
-                                />
-                            ))}
+                            <View style={{gap: '5%'}}>
+                                {dropin.active_users_list?.map((user: ActiveUser) => (
+                                    <ActiveUserBar
+                                        key={user.userId}
+                                        username={user.displayName}
+                                        profilePicture={ProfilePicture}
+                                    />
+                                ))}
+                            </View>
                         </View>
                     </ScrollView>
                     <View style={styles.buttonsViewStyle}>
