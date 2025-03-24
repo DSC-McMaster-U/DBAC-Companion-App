@@ -41,7 +41,7 @@ export const getFacilityCapacityInfo = async (req, res) => {
             // Get users display names
             const activeUsersList = await getUsersIdsToUserNamesArray(activeUserIdsList);
 
-            facilityData.active_users_list = activeUsersList;
+            result.active_users_list = activeUsersList;
         }
 
         // Rename/add to this when new variables/maps are created in firestore
