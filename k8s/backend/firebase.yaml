@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: firebase-backend
+  labels:
+    app: firebase-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: firebase-backend
+  template:
+    metadata:
+      labels:
+        app: firebase-backend
+    spec:
+      containers:
+      - name: firebase-backend
+        image: firebase/firebase-tools:latest
+        command:
+          - "bash"
+          - "-c"
+          - "firebase emulators:start --only firestore,auth --host 0.0.0.0 --port 8080"
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: firebase-config
+        env:
+        - name: SERVICE_ACCOUNT_KEY
+          valueFrom:
+            secretKeyRef:
+              name: firebase-secret
+              key: SERVICE_ACCOUNT_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: firebase-backend-service
+spec:
+  type: NodePort
+  selector:
+    app: firebase-backend
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080

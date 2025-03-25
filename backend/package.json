@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "backend": "file:",
     "cors": "^2.8.5",
     "express": "^4.21.0",
     "firebase-admin": "^13.1.0",
